@@ -233,7 +233,7 @@
   .about-window{
     width:100%;
     max-width:460px;
-    max-height:80vh;
+    height:min(520px, 70vh);
     background:#ffffff;
     color:#111111;
     border-radius:18px;
@@ -256,9 +256,27 @@
     flex-shrink:0;
   }
   .about-dot{ width:12px; height:12px; border-radius:50%; border:none; padding:0; }
-  .about-dot.red{ background:#ff5f57; cursor:pointer; }
-  .about-dot.yellow{ background:#febc2e; }
-  .about-dot.green{ background:#28c840; }
+  .about-dot.red{
+    background:#ff5f57;
+    cursor:pointer;
+    position:relative;
+    transition:filter 0.15s ease;
+  }
+  .about-dot.red::after{
+    content:'×';
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    line-height:1;
+    color:rgba(75,0,0,0.65);
+    opacity:0;
+    transition:opacity 0.15s ease;
+  }
+  .about-dot.red:hover{ filter:brightness(0.95); }
+  .about-dot.red:hover::after{ opacity:1; }
 
   .about-scroll{
     overflow-y:auto;
@@ -361,26 +379,6 @@
     border-radius:20px;
     box-shadow:0 4px 14px rgba(0,0,0,0.18);
   }
-  .map-note{
-    font-size:13px;
-    color:#8a8a8a;
-    margin-top:10px;
-  }
-
-  .contact-btn{
-    display:block;
-    text-align:center;
-    margin-top:24px;
-    background:#ececec;
-    color:#111;
-    font-weight:600;
-    font-size:15px;
-    padding:14px;
-    border-radius:12px;
-    transition:background 0.15s ease;
-  }
-  .contact-btn:hover{ background:#e2e2e2; }
-
   @media (max-width:640px){
     .icon-box{ width:72px; height:72px; border-radius:16px; }
     .icon-label{ font-size:12px; }
@@ -425,7 +423,7 @@
 </div>
 
 <div class="dock">
-  <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="hyuan.png" alt="Hang Yuan"></button>
+  <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="hangyuan.jpg" alt="Hang Yuan"></button>
   <a class="dock-item brand" href="mailto:hyuan@usi.edu" data-tip="Contact Me">
     <img src="Mail.png" alt="Mail">
   </a>
@@ -443,15 +441,13 @@
   <div class="about-window" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
     <div class="about-titlebar">
       <button type="button" class="about-dot red" id="aboutClose" aria-label="Close"></button>
-      <span class="about-dot yellow"></span>
-      <span class="about-dot green"></span>
     </div>
     <div class="about-scroll">
       <div class="about-content">
         <h1 id="aboutTitle">About Me</h1>
 
         <div class="about-profile">
-          <img class="about-photo" src="hyuan.png" alt="Hang Yuan">
+          <img class="about-photo" src="hangyuan.jpg" alt="Hang Yuan">
           <div class="about-fields">
             <div class="about-field">
               <span class="about-label">NAME</span>
@@ -470,7 +466,8 @@
 
         <div class="about-bio">
           <p>I'm Hang Yuan, an interdisciplinary designer and creative technologist based in Evansville, IN — or anywhere.</p>
-          <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people. Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
+          <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people.</p>
+          <p>Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
         </div>
 
         <div class="about-location">
@@ -484,10 +481,7 @@
               title="Map of Evansville, IN">
             </iframe>
           </div>
-          <div class="map-note">Based in Evansville, IN — open to anywhere.</div>
         </div>
-
-        <a class="contact-btn" href="mailto:hyuan@usi.edu">Contact me</a>
       </div>
     </div>
   </div>
