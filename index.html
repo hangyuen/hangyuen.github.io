@@ -48,7 +48,13 @@
     flex-direction:column;
     align-items:center;
     gap:10px;
-    cursor:pointer;
+    cursor:grab;
+    touch-action:none;
+    user-select:none;
+  }
+  .icon.dragging{
+    cursor:grabbing;
+    z-index:5;
   }
   .icon-box{
     width:112px;
@@ -164,30 +170,30 @@
 <div class="stage">
   <!-- Insert a background <video> or background-image on .stage when ready -->
 
-  <a class="icon p1" href="#">
+  <div class="icon p1">
     <div class="icon-box">VR</div>
     <div class="icon-label">Virtual Reality</div>
-  </a>
-  <a class="icon p2" href="#">
+  </div>
+  <div class="icon p2">
     <div class="icon-box">AR</div>
     <div class="icon-label">Augmented Reality</div>
-  </a>
-  <a class="icon p3" href="#">
+  </div>
+  <div class="icon p3">
     <div class="icon-box">CM</div>
     <div class="icon-label">Computer Modeling</div>
-  </a>
-  <a class="icon p4" href="#">
+  </div>
+  <div class="icon p4">
     <div class="icon-box">VFX</div>
     <div class="icon-label">Animation &amp; Visual Effects</div>
-  </a>
-  <a class="icon p5" href="#">
+  </div>
+  <div class="icon p5">
     <div class="icon-box"><img src="Digital_Art.png" alt="Digital Arts"></div>
     <div class="icon-label">Digital Arts</div>
-  </a>
-  <a class="icon p6" href="#">
+  </div>
+  <div class="icon p6">
     <div class="icon-box">Pub</div>
     <div class="icon-label">Publications</div>
-  </a>
+  </div>
 </div>
 
 <div class="dock">
@@ -206,6 +212,70 @@
     <img src="LinkedIn.png" alt="LinkedIn">
   </a>
 </div>
+
+<script>
+  // Makes each .icon draggable within .stage, using mouse or touch.
+  const stage = document.querySelector('.stage');
+  const icons = document.querySelectorAll('.icon');
+
+  icons.forEach(icon => {
+    let dragging = false;
+    let startX, startY, startLeftPx, startTopPx;
+
+    icon.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      icon.classList.add('dragging');
+      icon.setPointerCapture(e.pointerId);
+
+      const stageRect = stage.getBoundingClientRect();
+      const iconRect = icon.getBoundingClientRect();
+
+      // convert current center position to px within the stage
+      startLeftPx = iconRect.left - stageRect.left + iconRect.width / 2;
+      startTopPx = iconRect.top - stageRect.top + iconRect.height / 2;
+
+      startX = e.clientX;
+      startY = e.clientY;
+
+      // switch from % to px so dragging is smooth
+      icon.style.left = startLeftPx + 'px';
+      icon.style.top = startTopPx + 'px';
+    });
+
+    icon.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      const stageRect = stage.getBoundingClientRect();
+      let newLeft = startLeftPx + dx;
+      let newTop = startTopPx + dy;
+
+      // keep icon roughly within the stage bounds
+      newLeft = Math.max(20, Math.min(stageRect.width - 20, newLeft));
+      newTop = Math.max(20, Math.min(stageRect.height - 20, newTop));
+
+      icon.style.left = newLeft + 'px';
+      icon.style.top = newTop + 'px';
+    });
+
+    const endDrag = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      icon.classList.remove('dragging');
+      icon.releasePointerCapture(e.pointerId);
+    };
+
+    icon.addEventListener('pointerup', endDrag);
+    icon.addEventListener('pointercancel', endDrag);
+
+    // double-click / double-tap to open (add a real link via data-href later)
+    icon.addEventListener('dblclick', () => {
+      const link = icon.dataset.href;
+      if (link) window.open(link, '_blank');
+    });
+  });
+</script>
 
 </body>
 </html>
