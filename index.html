@@ -125,6 +125,16 @@
     border-radius:14px;
   }
   .dock-item svg{ width:26px; height:26px; }
+  .dock-item.brand{
+    background:transparent;
+    border:none;
+    padding:4px;
+  }
+  .dock-item.brand img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+  }
   .dock-divider{
     width:1px;
     height:36px;
@@ -180,11 +190,11 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/></svg>
   </a>
   <div class="dock-divider"></div>
-  <a class="dock-item" href="https://instagram.com/yourhandle" target="_blank" rel="noopener" title="Instagram">
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="white" stroke="none"/></svg>
+  <a class="dock-item brand" href="https://instagram.com/yourhandle" target="_blank" rel="noopener">
+    <img src="Instagram.svg" alt="Instagram">
   </a>
-  <a class="dock-item" href="https://www.linkedin.com/in/-hangyuan-" target="_blank" rel="noopener" title="LinkedIn">
-    <svg viewBox="0 0 24 24" fill="white" stroke="none"><path d="M4.98 3.5C4.98 4.88 3.94 6 2.5 6S0 4.88 0 3.5 1.06 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zM8.5 8h3.8v2.05h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V23h-4v-6.85c0-1.63-.03-3.73-2.27-3.73-2.27 0-2.62 1.77-2.62 3.6V23h-4V8z"/></svg>
+  <a class="dock-item brand" href="https://www.linkedin.com/in/-hangyuan-" target="_blank" rel="noopener">
+    <img src="LinkedIn.png" alt="LinkedIn">
   </a>
 </div>
 
