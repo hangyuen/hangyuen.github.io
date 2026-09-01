@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hang Yuan — Design Portfolio</title>
-<link rel="icon" type="image/png" href="hy.png">
+<title>Hang Yuan's Web</title>
+<link rel="icon" type="image/png" href="hyuan.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -254,6 +254,12 @@
     padding:16px 20px;
     border-bottom:1px solid #ececec;
     flex-shrink:0;
+    cursor:grab;
+    touch-action:none;
+    user-select:none;
+  }
+  .about-titlebar.dragging{
+    cursor:grabbing;
   }
   .about-dot{ width:12px; height:12px; border-radius:50%; border:none; padding:0; }
   .about-dot.red{
@@ -423,7 +429,7 @@
 </div>
 
 <div class="dock">
-  <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="hyuan.png" alt="Hang Yuan"></button>
+  <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="hangyuan.jpg" alt="Hang Yuan"></button>
   <a class="dock-item brand" href="mailto:hyuan@usi.edu" data-tip="Contact Me">
     <img src="Mail.png" alt="Mail">
   </a>
@@ -570,8 +576,15 @@
   const aboutTrigger = document.getElementById('aboutTrigger');
   const aboutOverlay = document.getElementById('aboutOverlay');
   const aboutClose = document.getElementById('aboutClose');
+  const aboutWindow = document.querySelector('.about-window');
+  const aboutTitlebar = document.querySelector('.about-titlebar');
 
   function openAbout(){
+    // reset any previous drag position so it always reopens centered
+    aboutWindow.style.position = '';
+    aboutWindow.style.left = '';
+    aboutWindow.style.top = '';
+    aboutWindow.style.margin = '';
     aboutOverlay.classList.add('open');
     aboutOverlay.setAttribute('aria-hidden', 'false');
   }
@@ -588,6 +601,59 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeAbout();
   });
+
+  // Drag the About Me window around by its titlebar
+  let aboutDragging = false, aboutMoved = 0;
+  let dragStartX, dragStartY, winStartLeft, winStartTop;
+
+  aboutTitlebar.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('#aboutClose')) return; // don't drag when closing
+    aboutDragging = true;
+    aboutMoved = 0;
+    aboutTitlebar.classList.add('dragging');
+    aboutTitlebar.setPointerCapture(e.pointerId);
+
+    const rect = aboutWindow.getBoundingClientRect();
+    winStartLeft = rect.left;
+    winStartTop = rect.top;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+
+    // switch to fixed positioning at the current visual spot so it can move freely
+    aboutWindow.style.position = 'fixed';
+    aboutWindow.style.margin = '0';
+    aboutWindow.style.left = winStartLeft + 'px';
+    aboutWindow.style.top = winStartTop + 'px';
+  });
+
+  aboutTitlebar.addEventListener('pointermove', (e) => {
+    if (!aboutDragging) return;
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    aboutMoved = Math.max(aboutMoved, Math.abs(dx), Math.abs(dy));
+
+    const rect = aboutWindow.getBoundingClientRect();
+    let newLeft = winStartLeft + dx;
+    let newTop = winStartTop + dy;
+
+    // keep a bit of the titlebar reachable within the viewport
+    const margin = 24;
+    newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
+    newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
+
+    aboutWindow.style.left = newLeft + 'px';
+    aboutWindow.style.top = newTop + 'px';
+  });
+
+  const endAboutDrag = (e) => {
+    if (!aboutDragging) return;
+    aboutDragging = false;
+    aboutTitlebar.classList.remove('dragging');
+    aboutTitlebar.releasePointerCapture(e.pointerId);
+  };
+
+  aboutTitlebar.addEventListener('pointerup', endAboutDrag);
+  aboutTitlebar.addEventListener('pointercancel', endAboutDrag);
 </script>
 
 </body>
