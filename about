@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About — Hang Yuan</title>
-<link rel="icon" type="image/png" href="hy.png">
+<link rel="icon" type="image/png" href="assets/hy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -239,7 +239,7 @@
     <h1>About Me</h1>
 
     <div class="profile">
-      <img class="photo" src="hangyuan.jpg" alt="Hang Yuan">
+      <img class="photo" src="assets/hangyuan.jpg" alt="Hang Yuan">
       <div class="fields">
         <div class="field">
           <span class="field-label">NAME</span>
@@ -275,16 +275,16 @@
 </div>
 
 <div class="dock">
-  <a class="dock-item avatar" href="index.html" data-tip="Home"><img src="hangyuan.jpg" alt="Hang Yuan"></a>
+  <a class="dock-item avatar" href="index.html" data-tip="Home"><img src="assets/hangyuan.jpg" alt="Hang Yuan"></a>
   <a class="dock-item brand" href="mailto:hyuan@usi.edu" data-tip="Contact Me">
-    <img src="Mail.png" alt="Mail">
+    <img src="assets/Mail.png" alt="Mail">
   </a>
   <div class="dock-divider"></div>
   <a class="dock-item brand" href="https://www.instagram.com/hang_yuan_/" target="_blank" rel="noopener" data-tip="Instagram">
-    <img src="Instagram.svg" alt="Instagram">
+    <img src="assets/Instagram.svg" alt="Instagram">
   </a>
   <a class="dock-item brand" href="https://www.linkedin.com/in/-hangyuan-" target="_blank" rel="noopener" data-tip="LinkedIn">
-    <img src="LinkedIn.png" alt="LinkedIn">
+    <img src="assets/LinkedIn.png" alt="LinkedIn">
   </a>
 </div>
 
