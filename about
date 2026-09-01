@@ -54,9 +54,26 @@
     border-bottom:1px solid #ececec;
   }
   .dot{ width:12px; height:12px; border-radius:50%; }
-  .dot.red{ background:#ff5f57; }
-  .dot.yellow{ background:#febc2e; }
-  .dot.green{ background:#28c840; }
+  .dot.red{
+    background:#ff5f57;
+    position:relative;
+    transition:filter 0.15s ease;
+  }
+  .dot.red::after{
+    content:'×';
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    line-height:1;
+    color:rgba(75,0,0,0.65);
+    opacity:0;
+    transition:opacity 0.15s ease;
+  }
+  .dot.red:hover{ filter:brightness(0.95); }
+  .dot.red:hover::after{ opacity:1; }
 
   .content{
     padding:32px 32px 40px;
@@ -215,15 +232,14 @@
 <div class="window">
   <div class="titlebar">
     <span class="dot red"></span>
-    <span class="dot yellow"></span>
-    <span class="dot green"></span>
+
   </div>
 
   <div class="content">
     <h1>About Me</h1>
 
     <div class="profile">
-      <img class="photo" src="hyuan.png" alt="Hang Yuan">
+      <img class="photo" src="hangyuan.jpg" alt="Hang Yuan">
       <div class="fields">
         <div class="field">
           <span class="field-label">NAME</span>
@@ -242,7 +258,8 @@
 
     <div class="bio">
       <p>I'm Hang Yuan, an interdisciplinary designer and creative technologist based in Evansville, IN — or anywhere.</p>
-      <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people. Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
+      <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people.</p>
+      <p>Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
 
       <div class="map-wrap">
         <iframe
@@ -258,7 +275,7 @@
 </div>
 
 <div class="dock">
-  <a class="dock-item avatar" href="index.html" data-tip="Home"><img src="hyuan.png" alt="Hang Yuan"></a>
+  <a class="dock-item avatar" href="index.html" data-tip="Home"><img src="hangyuan.jpg" alt="Hang Yuan"></a>
   <a class="dock-item brand" href="mailto:hyuan@usi.edu" data-tip="Contact Me">
     <img src="Mail.png" alt="Mail">
   </a>
