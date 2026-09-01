@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="hy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #000000;
@@ -139,6 +139,13 @@
     transition:transform 0.15s ease;
     position:relative;
   }
+  button.dock-item{
+    font:inherit;
+    cursor:pointer;
+    padding:0;
+    -webkit-appearance:none;
+    appearance:none;
+  }
   .dock-item[data-tip]::after{
     content:attr(data-tip);
     position:absolute;
@@ -206,11 +213,183 @@
     margin:0 2px;
   }
 
+  /* ABOUT ME MODAL */
+  .about-overlay{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:8vh 20px 140px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s ease;
+  }
+  .about-overlay.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .about-window{
+    width:100%;
+    max-width:460px;
+    max-height:80vh;
+    background:#ffffff;
+    color:#111111;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 40px 90px rgba(0,0,0,0.55);
+    display:flex;
+    flex-direction:column;
+    transform:translateY(10px) scale(0.98);
+    transition:transform 0.2s ease;
+  }
+  .about-overlay.open .about-window{
+    transform:translateY(0) scale(1);
+  }
+  .about-titlebar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:16px 20px;
+    border-bottom:1px solid #ececec;
+    flex-shrink:0;
+  }
+  .about-dot{ width:12px; height:12px; border-radius:50%; border:none; padding:0; }
+  .about-dot.red{ background:#ff5f57; cursor:pointer; }
+  .about-dot.yellow{ background:#febc2e; }
+  .about-dot.green{ background:#28c840; }
+
+  .about-scroll{
+    overflow-y:auto;
+  }
+
+  .about-content{
+    padding:28px 26px 32px;
+  }
+
+  .about-content h1{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:30px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin-bottom:22px;
+  }
+
+  .about-profile{
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+    margin-bottom:20px;
+  }
+
+  .about-photo{
+    width:96px;
+    height:96px;
+    border-radius:14px;
+    object-fit:cover;
+    background:#e4e4e4;
+    flex-shrink:0;
+  }
+
+  .about-fields{ flex:1; min-width:0; }
+
+  .about-field{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    padding:10px 0;
+    border-bottom:1px solid #ececec;
+  }
+  .about-field:first-child{ padding-top:2px; }
+
+  .about-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.02em;
+    color:#111;
+    width:64px;
+    flex-shrink:0;
+  }
+
+  .about-value{
+    font-size:14px;
+    color:#9a9a9a;
+  }
+  .about-value.about-link{ color:#2f6fed; }
+
+  .about-bio{
+    background:#f2f2f2;
+    border-radius:14px;
+    padding:20px 22px;
+  }
+  .about-bio p{
+    font-size:15px;
+    line-height:1.55;
+    color:#222;
+  }
+  .about-bio p + p{ margin-top:14px; }
+
+  .about-location h2{
+    font-size:17px;
+    font-weight:700;
+    margin:26px 0 12px;
+  }
+
+  .map-card{
+    position:relative;
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid #e2e2e2;
+  }
+  .map-card iframe{
+    display:block;
+    width:100%;
+    height:220px;
+    border:0;
+  }
+  .open-in-maps{
+    position:absolute;
+    top:12px;
+    left:12px;
+    z-index:2;
+    background:#ffffff;
+    color:#2f6fed;
+    font-weight:600;
+    font-size:13px;
+    padding:8px 14px;
+    border-radius:20px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.18);
+  }
+  .map-note{
+    font-size:13px;
+    color:#8a8a8a;
+    margin-top:10px;
+  }
+
+  .contact-btn{
+    display:block;
+    text-align:center;
+    margin-top:24px;
+    background:#ececec;
+    color:#111;
+    font-weight:600;
+    font-size:15px;
+    padding:14px;
+    border-radius:12px;
+    transition:background 0.15s ease;
+  }
+  .contact-btn:hover{ background:#e2e2e2; }
+
   @media (max-width:640px){
     .icon-box{ width:72px; height:72px; border-radius:16px; }
     .icon-label{ font-size:12px; }
     .dock{ gap:10px; padding:10px 12px; bottom:20px; }
     .dock-item{ width:46px; height:46px; }
+    .about-overlay{ padding-top:6vh; padding-bottom:120px; }
+    .about-content{ padding:22px 20px 26px; }
+    .about-content h1{ font-size:24px; }
+    .about-photo{ width:76px; height:76px; }
   }
 </style>
 </head>
@@ -246,7 +425,7 @@
 </div>
 
 <div class="dock">
-  <a class="dock-item avatar" href="about.html" data-tip="About Me"><img src="hyuan.png" alt="Hang Yuan"></a>
+  <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="hyuan.png" alt="Hang Yuan"></button>
   <a class="dock-item brand" href="mailto:hyuan@usi.edu" data-tip="Contact Me">
     <img src="Mail.png" alt="Mail">
   </a>
@@ -257,6 +436,61 @@
   <a class="dock-item brand" href="https://www.linkedin.com/in/-hangyuan-" target="_blank" rel="noopener" data-tip="LinkedIn">
     <img src="LinkedIn.png" alt="LinkedIn">
   </a>
+</div>
+
+<!-- ABOUT ME MODAL -->
+<div class="about-overlay" id="aboutOverlay" aria-hidden="true">
+  <div class="about-window" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div class="about-titlebar">
+      <button type="button" class="about-dot red" id="aboutClose" aria-label="Close"></button>
+      <span class="about-dot yellow"></span>
+      <span class="about-dot green"></span>
+    </div>
+    <div class="about-scroll">
+      <div class="about-content">
+        <h1 id="aboutTitle">About Me</h1>
+
+        <div class="about-profile">
+          <img class="about-photo" src="hyuan.png" alt="Hang Yuan">
+          <div class="about-fields">
+            <div class="about-field">
+              <span class="about-label">NAME</span>
+              <span class="about-value">Hang Yuan</span>
+            </div>
+            <div class="about-field">
+              <span class="about-label">POSITION</span>
+              <span class="about-value">Assistant Professor at USI</span>
+            </div>
+            <div class="about-field">
+              <span class="about-label">MAIL</span>
+              <a class="about-value about-link" href="mailto:hyuan@usi.edu">hyuan@usi.edu</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-bio">
+          <p>I'm Hang Yuan, an interdisciplinary designer and creative technologist based in Evansville, IN — or anywhere.</p>
+          <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people. Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
+        </div>
+
+        <div class="about-location">
+          <h2>Location</h2>
+          <div class="map-card">
+            <a class="open-in-maps" href="https://www.google.com/maps/search/?api=1&query=Evansville%2C+IN" target="_blank" rel="noopener">Open in Maps ↗</a>
+            <iframe
+              src="https://www.google.com/maps?q=Evansville,IN&output=embed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Map of Evansville, IN">
+            </iframe>
+          </div>
+          <div class="map-note">Based in Evansville, IN — open to anywhere.</div>
+        </div>
+
+        <a class="contact-btn" href="mailto:hyuan@usi.edu">Contact me</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -336,6 +570,29 @@
     if (e.target === stage) {
       icons.forEach(i => i.classList.remove('selected'));
     }
+  });
+
+  // ABOUT ME MODAL logic
+  const aboutTrigger = document.getElementById('aboutTrigger');
+  const aboutOverlay = document.getElementById('aboutOverlay');
+  const aboutClose = document.getElementById('aboutClose');
+
+  function openAbout(){
+    aboutOverlay.classList.add('open');
+    aboutOverlay.setAttribute('aria-hidden', 'false');
+  }
+  function closeAbout(){
+    aboutOverlay.classList.remove('open');
+    aboutOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  aboutTrigger.addEventListener('click', openAbout);
+  aboutClose.addEventListener('click', closeAbout);
+  aboutOverlay.addEventListener('pointerdown', (e) => {
+    if (e.target === aboutOverlay) closeAbout();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAbout();
   });
 </script>
 
