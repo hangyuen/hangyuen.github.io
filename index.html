@@ -265,29 +265,36 @@
   .about-titlebar.dragging{
     cursor:grabbing;
   }
-  .about-dot{ width:16px; height:16px; border-radius:50%; border:none; padding:0; }
+  .about-dot{ width:16px; height:16px; border-radius:50%; border:none; padding:0; margin:0; box-sizing:border-box; }
   .about-dot.red{
     background:#ff5f57;
     cursor:pointer;
     position:relative;
     transition:filter 0.15s ease;
   }
-  .about-dot.red::after{
-    content:'×';
+  .about-dot.red::after,
+  .about-dot.red::before{
+    content:'';
     position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:16px;
-    line-height:1;
-    color:rgba(75,0,0,0.7);
+    top:50%;
+    left:50%;
+    width:12px;
+    height:2px;
+    margin-top:-1px;
+    margin-left:-6px;
+    background:rgba(75,0,0,0.75);
     opacity:0;
     transition:opacity 0.15s ease;
-    transform:translateY(-0.5px);
+  }
+  .about-dot.red::after{
+    transform:rotate(45deg);
+  }
+  .about-dot.red::before{
+    transform:rotate(-45deg);
   }
   .about-dot.red:hover{ filter:brightness(0.95); }
-  .about-dot.red:hover::after{ opacity:1; }
+  .about-dot.red:hover::after,
+  .about-dot.red:hover::before{ opacity:1; }
 
   .about-scroll{
     overflow-y:auto;
@@ -376,27 +383,27 @@
 <div class="stage">
   <!-- Insert a background <video> or background-image on .stage when ready -->
 
-  <div class="icon p1">
+  <div class="icon p1" data-href="vr.html">
     <div class="icon-box">VR</div>
     <div class="icon-label">Virtual Reality</div>
   </div>
-  <div class="icon p2">
+  <div class="icon p2" data-href="ar.html">
     <div class="icon-box">AR</div>
     <div class="icon-label">Augmented Reality</div>
   </div>
-  <div class="icon p3">
+  <div class="icon p3" data-href="cm.html">
     <div class="icon-box">CM</div>
     <div class="icon-label">Computer Modeling</div>
   </div>
-  <div class="icon p4">
+  <div class="icon p4" data-href="vfx.html">
     <div class="icon-box">VFX</div>
     <div class="icon-label">Animation &amp; Visual Effects</div>
   </div>
-  <div class="icon p5">
+  <div class="icon p5" data-href="digital-art.html">
     <div class="icon-box"><img src="assets/Digital_Art.png" alt="Digital Arts"></div>
     <div class="icon-label">Digital Arts</div>
   </div>
-  <div class="icon p6">
+  <div class="icon p6" data-href="publications.html">
     <div class="icon-box">Pub</div>
     <div class="icon-label">Publications</div>
   </div>
@@ -519,10 +526,10 @@
     icon.addEventListener('pointerup', endDrag);
     icon.addEventListener('pointercancel', endDrag);
 
-    // double-click / double-tap to open (add a real link via data-href later)
+    // double-click / double-tap to open the linked project page
     icon.addEventListener('dblclick', () => {
       const link = icon.dataset.href;
-      if (link) window.open(link, '_blank');
+      if (link) window.location.href = link;
     });
   });
 
