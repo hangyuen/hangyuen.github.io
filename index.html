@@ -128,9 +128,9 @@
     backdrop-filter:blur(16px);
   }
   .dock-item{
-    width:64px;
-    height:64px;
-    border-radius:16px;
+    width:52px;
+    height:52px;
+    border-radius:14px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -181,7 +181,7 @@
     opacity:1;
     transform:translate(-50%, 0);
   }
-  .dock-item:hover{ transform:translateY(-6px); }
+  .dock-item:hover{ transform:translateY(-6px) scale(1.1); }
   .dock-item.avatar{
     background:linear-gradient(135deg, #444, #111);
     font-weight:700;
@@ -208,9 +208,9 @@
   }
   .dock-divider{
     width:1px;
-    height:36px;
+    height:48px;
     background:rgba(255,255,255,0.16);
-    margin:0 2px;
+    margin:0 4px;
   }
 
   /* ABOUT ME MODAL */
@@ -261,7 +261,7 @@
   .about-titlebar.dragging{
     cursor:grabbing;
   }
-  .about-dot{ width:12px; height:12px; border-radius:50%; border:none; padding:0; }
+  .about-dot{ width:16px; height:16px; border-radius:50%; border:none; padding:0; }
   .about-dot.red{
     background:#ff5f57;
     cursor:pointer;
@@ -275,7 +275,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:11px;
+    font-size:14px;
     line-height:1;
     color:rgba(75,0,0,0.65);
     opacity:0;
@@ -388,8 +388,8 @@
   @media (max-width:640px){
     .icon-box{ width:72px; height:72px; border-radius:16px; }
     .icon-label{ font-size:12px; }
-    .dock{ gap:10px; padding:10px 12px; bottom:20px; }
-    .dock-item{ width:46px; height:46px; }
+    .dock{ gap:8px; padding:8px 10px; bottom:20px; }
+    .dock-item{ width:42px; height:42px; }
     .about-overlay{ padding:20px; }
     .about-content{ padding:22px 20px 26px; }
     .about-content h1{ font-size:24px; }
@@ -471,7 +471,7 @@
         </div>
 
         <div class="about-bio">
-          <p>I'm Hang /hʌŋ/, an interdisciplinary designer and creative technologist based in Evansville, IN — or anywhere.</p>
+          <p>I'm Hang <span style="color:#9a9a9a;">/hʌŋ/</span>, an interdisciplinary designer and creative technologist based in Evansville, IN — or anywhere.</p>
           <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people.</p>
           <p>Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
         </div>
