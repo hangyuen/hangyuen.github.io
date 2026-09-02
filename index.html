@@ -80,6 +80,17 @@
     user-select:none;
     pointer-events:none;
   }
+  /* Give only the Computer Modeling cover a subtle 3D tilt */
+  .icon.p3 .icon-box{
+    perspective:600px;
+  }
+  .icon.p3 .icon-box img{
+    transform:rotateY(-10deg) rotateX(6deg) scale(1.08);
+    transition:transform 0.25s ease;
+  }
+  .icon.p3:hover .icon-box img{
+    transform:rotateY(-14deg) rotateX(9deg) scale(1.12);
+  }
   .icon:hover .icon-box{
     transform:translateY(-4px) scale(1.04);
     border-color:#444;
