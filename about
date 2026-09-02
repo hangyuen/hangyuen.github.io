@@ -177,6 +177,30 @@
     position:relative;
   }
   .dock-item:hover{ transform:translateY(-6px) scale(1.1); }
+  .dock-item[data-tip]::after{
+    content:attr(data-tip);
+    position:absolute;
+    bottom:calc(100% + 14px);
+    left:50%;
+    transform:translate(-50%, 4px);
+    background:rgba(235,235,235,0.55);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    color:#1d1d1f;
+    font-size:13px;
+    font-weight:500;
+    padding:6px 14px;
+    border-radius:999px;
+    white-space:nowrap;
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.15s ease, transform 0.15s ease;
+  }
+  .dock-item[data-tip]:hover::after{
+    opacity:1;
+    transform:translate(-50%, 0);
+  }
   .dock-item.avatar{
     background:linear-gradient(135deg, #444, #111);
     padding:0;
