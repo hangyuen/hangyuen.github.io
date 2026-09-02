@@ -139,6 +139,21 @@
     transition:transform 0.15s ease;
     position:relative;
   }
+  .dock-item::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    background:rgba(255,255,255,0);
+    transition:background 0.12s ease;
+    pointer-events:none;
+  }
+  .dock-item:active::before{
+    background:rgba(255,255,255,0.22);
+  }
+  .dock-item:active{
+    transform:translateY(-6px) scale(1.05);
+  }
   button.dock-item{
     font:inherit;
     cursor:pointer;
@@ -264,11 +279,12 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:14px;
+    font-size:16px;
     line-height:1;
-    color:rgba(75,0,0,0.65);
+    color:rgba(75,0,0,0.7);
     opacity:0;
     transition:opacity 0.15s ease;
+    transform:translateY(-0.5px);
   }
   .about-dot.red:hover{ filter:brightness(0.95); }
   .about-dot.red:hover::after{ opacity:1; }
@@ -419,7 +435,7 @@
             </div>
             <div class="about-field">
               <span class="about-label">POSITION</span>
-              <span class="about-value">Assistant Professor at USI</span>
+              <span class="about-value">Asst Prof at USI</span>
             </div>
             <div class="about-field">
               <span class="about-label">MAIL</span>
