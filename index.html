@@ -57,9 +57,9 @@
     z-index:5;
   }
   .icon-box{
-    width:112px;
-    height:112px;
-    border-radius:24px;
+    width:96px;
+    height:96px;
+    border-radius:22px;
     background:linear-gradient(145deg, #1e1e1e, #0a0a0a);
     border:1px solid #2a2a2a;
     box-shadow:0 12px 30px rgba(0,0,0,0.5);
@@ -367,7 +367,7 @@
   .about-bio p + p{ margin-top:14px; }
 
   @media (max-width:640px){
-    .icon-box{ width:72px; height:72px; border-radius:16px; }
+    .icon-box{ width:64px; height:64px; border-radius:14px; }
     .icon-label{ font-size:12px; }
     .dock{ gap:8px; padding:8px 10px; bottom:20px; }
     .dock-item{ width:42px; height:42px; }
@@ -388,7 +388,7 @@
     <div class="icon-label">Virtual Reality</div>
   </div>
   <div class="icon p2" data-href="ar.html">
-    <div class="icon-box">AR</div>
+    <div class="icon-box"><img src="assets/arr.png" alt="Augmented Reality"></div>
     <div class="icon-label">Augmented Reality</div>
   </div>
   <div class="icon p3" data-href="cm.html">
@@ -548,14 +548,11 @@
   const aboutTitlebar = document.querySelector('.about-titlebar');
 
   function openAbout(){
-    // reset any previous drag position/size so it always reopens centered at its normal width
+    // reset any previous drag position so it always reopens centered
     aboutWindow.style.position = '';
     aboutWindow.style.left = '';
     aboutWindow.style.top = '';
     aboutWindow.style.margin = '';
-    aboutWindow.style.width = '';
-    aboutWindow.style.height = '';
-    aboutWindow.style.maxWidth = '';
     aboutOverlay.classList.add('open');
     aboutOverlay.setAttribute('aria-hidden', 'false');
   }
@@ -590,14 +587,9 @@
     dragStartX = e.clientX;
     dragStartY = e.clientY;
 
-    // switch to fixed positioning at the current visual spot, and LOCK the
-    // rendered pixel size so it can't stretch to the full viewport width
-    // once it's no longer sized by the flex overlay
+    // switch to fixed positioning at the current visual spot so it can move freely
     aboutWindow.style.position = 'fixed';
     aboutWindow.style.margin = '0';
-    aboutWindow.style.width = rect.width + 'px';
-    aboutWindow.style.height = rect.height + 'px';
-    aboutWindow.style.maxWidth = rect.width + 'px';
     aboutWindow.style.left = winStartLeft + 'px';
     aboutWindow.style.top = winStartTop + 'px';
   });
