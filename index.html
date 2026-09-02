@@ -152,32 +152,21 @@
     bottom:calc(100% + 14px);
     left:50%;
     transform:translate(-50%, 4px);
-    background:#fdfdfd;
-    color:#111;
+    background:rgba(235,235,235,0.55);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    color:#1d1d1f;
     font-size:13px;
-    font-weight:600;
-    padding:6px 13px;
-    border-radius:14px;
+    font-weight:500;
+    padding:6px 14px;
+    border-radius:999px;
     white-space:nowrap;
-    box-shadow:0 8px 20px rgba(0,0,0,0.35);
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
     opacity:0;
     pointer-events:none;
     transition:opacity 0.15s ease, transform 0.15s ease;
   }
-  .dock-item[data-tip]::before{
-    content:'';
-    position:absolute;
-    bottom:calc(100% + 8px);
-    left:50%;
-    transform:translate(-50%, 4px);
-    border:6px solid transparent;
-    border-top-color:#fdfdfd;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.15s ease, transform 0.15s ease;
-  }
-  .dock-item[data-tip]:hover::after,
-  .dock-item[data-tip]:hover::before{
+  .dock-item[data-tip]:hover::after{
     opacity:1;
     transform:translate(-50%, 0);
   }
@@ -354,37 +343,6 @@
   }
   .about-bio p + p{ margin-top:14px; }
 
-  .about-location h2{
-    font-size:17px;
-    font-weight:700;
-    margin:26px 0 12px;
-  }
-
-  .map-card{
-    position:relative;
-    border-radius:12px;
-    overflow:hidden;
-    border:1px solid #e2e2e2;
-  }
-  .map-card iframe{
-    display:block;
-    width:100%;
-    height:220px;
-    border:0;
-  }
-  .open-in-maps{
-    position:absolute;
-    top:12px;
-    left:12px;
-    z-index:2;
-    background:#ffffff;
-    color:#2f6fed;
-    font-weight:600;
-    font-size:13px;
-    padding:8px 14px;
-    border-radius:20px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.18);
-  }
   @media (max-width:640px){
     .icon-box{ width:72px; height:72px; border-radius:16px; }
     .icon-label{ font-size:12px; }
@@ -474,19 +432,6 @@
           <p>I'm Hang <span style="color:#9a9a9a;">/hʌŋ/</span>, an interdisciplinary designer and creative technologist based in Evansville, IN — or anywhere.</p>
           <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people.</p>
           <p>Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
-        </div>
-
-        <div class="about-location">
-          <h2>Location</h2>
-          <div class="map-card">
-            <a class="open-in-maps" href="https://www.google.com/maps/search/?api=1&query=Evansville%2C+IN" target="_blank" rel="noopener">Open in Maps ↗</a>
-            <iframe
-              src="https://www.google.com/maps?q=Evansville,IN&output=embed"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              title="Map of Evansville, IN">
-            </iframe>
-          </div>
         </div>
       </div>
     </div>
