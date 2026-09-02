@@ -377,6 +377,147 @@
   }
   .about-bio p + p{ margin-top:14px; }
 
+  /* PROJECT WINDOW — spawned per project, all identical size, all independently draggable */
+  .project-window{
+    position:fixed;
+    left:50%;
+    top:50%;
+    width:calc(100% - 48px);
+    max-width:900px;
+    height:min(680px, 86vh);
+    background:#ffffff;
+    color:#111111;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 40px 90px rgba(0,0,0,0.55);
+    display:flex;
+    flex-direction:column;
+    z-index:60;
+    opacity:0;
+    pointer-events:none;
+    transform:translate(-50%, -50%) scale(0.97);
+    transition:transform 0.2s ease, opacity 0.2s ease;
+  }
+  .project-window.open{
+    opacity:1;
+    pointer-events:auto;
+    transform:translate(-50%, -50%) scale(1);
+  }
+  .project-titlebar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:16px 20px;
+    border-bottom:1px solid #ececec;
+    flex-shrink:0;
+    cursor:grab;
+    touch-action:none;
+    user-select:none;
+  }
+  .project-titlebar.dragging{ cursor:grabbing; }
+  .project-dot{ width:16px; height:16px; border-radius:50%; border:none; padding:0; margin:0; box-sizing:border-box; }
+  .project-dot.red{
+    background:#ff5f57;
+    cursor:pointer;
+    position:relative;
+    transition:filter 0.15s ease;
+  }
+  .project-dot.red::after,
+  .project-dot.red::before{
+    content:'';
+    position:absolute;
+    top:50%; left:50%;
+    width:12px; height:2px;
+    margin-top:-1px; margin-left:-6px;
+    background:rgba(75,0,0,0.75);
+    opacity:0;
+    transition:opacity 0.15s ease;
+  }
+  .project-dot.red::after{ transform:rotate(45deg); }
+  .project-dot.red::before{ transform:rotate(-45deg); }
+  .project-dot.red:hover{ filter:brightness(0.95); }
+  .project-dot.red:hover::after,
+  .project-dot.red:hover::before{ opacity:1; }
+  .project-scroll{
+    overflow-y:auto;
+    flex:1;
+  }
+  .project-content{
+    padding:36px 40px 44px;
+  }
+  .project-content h1{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:38px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin-bottom:16px;
+  }
+  .project-desc{
+    font-size:15px;
+    line-height:1.6;
+    color:#333;
+    max-width:820px;
+    margin-bottom:28px;
+  }
+  .project-media{
+    width:100%;
+    aspect-ratio:16/8;
+    border-radius:10px;
+    overflow:hidden;
+    background:#111;
+  }
+  .project-media img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .project-pub-list{
+    display:none;
+    flex-direction:column;
+    margin-top:20px;
+  }
+  .pub-entry{
+    padding:22px 0;
+    border-bottom:1px solid #ececec;
+  }
+  .pub-entry:first-child{ padding-top:0; }
+  .pub-entry:last-child{ border-bottom:none; }
+  .pub-entry-title{
+    font-size:17px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    color:#111;
+    line-height:1.4;
+    margin-bottom:6px;
+  }
+  .pub-entry-meta{
+    font-size:13px;
+    color:#8a8a8a;
+    margin-bottom:8px;
+  }
+  .pub-entry-venue{
+    font-size:14px;
+    line-height:1.55;
+    color:#555;
+    max-width:760px;
+    margin-bottom:10px;
+  }
+  .pub-entry-link{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-size:14px;
+    font-weight:600;
+    color:#2f6fed;
+    transition:opacity 0.15s ease;
+  }
+  .pub-entry-link:hover{ opacity:0.7; }
+  @media (max-width:640px){
+    .project-content{ padding:26px 22px 32px; }
+    .project-content h1{ font-size:28px; }
+  }
+
   @media (max-width:640px){
     .icon-box{ width:64px; height:64px; border-radius:14px; }
     .icon-label{ font-size:12px; }
@@ -394,27 +535,27 @@
 <div class="stage">
   <!-- Insert a background <video> or background-image on .stage when ready -->
 
-  <div class="icon p1" data-href="vr.html">
+  <div class="icon p1" data-project="vr">
     <div class="icon-box"><img src="assets/vr.png" alt="Virtual Reality"></div>
     <div class="icon-label">Virtual Reality</div>
   </div>
-  <div class="icon p2" data-href="ar.html">
+  <div class="icon p2" data-project="ar">
     <div class="icon-box"><img src="assets/arr.png" alt="Augmented Reality"></div>
     <div class="icon-label">Augmented Reality</div>
   </div>
-  <div class="icon p3" data-href="cm.html">
+  <div class="icon p3" data-project="cm">
     <div class="icon-box"><img src="assets/3d.png" alt="Computer Modeling"></div>
     <div class="icon-label">Computer Modeling</div>
   </div>
-  <div class="icon p4" data-href="vfx.html">
+  <div class="icon p4" data-project="vfx">
     <div class="icon-box"><img src="assets/animation.gif" alt="Animation & Visual Effects"></div>
     <div class="icon-label">Animation &amp; Visual Effects</div>
   </div>
-  <div class="icon p5" data-href="digital-art.html">
+  <div class="icon p5" data-project="digital-art">
     <div class="icon-box"><img src="assets/Digital_Art.png" alt="Digital Arts"></div>
     <div class="icon-label">Digital Arts</div>
   </div>
-  <div class="icon p6" data-href="publications.html">
+  <div class="icon p6" data-project="publications">
     <div class="icon-box"><img src="assets/pb.png" alt="Publications"></div>
     <div class="icon-label">Publications</div>
   </div>
@@ -472,6 +613,26 @@
   </div>
 </div>
 
+<!-- PROJECT WINDOW TEMPLATE — cloned once per opened project, so several can be open at once -->
+<template id="projectWindowTemplate">
+  <div class="project-window" role="dialog" aria-modal="false">
+    <div class="project-titlebar">
+      <button type="button" class="project-dot red" aria-label="Close"></button>
+    </div>
+    <div class="project-scroll">
+      <div class="project-content">
+        <h1 class="project-title"></h1>
+        <p class="project-desc"></p>
+        <div class="project-pub-list"></div>
+
+        <div class="project-media">
+          <img class="project-image" src="" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script>
   // Makes each .icon draggable within .stage, using mouse or touch.
   const stage = document.querySelector('.stage');
@@ -526,22 +687,20 @@
       icon.classList.remove('dragging');
       icon.releasePointerCapture(e.pointerId);
 
-      // treat as a click (select) only if it barely moved
+      // treat as a click (select + open) only if it barely moved
       if (moved < 6) {
         const alreadySelected = icon.classList.contains('selected');
         icons.forEach(i => i.classList.remove('selected'));
         if (!alreadySelected) icon.classList.add('selected');
+
+        const key = icon.dataset.project;
+        if (key) openProject(key);
       }
     };
 
     icon.addEventListener('pointerup', endDrag);
     icon.addEventListener('pointercancel', endDrag);
 
-    // double-click / double-tap to open the linked project page
-    icon.addEventListener('dblclick', () => {
-      const link = icon.dataset.href;
-      if (link) window.location.href = link;
-    });
   });
 
   // clicking empty stage area deselects all icons
@@ -641,6 +800,223 @@
 
   aboutTitlebar.addEventListener('pointerup', endAboutDrag);
   aboutTitlebar.addEventListener('pointercancel', endAboutDrag);
+
+  // PROJECT WINDOWS — each opened project spawns its own independent, draggable window.
+  // Several can be open at once. Re-opening an already-open project just brings it to front.
+  const projectData = {
+    'vr': {
+      title: 'Virtual Reality',
+      desc: 'Immersive experiences built for headsets and beyond.',
+      client: 'Placeholder Client',
+      year: '2026',
+      type: 'Virtual Reality',
+      credits: 'Solo Project',
+      image: 'assets/vr.png'
+    },
+    'ar': {
+      title: 'Augmented Reality',
+      desc: 'Blending digital layers into the real world.',
+      client: 'Placeholder Client',
+      year: '2026',
+      type: 'Augmented Reality',
+      credits: 'Solo Project',
+      image: 'assets/arr.png'
+    },
+    'cm': {
+      title: 'Computer Modeling',
+      desc: '3D modeling, sculpting, and technical builds.',
+      client: 'Placeholder Client',
+      year: '2026',
+      type: 'Computer Modeling',
+      credits: 'Solo Project',
+      image: 'assets/3d.png'
+    },
+    'vfx': {
+      title: 'Animation & Visual Effects',
+      desc: 'Motion, animation, and visual effects work.',
+      client: 'Placeholder Client',
+      year: '2026',
+      type: 'Animation & VFX',
+      credits: 'Solo Project',
+      image: 'assets/animation.gif'
+    },
+    'digital-art': {
+      title: 'Digital Arts',
+      desc: 'Illustration and digital artwork.',
+      client: 'Placeholder Client',
+      year: '2026',
+      type: 'Digital Art',
+      credits: 'Solo Project',
+      image: 'assets/Digital_Art.png'
+    },
+    'publications': {
+      title: 'Publications',
+      desc: '',
+      entries: [
+        {
+          title: 'Impression, Sunrise: What Monet Teaches Game Design Teams About Feeling Before Knowing',
+          meta: 'Yuan, H., & Yang, Z. · 2026',
+          venue: 'Companion of the Computer-Supported Cooperative Work and Social Computing (CSCW Companion \'26), October 10–14, 2026, Salt Lake City, UT, USA. ACM, New York, NY, USA.',
+          link: 'https://doi.org/10.1145/3785651.3831536'
+        },
+        {
+          title: 'Character.exe: Exploring Agency Through Narrative Choices',
+          meta: 'Yuan, H., & Gude, R. · 2026',
+          venue: 'HCI International 2026 Posters (Communications in Computer and Information Science, Vol. 3048, pp. 394–403). Springer, Cham.',
+          link: 'https://doi.org/10.1007/978-3-032-30816-0_39'
+        }
+      ]
+    }
+  };
+
+  const projectTemplate = document.getElementById('projectWindowTemplate');
+  const openProjectWindows = {}; // key -> window element currently open
+  let topZIndex = 60;
+
+  function bringToFront(win){
+    topZIndex += 1;
+    win.style.zIndex = topZIndex;
+  }
+
+  function openProject(key){
+    // if this project's window is already open, just focus it instead of duplicating
+    if (openProjectWindows[key]) {
+      bringToFront(openProjectWindows[key]);
+      return;
+    }
+
+    const data = projectData[key];
+    if (!data) return;
+
+    const frag = projectTemplate.content.cloneNode(true);
+    const win = frag.querySelector('.project-window');
+
+    win.querySelector('.project-title').textContent = data.title;
+
+    const descEl = win.querySelector('.project-desc');
+    const mediaEl = win.querySelector('.project-media');
+    const listEl = win.querySelector('.project-pub-list');
+    const img = win.querySelector('.project-image');
+
+    if (data.entries && data.entries.length) {
+      // publication-style content: hide the plain description and image,
+      // render a clean list of citation entries instead
+      descEl.style.display = 'none';
+      mediaEl.style.display = 'none';
+      listEl.style.display = 'flex';
+      listEl.innerHTML = data.entries.map(entry => `
+        <div class="pub-entry">
+          <div class="pub-entry-title">${entry.title}</div>
+          <div class="pub-entry-meta">${entry.meta}</div>
+          <div class="pub-entry-venue">${entry.venue}</div>
+          <a class="pub-entry-link" href="${entry.link}" target="_blank" rel="noopener">View paper →</a>
+        </div>
+      `).join('');
+    } else {
+      descEl.style.display = '';
+      descEl.textContent = data.desc;
+      mediaEl.style.display = '';
+      listEl.style.display = 'none';
+      img.src = data.image;
+      img.alt = data.title;
+    }
+
+    // cascade each newly opened window slightly so multiple stacks are visible,
+    // rather than perfectly overlapping in the exact center
+    const openCount = Object.keys(openProjectWindows).length;
+    const cascade = (openCount % 6) * 26;
+    win.style.marginLeft = cascade + 'px';
+    win.style.marginTop = cascade + 'px';
+
+    document.body.appendChild(win);
+    openProjectWindows[key] = win;
+    bringToFront(win);
+
+    // trigger the open transition on the next frame
+    requestAnimationFrame(() => {
+      win.classList.add('open');
+    });
+
+    setupProjectWindow(win, key);
+  }
+
+  function closeProjectWindow(win, key){
+    win.classList.remove('open');
+    delete openProjectWindows[key];
+    // remove from the DOM after the closing transition finishes
+    setTimeout(() => {
+      if (win.parentNode) win.parentNode.removeChild(win);
+    }, 200);
+  }
+
+  function setupProjectWindow(win, key){
+    const titlebar = win.querySelector('.project-titlebar');
+    const closeBtn = win.querySelector('.project-dot.red');
+
+    // bring to front whenever this window is interacted with
+    win.addEventListener('pointerdown', () => bringToFront(win));
+
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeProjectWindow(win, key);
+    });
+
+    // drag by the titlebar, same pattern as the About Me window
+    let dragging = false, moved = 0;
+    let dragStartX, dragStartY, winStartLeft, winStartTop;
+
+    titlebar.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.project-dot.red')) return;
+      dragging = true;
+      moved = 0;
+      titlebar.classList.add('dragging');
+      titlebar.setPointerCapture(e.pointerId);
+
+      const rect = win.getBoundingClientRect();
+      winStartLeft = rect.left;
+      winStartTop = rect.top;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+
+      // lock the current rendered size/position in px so switching away from
+      // the centered transform can't cause it to jump or stretch
+      win.style.width = rect.width + 'px';
+      win.style.height = rect.height + 'px';
+      win.style.maxWidth = rect.width + 'px';
+      win.style.margin = '0';
+      win.style.left = winStartLeft + 'px';
+      win.style.top = winStartTop + 'px';
+      win.style.transform = 'none';
+    });
+
+    titlebar.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      moved = Math.max(moved, Math.abs(dx), Math.abs(dy));
+
+      const rect = win.getBoundingClientRect();
+      let newLeft = winStartLeft + dx;
+      let newTop = winStartTop + dy;
+
+      const margin = 24;
+      newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
+      newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
+
+      win.style.left = newLeft + 'px';
+      win.style.top = newTop + 'px';
+    });
+
+    const endDrag = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      titlebar.classList.remove('dragging');
+      titlebar.releasePointerCapture(e.pointerId);
+    };
+
+    titlebar.addEventListener('pointerup', endDrag);
+    titlebar.addEventListener('pointercancel', endDrag);
+  }
 </script>
 
 </body>
