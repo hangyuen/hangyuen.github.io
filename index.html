@@ -548,11 +548,14 @@
   const aboutTitlebar = document.querySelector('.about-titlebar');
 
   function openAbout(){
-    // reset any previous drag position so it always reopens centered
+    // reset any previous drag position/size so it always reopens centered at its normal width
     aboutWindow.style.position = '';
     aboutWindow.style.left = '';
     aboutWindow.style.top = '';
     aboutWindow.style.margin = '';
+    aboutWindow.style.width = '';
+    aboutWindow.style.height = '';
+    aboutWindow.style.maxWidth = '';
     aboutOverlay.classList.add('open');
     aboutOverlay.setAttribute('aria-hidden', 'false');
   }
@@ -587,9 +590,14 @@
     dragStartX = e.clientX;
     dragStartY = e.clientY;
 
-    // switch to fixed positioning at the current visual spot so it can move freely
+    // switch to fixed positioning at the current visual spot, and LOCK the
+    // rendered pixel size so it can't stretch to the full viewport width
+    // once it's no longer sized by the flex overlay
     aboutWindow.style.position = 'fixed';
     aboutWindow.style.margin = '0';
+    aboutWindow.style.width = rect.width + 'px';
+    aboutWindow.style.height = rect.height + 'px';
+    aboutWindow.style.maxWidth = rect.width + 'px';
     aboutWindow.style.left = winStartLeft + 'px';
     aboutWindow.style.top = winStartTop + 'px';
   });
