@@ -128,7 +128,7 @@
     position:fixed;
     left:50%; bottom:34px;
     transform:translateX(-50%);
-    z-index:10;
+    z-index:100;
     display:flex;
     align-items:center;
     gap:14px;
@@ -377,6 +377,124 @@
   }
   .about-bio p + p{ margin-top:14px; }
 
+  /* CONTACT ME MODAL — mirrors the About Me window chrome, with a form inside */
+  .contact-intro{
+    font-size:15px;
+    line-height:1.55;
+    color:#555;
+    margin-bottom:24px;
+  }
+
+  .contact-form{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .contact-field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+
+  .contact-field label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:#8a8a8a;
+    text-transform:uppercase;
+  }
+
+  .contact-field input,
+  .contact-field textarea{
+    font-family:'Inter', sans-serif;
+    font-size:15px;
+    color:#111;
+    background:#f2f2f2;
+    border:1px solid transparent;
+    border-radius:12px;
+    padding:12px 14px;
+    outline:none;
+    resize:none;
+    transition:border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .contact-field textarea{
+    min-height:110px;
+    line-height:1.5;
+  }
+
+  .contact-field input::placeholder,
+  .contact-field textarea::placeholder{
+    color:#a8a8a8;
+  }
+
+  .contact-hint{
+    font-size:12px;
+    color:#9a9a9a;
+    margin-top:1px;
+  }
+
+  .contact-field input:hover,
+  .contact-field textarea:hover{
+    background:#ececec;
+  }
+
+  .contact-field input:focus,
+  .contact-field textarea:focus{
+    background:#ffffff;
+    border-color:rgba(10,132,255,0.55);
+  }
+
+  .contact-submit-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-top:4px;
+  }
+
+  .contact-send{
+    font-family:'Inter', sans-serif;
+    font-size:15px;
+    font-weight:600;
+    color:#ffffff;
+    background:#0a84ff;
+    border:none;
+    border-radius:980px;
+    padding:11px 26px;
+    cursor:pointer;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .contact-send:hover{
+    background:#2f95ff;
+    transform:translateY(-2px);
+  }
+  .contact-send:active{
+    transform:translateY(0) scale(0.97);
+  }
+  .contact-send:disabled{
+    cursor:default;
+    background:#34c759;
+    transform:none;
+  }
+
+  .contact-status{
+    font-size:13px;
+    color:#8a8a8a;
+    opacity:0;
+    transition:opacity 0.2s ease;
+  }
+  .contact-status.visible{
+    opacity:1;
+  }
+
+  #contactWindow{
+    max-width:560px;
+  }
+  #contactWindow .contact-field textarea{
+    min-height:160px;
+  }
+
   /* PROJECT WINDOW — spawned per project, all identical size, all independently draggable */
   .project-window{
     position:fixed;
@@ -563,9 +681,9 @@
 
 <div class="dock">
   <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="assets/hyuan.png" alt="Hang Yuan"></button>
-  <a class="dock-item brand" href="mailto:hyuan@usi.edu" data-tip="Contact Me">
+  <button type="button" class="dock-item brand" id="contactTrigger" data-tip="Contact Me">
     <img src="assets/Mail.png" alt="Mail">
-  </a>
+  </button>
   <div class="dock-divider"></div>
   <a class="dock-item brand" href="https://www.instagram.com/hang_yuan_/" target="_blank" rel="noopener" data-tip="Instagram">
     <img src="assets/Instagram.svg" alt="Instagram">
@@ -598,7 +716,7 @@
             </div>
             <div class="about-field">
               <span class="about-label">MAIL</span>
-              <a class="about-value about-link" href="mailto:hyuan@usi.edu">hyuan@usi.edu</a>
+              <a class="about-value about-link" href="mailto:hangyuan@yahoo.com">hangyuan@yahoo.com</a>
             </div>
           </div>
         </div>
@@ -608,6 +726,40 @@
           <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people.</p>
           <p>Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT ME MODAL -->
+<div class="about-overlay" id="contactOverlay" aria-hidden="true">
+  <div class="about-window" id="contactWindow" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+    <div class="about-titlebar" id="contactTitlebar">
+      <button type="button" class="about-dot red" id="contactClose" aria-label="Close"></button>
+    </div>
+    <div class="about-scroll">
+      <div class="about-content">
+        <h1 id="contactTitle">Let's Connect</h1>
+        <p class="contact-intro">Thanks for stopping by! Let me know if there's anything on your mind, a project, a question, or just to say hi.</p>
+
+        <form class="contact-form" id="contactForm">
+          <div class="contact-field">
+            <label for="contactName">Name</label>
+            <input type="text" id="contactName" name="name" placeholder="Your name" required>
+          </div>
+          <div class="contact-field">
+            <label for="contactEmail">Email</label>
+            <input type="email" id="contactEmail" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="contact-field">
+            <label for="contactMessage">Message</label>
+            <textarea id="contactMessage" name="message" placeholder="What's on your mind?" required></textarea>
+          </div>
+          <div class="contact-submit-row">
+            <button type="submit" class="contact-send" id="contactSend">Send</button>
+            <span class="contact-status" id="contactStatus">Thanks, your message is on its way!</span>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -714,10 +866,12 @@
   const aboutTrigger = document.getElementById('aboutTrigger');
   const aboutOverlay = document.getElementById('aboutOverlay');
   const aboutClose = document.getElementById('aboutClose');
-  const aboutWindow = document.querySelector('.about-window');
-  const aboutTitlebar = document.querySelector('.about-titlebar');
+  const aboutWindow = aboutOverlay.querySelector('.about-window');
+  const aboutTitlebar = aboutOverlay.querySelector('.about-titlebar');
 
   function openAbout(){
+    // if the other modal is open, swap directly instead of requiring two clicks
+    closeContact();
     // reset any previous drag position/size so it always reopens centered at its normal width
     aboutWindow.style.position = '';
     aboutWindow.style.left = '';
@@ -814,6 +968,145 @@
 
   aboutTitlebar.addEventListener('pointerup', endAboutDrag);
   aboutTitlebar.addEventListener('pointercancel', endAboutDrag);
+
+  // CONTACT ME MODAL — same window chrome/drag behavior as About Me, plus a form
+  const contactTrigger = document.getElementById('contactTrigger');
+  const contactOverlay = document.getElementById('contactOverlay');
+  const contactClose = document.getElementById('contactClose');
+  const contactWindow = document.getElementById('contactWindow');
+  const contactTitlebar = document.getElementById('contactTitlebar');
+  const contactForm = document.getElementById('contactForm');
+  const contactSend = document.getElementById('contactSend');
+  const contactStatus = document.getElementById('contactStatus');
+
+  function openContact(){
+    // if the other modal is open, swap directly instead of requiring two clicks
+    closeAbout();
+    contactWindow.style.position = '';
+    contactWindow.style.left = '';
+    contactWindow.style.top = '';
+    contactWindow.style.margin = '';
+    contactWindow.style.width = '';
+    contactWindow.style.height = '';
+    contactWindow.style.maxWidth = '';
+    contactWindow.style.transform = '';
+    contactOverlay.classList.add('open');
+    contactOverlay.setAttribute('aria-hidden', 'false');
+  }
+  function closeContact(){
+    contactOverlay.classList.remove('open');
+    contactOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  contactTrigger.addEventListener('click', openContact);
+  contactClose.addEventListener('click', closeContact);
+  contactOverlay.addEventListener('pointerdown', (e) => {
+    if (e.target === contactOverlay) closeContact();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeContact();
+  });
+
+  // drag the Let's Connect window by its titlebar — identical pattern to About Me
+  let contactDragging = false, contactMoved = 0;
+  let cDragStartX, cDragStartY, cWinStartLeft, cWinStartTop;
+
+  contactTitlebar.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('#contactClose')) return;
+    contactDragging = true;
+    contactMoved = 0;
+    contactTitlebar.classList.add('dragging');
+    contactTitlebar.setPointerCapture(e.pointerId);
+
+    const rect = contactWindow.getBoundingClientRect();
+    cWinStartLeft = rect.left;
+    cWinStartTop = rect.top;
+    cDragStartX = e.clientX;
+    cDragStartY = e.clientY;
+
+    contactWindow.style.transition = 'none';
+    contactWindow.style.position = 'fixed';
+    contactWindow.style.margin = '0';
+    contactWindow.style.width = rect.width + 'px';
+    contactWindow.style.height = rect.height + 'px';
+    contactWindow.style.maxWidth = rect.width + 'px';
+    contactWindow.style.left = cWinStartLeft + 'px';
+    contactWindow.style.top = cWinStartTop + 'px';
+    contactWindow.style.transform = 'none';
+
+    void contactWindow.offsetHeight;
+    contactWindow.style.transition = '';
+  });
+
+  contactTitlebar.addEventListener('pointermove', (e) => {
+    if (!contactDragging) return;
+    const dx = e.clientX - cDragStartX;
+    const dy = e.clientY - cDragStartY;
+    contactMoved = Math.max(contactMoved, Math.abs(dx), Math.abs(dy));
+
+    const rect = contactWindow.getBoundingClientRect();
+    let newLeft = cWinStartLeft + dx;
+    let newTop = cWinStartTop + dy;
+
+    const margin = 24;
+    newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
+    newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
+
+    contactWindow.style.left = newLeft + 'px';
+    contactWindow.style.top = newTop + 'px';
+  });
+
+  const endContactDrag = (e) => {
+    if (!contactDragging) return;
+    contactDragging = false;
+    contactTitlebar.classList.remove('dragging');
+    contactTitlebar.releasePointerCapture(e.pointerId);
+  };
+
+  contactTitlebar.addEventListener('pointerup', endContactDrag);
+  contactTitlebar.addEventListener('pointercancel', endContactDrag);
+
+  // form submit — posts directly to Formspree, so the message lands in the inbox
+  // even if the visitor has no mail app configured on their device
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const message = document.getElementById('contactMessage').value.trim();
+    if (!name || !email || !message) return;
+
+    contactSend.textContent = 'Sending…';
+    contactSend.disabled = true;
+
+    try {
+      const response = await fetch('https://formspree.io/f/xaeyjgba', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(contactForm)
+      });
+
+      if (response.ok) {
+        contactSend.textContent = 'Sent ✓';
+        contactStatus.textContent = 'Thanks, your message is on its way!';
+        contactStatus.classList.add('visible');
+        setTimeout(() => {
+          contactSend.textContent = 'Send';
+          contactSend.disabled = false;
+          contactStatus.classList.remove('visible');
+          contactForm.reset();
+        }, 2400);
+      } else {
+        throw new Error('Formspree responded with an error');
+      }
+    } catch (err) {
+      contactSend.textContent = 'Send';
+      contactSend.disabled = false;
+      contactStatus.textContent = "Something went wrong, mind trying again?";
+      contactStatus.classList.add('visible');
+      setTimeout(() => contactStatus.classList.remove('visible'), 3000);
+    }
+  });
 
   // PROJECT WINDOWS — each opened project spawns its own independent, draggable window.
   // Several can be open at once. Re-opening an already-open project just brings it to front.
