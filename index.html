@@ -570,6 +570,31 @@
     letter-spacing:-0.02em;
     margin-bottom:16px;
   }
+  .project-meta{
+    display:none;
+    flex-wrap:wrap;
+    gap:18px 32px;
+    margin-bottom:24px;
+    padding-bottom:22px;
+    border-bottom:1px solid #ececec;
+  }
+  .project-meta-item{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .project-meta-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:#8a8a8a;
+    text-transform:uppercase;
+  }
+  .project-meta-value{
+    font-size:14px;
+    font-weight:500;
+    color:#222;
+  }
   .project-desc{
     font-size:15px;
     line-height:1.6;
@@ -634,6 +659,36 @@
   @media (max-width:640px){
     .project-content{ padding:26px 22px 32px; }
     .project-content h1{ font-size:28px; }
+  }
+
+  .project-embeds{
+    display:none;
+    flex-direction:column;
+    gap:28px;
+    margin-top:28px;
+  }
+  .embed-block-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:#8a8a8a;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .embed-frame{
+    position:relative;
+    width:100%;
+    padding-top:56.25%;
+    border-radius:10px;
+    overflow:hidden;
+    background:#111;
+  }
+  .embed-frame iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
   }
 
   @media (max-width:640px){
@@ -774,12 +829,15 @@
     <div class="project-scroll">
       <div class="project-content">
         <h1 class="project-title"></h1>
+        <div class="project-meta"></div>
         <p class="project-desc"></p>
         <div class="project-pub-list"></div>
 
         <div class="project-media">
           <img class="project-image" src="" alt="">
         </div>
+
+        <div class="project-embeds"></div>
       </div>
     </div>
   </div>
@@ -1121,13 +1179,16 @@
       image: 'assets/vr.gif'
     },
     'ar': {
-      title: 'Augmented Reality',
-      desc: 'Blending digital layers into the real world.',
-      client: 'Placeholder Client',
-      year: '2026',
-      type: 'Augmented Reality',
-      credits: 'Solo Project',
-      image: 'assets/arr.png'
+      title: "Howl's Moving Castle (AR)",
+      desc: "This augmented reality piece brings the castle from Howl's Moving Castle into the room. Point your camera at the image target, and the iconic walking castle appears in your space, ready to be explored from any angle. Clouds drift past, smoke curls from its chimneys, and fire flickers beneath it as it strides forward. The castle was modeled in Autodesk Maya, reinterpreting the original 2D film with a good deal of added detail and imagination, and the AR experience itself was built in Unity.",
+      meta: [
+        { label: 'Type', value: 'Augmented Reality' },
+        { label: 'Built With', value: 'Unity, Autodesk Maya' },
+        { label: 'Exhibition', value: 'Lockwood Cafe, Ames, IA' },
+        { label: 'Date', value: 'May 2023' }
+      ],
+      video: 'pIK76hhme4I',
+      sketchfab: 'c77dced0571944fbac9ec956a35fd2c5'
     },
     'cm': {
       title: 'Computer Modeling',
@@ -1201,9 +1262,23 @@
     win.querySelector('.project-title').textContent = data.title;
 
     const descEl = win.querySelector('.project-desc');
+    const metaEl = win.querySelector('.project-meta');
     const mediaEl = win.querySelector('.project-media');
     const listEl = win.querySelector('.project-pub-list');
+    const embedsEl = win.querySelector('.project-embeds');
     const img = win.querySelector('.project-image');
+
+    if (data.meta && data.meta.length) {
+      metaEl.style.display = 'flex';
+      metaEl.innerHTML = data.meta.map(m => `
+        <div class="project-meta-item">
+          <span class="project-meta-label">${m.label}</span>
+          <span class="project-meta-value">${m.value}</span>
+        </div>`).join('');
+    } else {
+      metaEl.style.display = 'none';
+      metaEl.innerHTML = '';
+    }
 
     if (data.entries && data.entries.length) {
       // publication-style content: hide the plain description and image,
@@ -1222,10 +1297,41 @@
     } else {
       descEl.style.display = '';
       descEl.textContent = data.desc;
-      mediaEl.style.display = '';
       listEl.style.display = 'none';
-      img.src = data.image;
-      img.alt = data.title;
+      if (data.image) {
+        mediaEl.style.display = '';
+        img.src = data.image;
+        img.alt = data.title;
+      } else {
+        mediaEl.style.display = 'none';
+      }
+    }
+
+    if (data.video || data.sketchfab) {
+      embedsEl.style.display = 'flex';
+      let embedsHtml = '';
+      if (data.video) {
+        embedsHtml += `
+          <div>
+            <div class="embed-block-label">Watch it in action</div>
+            <div class="embed-frame">
+              <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+          </div>`;
+      }
+      if (data.sketchfab) {
+        embedsHtml += `
+          <div>
+            <div class="embed-block-label">3D model</div>
+            <div class="embed-frame">
+              <iframe src="https://sketchfab.com/models/${data.sketchfab}/embed" title="${data.title} 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+            </div>
+          </div>`;
+      }
+      embedsEl.innerHTML = embedsHtml;
+    } else {
+      embedsEl.style.display = 'none';
+      embedsEl.innerHTML = '';
     }
 
     // cascade each newly opened window slightly so multiple stacks are visible,
