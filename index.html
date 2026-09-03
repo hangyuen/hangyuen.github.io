@@ -501,8 +501,8 @@
     left:50%;
     top:50%;
     width:calc(100% - 48px);
-    max-width:900px;
-    height:min(680px, 86vh);
+    max-width:980px;
+    height:min(740px, 90vh);
     background:#ffffff;
     color:#111111;
     border-radius:14px;
@@ -601,6 +601,12 @@
     color:#333;
     max-width:820px;
     margin-bottom:28px;
+  }
+  .project-desc p{
+    margin:0;
+  }
+  .project-desc p + p{
+    margin-top:14px;
   }
   .project-media{
     width:100%;
@@ -830,7 +836,7 @@
       <div class="project-content">
         <h1 class="project-title"></h1>
         <div class="project-meta"></div>
-        <p class="project-desc"></p>
+        <div class="project-desc"></div>
         <div class="project-pub-list"></div>
 
         <div class="project-media">
@@ -1180,10 +1186,13 @@
     },
     'ar': {
       title: "Howl's Moving Castle (AR)",
-      desc: "This augmented reality piece brings the castle from Howl's Moving Castle into the room. Point your camera at the image target, and the iconic walking castle appears in your space, ready to be explored from any angle. Clouds drift past, smoke curls from its chimneys, and fire flickers beneath it as it strides forward. The castle was modeled in Autodesk Maya, reinterpreting the original 2D film with a good deal of added detail and imagination, and the AR experience itself was built in Unity.",
+      desc: [
+        "This augmented reality piece brings the castle from Studio Ghibli's Howl's Moving Castle (Hayao Miyazaki, 2004) into the room. Once the app detects the image target, the iconic walking castle appears in the audience's space, ready to be explored from any angle through interactive elements. Clouds drift past, smoke curls from its chimneys, and fire flickers beneath it as it strides forward.",
+        "The castle was fully modeled in Autodesk Maya, reinterpreting the original 2D film in three dimensions, then textured with Substance Designer and Substance Painter. Every surface and mechanical detail was designed to hold up under close inspection from any viewing angle, and the finished model was brought into Unity, where the AR experience was built and tuned for real-time interaction."
+      ],
       meta: [
         { label: 'Type', value: 'Augmented Reality' },
-        { label: 'Built With', value: 'Unity, Autodesk Maya' },
+        { label: 'Built With', value: 'Autodesk Maya, Substance, Unity' },
         { label: 'Exhibition', value: 'Lockwood Cafe, Ames, IA' },
         { label: 'Date', value: 'May 2023' }
       ],
@@ -1296,7 +1305,9 @@
       `).join('');
     } else {
       descEl.style.display = '';
-      descEl.textContent = data.desc;
+      const paragraphs = Array.isArray(data.desc) ? data.desc : [data.desc];
+      descEl.innerHTML = paragraphs.map(p => `<p></p>`).join('');
+      descEl.querySelectorAll('p').forEach((pEl, i) => { pEl.textContent = paragraphs[i]; });
       listEl.style.display = 'none';
       if (data.image) {
         mediaEl.style.display = '';
