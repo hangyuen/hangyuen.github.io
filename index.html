@@ -478,7 +478,7 @@
     margin-top:20px;
   }
   .pub-entry{
-    padding:22px 0;
+    padding:14px 0;
     border-bottom:1px solid #ececec;
   }
   .pub-entry:first-child{ padding-top:0; }
@@ -688,7 +688,7 @@
       icon.releasePointerCapture(e.pointerId);
 
       // treat as a click (select + open) only if it barely moved
-      if (moved < 6) {
+      if (moved < 10) {
         const alreadySelected = icon.classList.contains('selected');
         icons.forEach(i => i.classList.remove('selected'));
         if (!alreadySelected) icon.classList.add('selected');
@@ -726,6 +726,7 @@
     aboutWindow.style.width = '';
     aboutWindow.style.height = '';
     aboutWindow.style.maxWidth = '';
+    aboutWindow.style.transform = '';
     aboutOverlay.classList.add('open');
     aboutOverlay.setAttribute('aria-hidden', 'false');
   }
@@ -760,6 +761,13 @@
     dragStartX = e.clientX;
     dragStartY = e.clientY;
 
+    // freeze transitions first: switching from the flex-centered layout
+    // (plus its entrance transform) to a fixed pixel position must happen
+    // instantly, otherwise the transform transition animates the window
+    // from its old transform down to none, which reads as a jump to the
+    // top-left before snapping back to where it should be
+    aboutWindow.style.transition = 'none';
+
     // switch to fixed positioning at the current visual spot, and LOCK the
     // rendered pixel size so it can't stretch to the full viewport width
     // once it's no longer sized by the flex overlay
@@ -770,6 +778,12 @@
     aboutWindow.style.maxWidth = rect.width + 'px';
     aboutWindow.style.left = winStartLeft + 'px';
     aboutWindow.style.top = winStartTop + 'px';
+    aboutWindow.style.transform = 'none';
+
+    // force a reflow so the transition:none is applied before we restore
+    // the transition property, then restore it for future open/close animations
+    void aboutWindow.offsetHeight;
+    aboutWindow.style.transition = '';
   });
 
   aboutTitlebar.addEventListener('pointermove', (e) => {
@@ -978,6 +992,15 @@
       dragStartX = e.clientX;
       dragStartY = e.clientY;
 
+      // freeze the transition first: the window is centered with
+      // left:50%/top:50% PLUS transform:translate(-50%,-50%), so swapping
+      // to a fixed left/top with transform:none must happen instantly.
+      // Otherwise the transform transition (0.2s ease) animates away from
+      // the -50%/-50% offset while left/top have already jumped to their
+      // final pixel values, which looks like a snap to the top-left corner
+      // that then eases back to the middle.
+      win.style.transition = 'none';
+
       // lock the current rendered size/position in px so switching away from
       // the centered transform can't cause it to jump or stretch
       win.style.width = rect.width + 'px';
@@ -987,6 +1010,11 @@
       win.style.left = winStartLeft + 'px';
       win.style.top = winStartTop + 'px';
       win.style.transform = 'none';
+
+      // force a reflow so transition:none takes effect before we restore it,
+      // then restore the transition for future opacity/close animations
+      void win.offsetHeight;
+      win.style.transition = '';
     });
 
     titlebar.addEventListener('pointermove', (e) => {
