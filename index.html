@@ -850,6 +850,15 @@
 </template>
 
 <script>
+  // Global z-index counter shared by ALL floating windows (About, Contact,
+  // and every project window), so whichever one was opened/clicked most
+  // recently always renders on top of the others.
+  let topZIndex = 60;
+  function bringOverlayToFront(el){
+    topZIndex += 1;
+    el.style.zIndex = topZIndex;
+  }
+
   // Makes each .icon draggable within .stage, using mouse or touch.
   const stage = document.querySelector('.stage');
   const icons = document.querySelectorAll('.icon');
@@ -947,6 +956,7 @@
     aboutWindow.style.transform = '';
     aboutOverlay.classList.add('open');
     aboutOverlay.setAttribute('aria-hidden', 'false');
+    bringOverlayToFront(aboutOverlay);
   }
   function closeAbout(){
     aboutOverlay.classList.remove('open');
@@ -957,6 +967,7 @@
   aboutClose.addEventListener('click', closeAbout);
   aboutOverlay.addEventListener('pointerdown', (e) => {
     if (e.target === aboutOverlay) closeAbout();
+    else bringOverlayToFront(aboutOverlay);
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeAbout();
@@ -1056,6 +1067,7 @@
     contactWindow.style.transform = '';
     contactOverlay.classList.add('open');
     contactOverlay.setAttribute('aria-hidden', 'false');
+    bringOverlayToFront(contactOverlay);
   }
   function closeContact(){
     contactOverlay.classList.remove('open');
@@ -1066,6 +1078,7 @@
   contactClose.addEventListener('click', closeContact);
   contactOverlay.addEventListener('pointerdown', (e) => {
     if (e.target === contactOverlay) closeContact();
+    else bringOverlayToFront(contactOverlay);
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeContact();
@@ -1248,11 +1261,9 @@
 
   const projectTemplate = document.getElementById('projectWindowTemplate');
   const openProjectWindows = {}; // key -> window element currently open
-  let topZIndex = 60;
 
   function bringToFront(win){
-    topZIndex += 1;
-    win.style.zIndex = topZIndex;
+    bringOverlayToFront(win);
   }
 
   function openProject(key){
