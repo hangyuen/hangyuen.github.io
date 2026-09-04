@@ -502,7 +502,7 @@
     top:50%;
     width:calc(100% - 48px);
     max-width:900px;
-    height:min(780px, 92vh);
+    height:min(680px, 86vh);
     background:#ffffff;
     color:#111111;
     border-radius:14px;
@@ -649,7 +649,7 @@
     font-size:14px;
     line-height:1.55;
     color:#555;
-    max-width:760px;
+    max-width:100%;
     margin-bottom:10px;
   }
   .pub-entry-link{
@@ -681,10 +681,35 @@
     text-transform:uppercase;
     margin-bottom:10px;
   }
+  .embed-frame-hint{
+    position:absolute;
+    left:14px;
+    bottom:14px;
+    z-index:2;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 13px;
+    border-radius:999px;
+    background:rgba(20,20,20,0.55);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    color:rgba(255,255,255,0.9);
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:0;
+    pointer-events:none;
+    animation:embedHintFade 0.4s ease 3.6s forwards;
+  }
+  @keyframes embedHintFade{
+    from{ opacity:1; }
+    to{ opacity:0; }
+  }
   .embed-frame{
     position:relative;
     width:100%;
-    padding-top:62%;
+    padding-top:56.25%;
     border-radius:10px;
     overflow:hidden;
     background:#111;
@@ -1344,9 +1369,10 @@
       if (data.sketchfab) {
         embedsHtml += `
           <div>
-            <div class="embed-block-label">3D model</div>
+            <div class="embed-block-label">3D Model</div>
             <div class="embed-frame">
               <iframe src="https://sketchfab.com/models/${data.sketchfab}/embed" title="${data.title} 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+              <span class="embed-frame-hint">Drag to rotate · Scroll to zoom</span>
             </div>
           </div>`;
       }
