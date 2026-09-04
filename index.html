@@ -1292,6 +1292,12 @@
   }
 
   function openProject(key){
+    // Digital Arts lives on its own dedicated gallery page, not a popup window
+    if (key === 'digital-art') {
+      window.location.href = 'digital-arts.html';
+      return;
+    }
+
     // if this project's window is already open, just focus it instead of duplicating
     if (openProjectWindows[key]) {
       bringToFront(openProjectWindows[key]);
