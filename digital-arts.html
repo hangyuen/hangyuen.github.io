@@ -130,10 +130,10 @@
   .carousel-track::-webkit-scrollbar{ display:none; }
 
   .art-item{
-    /* percentage-based flex-basis means this already scales with the
-       container's width — bumping the cap lets it keep growing on big
-       desktop displays (iMac etc.) instead of plateauing at laptop size */
-    flex:0 0 calc((100% - 40px) / 2.4);
+    /* nudged up from ~2.4 items per view to ~2.2, giving each frame a bit
+       more presence while still comfortably fitting a 14" screen (the
+       1512px baseline) without crowding it */
+    flex:0 0 calc((100% - 40px) / 2.2);
     max-width:1000px;
     scroll-snap-align:start;
   }
@@ -144,7 +144,6 @@
     aspect-ratio:3/2;
     overflow:hidden;
     border-radius:18px;
-    border:1px solid rgba(0,0,0,0.08);
     background-color:#f0f0f0;
     background-size:cover;
     background-position:center;
