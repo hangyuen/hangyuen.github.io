@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Arts — Hang Yuan's Web</title>
+<meta name="format-detection" content="address=no, telephone=no, email=no, date=no">
+<title>Digital Arts · Hang Yuan's Web</title>
 <link rel="icon" type="image/png" href="assets/hy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -150,6 +151,13 @@
     background-position:center;
     transition:transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
+  .art-video{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+  }
   .art-item:hover .art-frame{
     transform:scale(1.012);
   }
@@ -239,7 +247,7 @@
     Back
   </a>
   <h1 class="page-title">Digital Arts</h1>
-  <p class="page-description">A collection of illustration and digital artwork — replace this with a sentence or two about what ties these pieces together, your process, or the period they're from.</p>
+  <p class="page-description">A collection of digital painting, illustration, motion graphics, social media, and architectural work. Swipe through to explore.</p>
 </div>
 
 <div class="carousel-wrap">
@@ -256,12 +264,15 @@
 <script>
   // Replace this with your real 6 pieces: image path, title, medium, year.
   const artworks = [
-    { image: 'assets/Upstream.jpg', title: 'Upstream', medium: 'Digital Painting', year: '2025', aspect: '16/9', dimensions: '32 x 18 inches',
-      description: "A figure sits chest-deep in a rushing current, calmly reading, anchored against the pull of the water by the quiet act of attention. Around them, the riverbank has burst into a wild tangle of wildflowers: lavender, goldenrod, poppies, and loosestrife crowding the frame in full bloom. Upstream holds two kinds of resistance at once: the physical push of the current, and the mental stillness required to stay present within it. Blooming, here, isn't passive. It happens even as things move against you.",
-      exhibition: "Exhibited in Bloom, Mainframe Studios, Des Moines, IA, 2025." },
     { image: 'assets/Open Field, Open Love.jpg', title: 'Open Field, Open Love', medium: 'Digital Painting', year: '2026', aspect: '16/9', dimensions: '32 x 18 inches',
-      description: "A figure stands alone in a windswept field, arms thrown open toward a golden retriever running to meet them. The grass bends and blurs around both figures, caught mid-motion, as if the whole landscape is moving with them. Open Field, Open Love speaks to the quiet work of reaching outward after isolation: the vulnerability of opening your arms before you know if anyone will meet you there, and the relief when something does. Connection here isn't loud or dramatic. It's small, animal, and immediate, a reminder that love can arrive on four legs before it arrives any other way.",
+      description: "A figure stands alone in a windswept field, arms thrown open toward a golden retriever running to meet them. The grass bends and blurs around both figures, caught mid-motion, as if the whole landscape is moving with them. Open Field, Open Love speaks to the quiet work of reaching outward after isolation: the vulnerability of opening your arms before you know if anyone will meet you there, and the relief when something does.",
       exhibition: "Exhibited in Loneliness, Isolation and Connection, Ludington Area Center for the Arts, Ludington, MI, 2025." },
+    { image: 'assets/Upstream.jpg', title: 'Upstream', medium: 'Digital Painting', year: '2024', aspect: '16/9', dimensions: '32 x 18 inches',
+      description: "A figure sits chest-deep in a rushing current, calmly reading, anchored against the pull of the water by the quiet act of attention. Around them, the riverbank has burst into a wild tangle of wildflowers: lavender, goldenrod, poppies, and loosestrife crowding the frame in full bloom. Upstream holds two kinds of resistance at once: the physical push of the current, and the mental stillness required to stay present within it. Blooming, here, isn't passive. It happens even as things move against you.",
+      exhibition: "Exhibited in Bloom, Mainframe Studios, Des Moines, IA, 2024." },
+    { title: 'JoinJade', medium: 'Digital Motion Graphics', year: '2021', aspect: '16/9', video: '4YP7FZZNVCo', dimensions: '1920 x 1080 px',
+      description: "Made as the opening video for that year's World Hepatitis Day (July 28) event, this motion graphics piece was produced for JoinJade, a global public health campaign founded in 2001 by the Asian Liver Center at Stanford University to fight the stigma, transmission, and mortality linked to hepatitis B and liver cancer.",
+      exhibition: "Exhibited at the Asian Liver Center, Stanford University, Palo Alto, CA, 2021." },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 03', medium: 'Mixed media / digital', year: '2026' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 04', medium: 'Digital painting', year: '2025' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 05', medium: 'Digital illustration', year: '2025' },
@@ -274,7 +285,9 @@
 
   track.innerHTML = artworks.map(art => `
     <div class="art-item">
-      <div class="art-frame" style="background-image:url('${art.image}');${art.aspect ? ` aspect-ratio:${art.aspect};` : ''}" role="img" aria-label="${art.title}"></div>
+      ${art.video
+        ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}><iframe class="art-video" src="https://www.youtube.com/embed/${art.video}" title="${art.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`
+        : `<div class="art-frame" style="background-image:url('${art.image}');${art.aspect ? ` aspect-ratio:${art.aspect};` : ''}" role="img" aria-label="${art.title}"></div>`}
       <div class="art-caption">
         <div class="art-title">${art.title}</div>
         <div class="art-meta">${[art.medium, art.dimensions, art.exhibition ? null : art.year].filter(Boolean).join(', ')}</div>
