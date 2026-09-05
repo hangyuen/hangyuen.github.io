@@ -99,7 +99,6 @@
     margin-bottom:14px;
   }
   .page-description{
-    max-width:620px;
     font-size:17px;
     line-height:1.55;
     color:var(--dim);
@@ -257,8 +256,10 @@
   const artworks = [
     { image: 'assets/Upstream.jpg', title: 'Upstream', medium: 'Digital Painting', year: '2025', aspect: '16/9', dimensions: '32 x 18 inches',
       description: "A figure sits chest-deep in a rushing current, calmly reading, anchored against the pull of the water by the quiet act of attention. Around them, the riverbank has burst into a wild tangle of wildflowers: lavender, goldenrod, poppies, and loosestrife crowding the frame in full bloom. Upstream holds two kinds of resistance at once: the physical push of the current, and the mental stillness required to stay present within it. Blooming, here, isn't passive. It happens even as things move against you.",
-      exhibition: "Exhibited in Bloom, Student Exhibition Reception, Mainframe Studios, Des Moines, IA, 2025." },
-    { image: 'assets/Open Field, Open Love.jpg', title: 'Open Field, Open Love', medium: 'Digital illustration', year: '2026', aspect: '16/9' },
+      exhibition: "Exhibited in Bloom, Mainframe Studios, Des Moines, IA, 2025." },
+    { image: 'assets/Open Field, Open Love.jpg', title: 'Open Field, Open Love', medium: 'Digital Painting', year: '2026', aspect: '16/9', dimensions: '32 x 18 inches',
+      description: "A figure stands alone in a windswept field, arms thrown open toward a golden retriever running to meet them. The grass bends and blurs around both figures, caught mid-motion, as if the whole landscape is moving with them. Open Field, Open Love speaks to the quiet work of reaching outward after isolation: the vulnerability of opening your arms before you know if anyone will meet you there, and the relief when something does. Connection here isn't loud or dramatic. It's small, animal, and immediate, a reminder that love can arrive on four legs before it arrives any other way.",
+      exhibition: "Exhibited in Loneliness, Isolation and Connection, Ludington Area Center for the Arts, Ludington, MI, 2025." },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 03', medium: 'Mixed media / digital', year: '2026' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 04', medium: 'Digital painting', year: '2025' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 05', medium: 'Digital illustration', year: '2025' },
@@ -274,7 +275,7 @@
       <div class="art-frame" style="background-image:url('${art.image}');${art.aspect ? ` aspect-ratio:${art.aspect};` : ''}" role="img" aria-label="${art.title}"></div>
       <div class="art-caption">
         <div class="art-title">${art.title}</div>
-        <div class="art-meta">${[art.medium, art.dimensions, art.year].filter(Boolean).join(', ')}</div>
+        <div class="art-meta">${[art.medium, art.dimensions, art.exhibition ? null : art.year].filter(Boolean).join(', ')}</div>
         ${art.description ? `<p class="art-description">${art.description}</p>` : ''}
         ${art.exhibition ? `<p class="art-exhibition">${art.exhibition}</p>` : ''}
       </div>
