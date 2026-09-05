@@ -93,8 +93,10 @@
   .carousel-track::-webkit-scrollbar{ display:none; }
 
   .art-item{
-    flex:0 0 calc((100% - 32px) / 2);
-    max-width:1100px;
+    /* was: calc((100% - 32px) / 2), max-width 1100px — bumped both up so
+       each frame reads noticeably larger while still showing ~1.7 per view */
+    flex:0 0 calc((100% - 32px) / 1.7);
+    max-width:1300px;
     scroll-snap-align:start;
   }
 
@@ -194,8 +196,8 @@
 <script>
   // Replace this with your real 6 pieces: image path, title, medium, year.
   const artworks = [
-    { image: 'assets/Digital_Art.png', title: 'Untitled Piece 01', medium: 'Digital painting', year: '2026' },
-    { image: 'assets/Digital_Art.png', title: 'Untitled Piece 02', medium: 'Digital illustration', year: '2026' },
+    { image: 'assets/Upstream.jpg', title: 'Upstream', medium: 'Digital painting', year: '2026', aspect: '16/9' },
+    { image: 'assets/Open Field, Open Love.jpg', title: 'Open Field, Open Love', medium: 'Digital illustration', year: '2026', aspect: '16/9' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 03', medium: 'Mixed media / digital', year: '2026' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 04', medium: 'Digital painting', year: '2025' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 05', medium: 'Digital illustration', year: '2025' },
@@ -208,7 +210,7 @@
 
   track.innerHTML = artworks.map(art => `
     <div class="art-item">
-      <div class="art-frame" style="background-image:url('${art.image}')" role="img" aria-label="${art.title}"></div>
+      <div class="art-frame" style="background-image:url('${art.image}');${art.aspect ? ` aspect-ratio:${art.aspect};` : ''}" role="img" aria-label="${art.title}"></div>
       <div class="art-caption">
         <div class="art-title">${art.title}</div>
         <div class="art-meta">
