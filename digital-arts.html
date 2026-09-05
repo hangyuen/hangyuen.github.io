@@ -15,14 +15,15 @@
     --dim: #6e6e73;
     --accent: #0071e3;
     --hairline: rgba(0,0,0,0.08);
-    /* 1512px ≈ the logical width of a 14.2" laptop screen (e.g. 14" MacBook
-       Pro). The whole page is designed at that width; --page-scale then
-       enlarges everything uniformly on wider screens instead of just
-       adding side margin, and never shrinks below 1x on smaller screens
-       (real responsiveness for phones/tablets is handled separately by
-       the max-width:900px/560px rules further down). */
-    --page-scale: clamp(1, calc(100vw / 1512), 1.8);
-    --page-gutter: clamp(40px, 9vw, 136px);
+    /* 1368px ≈ the logical width of a 12.3" laptop/tablet screen (e.g. a
+       Surface Pro 12.3", 2736×1824 physical @ 2x). The whole page is
+       designed at that width; --page-scale then enlarges everything
+       uniformly on wider screens instead of just adding side margin, and
+       never shrinks below 1x on smaller screens (real responsiveness for
+       phones/tablets is handled separately by the max-width:900px/560px
+       rules further down). */
+    --page-scale: clamp(1, calc(100vw / 1368), 1.8);
+    --page-gutter: clamp(40px, 9vw, 123px);
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -37,17 +38,18 @@
   }
 
   /* Everything lives inside .page-scale, laid out as if the screen were
-     always exactly 1512px wide (≈14.2", a 14" laptop's logical width).
-     Below that width it behaves completely normally. At or above it, the
-     media query pins the layout to that 1512px canvas and scales the
-     whole thing up with the real screen, so a bigger monitor enlarges
-     everything in proportion instead of just adding side margin. */
+     always exactly 1368px wide (≈12.3", a 12.3" screen's logical width,
+     e.g. Surface Pro). Below that width it behaves completely normally.
+     At or above it, the media query pins the layout to that 1368px canvas
+     and scales the whole thing up with the real screen, so a bigger
+     monitor enlarges everything in proportion instead of just adding
+     side margin. */
   .page-scale{
     width:100%;
   }
-  @media (min-width:1512px){
+  @media (min-width:1368px){
     .page-scale{
-      width:1512px;
+      width:1368px;
       margin:0 auto;
       transform-origin:top center;
       transform:scale(var(--page-scale));
@@ -130,8 +132,8 @@
 
   .art-item{
     /* nudged up from ~2.4 items per view to ~2.2, giving each frame a bit
-       more presence while still comfortably fitting a 14" screen (the
-       1512px baseline) without crowding it */
+       more presence while still comfortably fitting a 12.3" screen (the
+       1368px baseline) without crowding it */
     flex:0 0 calc((100% - 40px) / 2.2);
     max-width:1000px;
     scroll-snap-align:start;
@@ -153,7 +155,7 @@
   }
 
   .art-caption{
-    padding-top:20px;
+    padding-top:14px;
   }
   .art-title{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
