@@ -56,6 +56,42 @@
     cursor:grabbing;
     z-index:5;
   }
+
+  /* Inner wrapper that carries the gentle drifting animation, kept
+     separate from the outer .icon element so the drag logic (which sets
+     left/top directly on .icon) never fights with the animated transform. */
+  .icon-float{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    animation-name: iconFloat;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+  /* pause the drift while the user is actively dragging the icon */
+  .icon.dragging .icon-float{
+    animation-play-state: paused;
+  }
+
+  @keyframes iconFloat{
+    0%   { transform: translate(0px, 0px); }
+    25%  { transform: translate(2px, -5px); }
+    50%  { transform: translate(-1px, -9px); }
+    75%  { transform: translate(-3px, -4px); }
+    100% { transform: translate(0px, 0px); }
+  }
+
+  /* slightly different duration/delay per icon so the drifting reads as
+     organic rather than every icon bobbing in perfect unison */
+  .icon.p1 .icon-float{ animation-duration: 8.5s; animation-delay: -1.2s; }
+  .icon.p2 .icon-float{ animation-duration: 7.8s; animation-delay: -4.6s; }
+  .icon.p3 .icon-float{ animation-duration: 9.2s; animation-delay: -0.8s; }
+  .icon.p4 .icon-float{ animation-duration: 7.4s; animation-delay: -3.1s; }
+  .icon.p5 .icon-float{ animation-duration: 8.9s; animation-delay: -5.4s; }
+  .icon.p6 .icon-float{ animation-duration: 8.1s; animation-delay: -2.3s; }
+
   .icon-box{
     width:96px;
     height:96px;
@@ -729,6 +765,12 @@
     .about-content h1{ font-size:24px; }
     .about-photo{ width:76px; height:76px; }
   }
+
+  @media (prefers-reduced-motion: reduce){
+    .icon-float{
+      animation: none !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -737,28 +779,40 @@
   <!-- Insert a background <video> or background-image on .stage when ready -->
 
   <div class="icon p1" data-project="vr">
-    <div class="icon-box"><img src="assets/vr.gif" alt="Virtual Reality"></div>
-    <div class="icon-label">Virtual Reality</div>
+    <div class="icon-float">
+      <div class="icon-box"><img src="assets/vr.gif" alt="Virtual Reality"></div>
+      <div class="icon-label">Virtual Reality</div>
+    </div>
   </div>
   <div class="icon p2" data-project="ar">
-    <div class="icon-box"><img src="assets/arr.png" alt="Augmented Reality"></div>
-    <div class="icon-label">Augmented Reality</div>
+    <div class="icon-float">
+      <div class="icon-box"><img src="assets/arr.png" alt="Augmented Reality"></div>
+      <div class="icon-label">Augmented Reality</div>
+    </div>
   </div>
   <div class="icon p3" data-project="cm">
-    <div class="icon-box"><img src="assets/3d.png" alt="Computer Modeling"></div>
-    <div class="icon-label">Computer Modeling</div>
+    <div class="icon-float">
+      <div class="icon-box"><img src="assets/3d.png" alt="Computer Modeling"></div>
+      <div class="icon-label">Computer Modeling</div>
+    </div>
   </div>
   <div class="icon p4" data-project="vfx">
-    <div class="icon-box"><img src="assets/animation.gif" alt="Animation & Visual Effects"></div>
-    <div class="icon-label">Animation &amp; Visual Effects</div>
+    <div class="icon-float">
+      <div class="icon-box"><img src="assets/animation.gif" alt="Animation & Visual Effects"></div>
+      <div class="icon-label">Animation &amp; Visual Effects</div>
+    </div>
   </div>
   <div class="icon p5" data-project="digital-art">
-    <div class="icon-box"><img src="assets/Digital_Art.png" alt="Digital Arts"></div>
-    <div class="icon-label">Digital Arts</div>
+    <div class="icon-float">
+      <div class="icon-box"><img src="assets/Digital_Art.png" alt="Digital Arts"></div>
+      <div class="icon-label">Digital Arts</div>
+    </div>
   </div>
   <div class="icon p6" data-project="publications">
-    <div class="icon-box"><img src="assets/pb.png" alt="Publications"></div>
-    <div class="icon-label">Publications</div>
+    <div class="icon-float">
+      <div class="icon-box"><img src="assets/pb.png" alt="Publications"></div>
+      <div class="icon-label">Publications</div>
+    </div>
   </div>
 </div>
 
