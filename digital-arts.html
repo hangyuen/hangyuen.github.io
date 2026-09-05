@@ -44,7 +44,7 @@
   /* PAGE HEADER — back link, title, short intro, all left-aligned with the
      carousel below */
   .page-header{
-    max-width:1920px;
+    max-width:2400px;
     margin:0 auto;
     padding:56px var(--page-gutter) 0;
   }
@@ -86,7 +86,7 @@
      the reference. Captions sit under each image at all times, no hover. */
   .carousel-wrap{
     position:relative;
-    max-width:1920px;
+    max-width:2400px;
     margin:0 auto;
     padding-bottom:88px;
   }
@@ -105,10 +105,11 @@
   .carousel-track::-webkit-scrollbar{ display:none; }
 
   .art-item{
-    /* was: calc((100% - 32px) / 2), max-width 1100px — bumped both up so
-       each frame reads noticeably larger while still showing ~1.7 per view */
-    flex:0 0 calc((100% - 40px) / 1.7);
-    max-width:1300px;
+    /* percentage-based flex-basis means this already scales with the
+       container's width — bumping the cap lets it keep growing on big
+       desktop displays (iMac etc.) instead of plateauing at laptop size */
+    flex:0 0 calc((100% - 40px) / 2.4);
+    max-width:1000px;
     scroll-snap-align:start;
   }
 
