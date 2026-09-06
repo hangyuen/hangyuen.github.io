@@ -94,11 +94,11 @@
   .icon.p6 .icon-float{ animation-duration: 8.1s; animation-delay: -2.3s; }
 
   .icon-box{
-    width:96px;
-    height:96px;
-    border-radius:22px;
-    background:linear-gradient(145deg, #f2f2f4, #e2e2e7);
-    box-shadow:0 10px 24px rgba(0,0,0,0.12);
+    width:108px;
+    height:108px;
+    border-radius:24px;
+    background:linear-gradient(145deg, #e8e8ec, #d3d3da);
+    box-shadow:0 10px 24px rgba(0,0,0,0.14);
     display:flex;
     align-items:center;
     justify-content:center;
@@ -168,12 +168,12 @@
     align-items:center;
     gap:14px;
     padding:12px 16px;
-    background:rgba(255,255,255,0.6);
-    border:1px solid rgba(0,0,0,0.08);
-    border-radius:24px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.12);
-    backdrop-filter:blur(16px);
-    -webkit-backdrop-filter:blur(16px);
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.4);
+    border-radius:28px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+    backdrop-filter:blur(30px) saturate(180%);
+    -webkit-backdrop-filter:blur(30px) saturate(180%);
   }
   .dock-item{
     width:52px;
@@ -233,7 +233,8 @@
   }
   .dock-item:hover{ transform:translateY(-6px) scale(1.1); }
   .dock-item.avatar{
-    background:linear-gradient(135deg, #f0f0f2, #d7d7dc);
+    background:transparent;
+    border:none;
     font-weight:700;
     font-size:16px;
     padding:0;
@@ -289,7 +290,7 @@
     color:#111111;
     border-radius:18px;
     overflow:hidden;
-    box-shadow:0 40px 90px rgba(0,0,0,0.55);
+    box-shadow:0 20px 50px rgba(0,0,0,0.18), 0 4px 14px rgba(0,0,0,0.08);
     display:flex;
     flex-direction:column;
     transform:translateY(10px) scale(0.98);
@@ -690,7 +691,7 @@
     color:#111111;
     border-radius:14px;
     overflow:hidden;
-    box-shadow:0 40px 90px rgba(0,0,0,0.55);
+    box-shadow:0 20px 50px rgba(0,0,0,0.18), 0 4px 14px rgba(0,0,0,0.08);
     display:flex;
     flex-direction:column;
     z-index:60;
@@ -862,31 +863,6 @@
     color:#8a8a8a;
     margin-bottom:10px;
   }
-  .embed-frame-hint{
-    position:absolute;
-    left:14px;
-    bottom:14px;
-    z-index:2;
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    padding:7px 13px;
-    border-radius:999px;
-    background:rgba(20,20,20,0.55);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    color:rgba(255,255,255,0.9);
-    font-family:'Inter', sans-serif;
-    font-size:12px;
-    font-weight:500;
-    letter-spacing:0;
-    pointer-events:none;
-    animation:embedHintFade 0.4s ease 3.6s forwards;
-  }
-  @keyframes embedHintFade{
-    from{ opacity:1; }
-    to{ opacity:0; }
-  }
   .embed-frame{
     position:relative;
     width:100%;
@@ -904,7 +880,7 @@
   }
 
   @media (max-width:640px){
-    .icon-box{ width:64px; height:64px; border-radius:14px; }
+    .icon-box{ width:72px; height:72px; border-radius:16px; }
     .icon-label{ font-size:12px; }
     .dock{ gap:8px; padding:8px 10px; bottom:20px; }
     .dock-item{ width:42px; height:42px; }
@@ -1727,7 +1703,6 @@
             <div class="embed-block-label">3D Model</div>
             <div class="embed-frame">
               <iframe src="https://sketchfab.com/models/${data.sketchfab}/embed" title="${data.title} 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
-              <span class="embed-frame-hint">Drag to rotate · Scroll to zoom</span>
             </div>
           </div>`;
       }
