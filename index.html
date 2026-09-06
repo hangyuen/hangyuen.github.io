@@ -257,6 +257,12 @@
     object-fit:cover;
     border-radius:16px;
   }
+
+  /* Recolor the Mail icon away from blue (it sat right next to LinkedIn's
+     blue, which looked repetitive) — shifted to a warm coral/orange instead. */
+  #contactTrigger img{
+    filter: hue-rotate(140deg) saturate(1.3) brightness(1.05);
+  }
   .dock-divider{
     width:1px;
     height:48px;
@@ -540,6 +546,142 @@
   }
   #journeyWindow .about-content h1{
     font-size:34px;
+    margin-bottom:30px;
+  }
+
+  /* JOURNEY TIMELINE — Apple-style: quiet year labels, a continuous connecting
+     line with dots, and small pill "degree" tags for academic entries. */
+  .timeline{
+    display:flex;
+    flex-direction:column;
+  }
+  .timeline-item{
+    display:grid;
+    grid-template-columns:96px 24px 1fr;
+    column-gap:20px;
+    padding-bottom:30px;
+  }
+  .timeline-item:last-child{
+    padding-bottom:0;
+  }
+  .timeline-year{
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:-0.006em;
+    color:#8a8a8a;
+    text-align:right;
+    padding-top:3px;
+    white-space:nowrap;
+  }
+  .timeline-marker{
+    position:relative;
+    display:flex;
+    justify-content:center;
+  }
+  .timeline-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#c7c7cc;
+    margin-top:6px;
+    position:relative;
+    z-index:1;
+    flex-shrink:0;
+  }
+  .timeline-dot.dot-current{
+    background:#002856;
+    box-shadow:0 0 0 4px rgba(0,40,86,0.16);
+  }
+  .timeline-dot.dot-isu{
+    background:#c8102e;
+    box-shadow:0 0 0 4px rgba(200,16,46,0.16);
+  }
+  .timeline-dot.dot-unl{
+    background:#d00000;
+    box-shadow:0 0 0 4px rgba(208,0,0,0.16);
+  }
+  .timeline-marker::after{
+    content:'';
+    position:absolute;
+    top:16px;
+    bottom:-30px;
+    left:50%;
+    width:2px;
+    background:#ececec;
+    transform:translateX(-50%);
+  }
+  .timeline-item:last-child .timeline-marker::after{
+    display:none;
+  }
+  .timeline-content{
+    min-width:0;
+  }
+  .timeline-title{
+    font-size:16px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    color:#111;
+    margin-bottom:4px;
+  }
+  .timeline-sub{
+    font-size:13.5px;
+    color:#8a8a8a;
+    margin-bottom:10px;
+  }
+  .timeline-degree{
+    display:flex;
+    align-items:baseline;
+    font-size:14px;
+    line-height:1.7;
+    color:#333;
+  }
+  /* fixed-width tag so the description text lines up regardless of whether
+     the tag reads "MS"/"MFA" or "BA"/"BFA" — the H in Human-Computer and the
+     I in Integrated (or the F in Film and the T in Theatre) start flush */
+  .degree-tag{
+    display:inline-block;
+    flex-shrink:0;
+    width:46px;
+    text-align:left;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    color:#0a84ff;
+    background:rgba(10,132,255,0.1);
+    padding:2px 0 2px 8px;
+    border-radius:6px;
+    margin-right:10px;
+    box-sizing:border-box;
+  }
+  .degree-tag.tag-isu{
+    color:#c8102e;
+    background:rgba(200,16,46,0.1);
+  }
+  .degree-tag.tag-unl{
+    color:#d00000;
+    background:rgba(208,0,0,0.1);
+  }
+
+  /* tiny institution logo shown next to the school name */
+  .timeline-logo{
+    width:20px;
+    height:20px;
+    object-fit:contain;
+    border-radius:4px;
+    vertical-align:middle;
+    margin-right:8px;
+  }
+
+  @media (max-width:640px){
+    .timeline-item{
+      grid-template-columns:56px 18px 1fr;
+      column-gap:12px;
+      padding-bottom:24px;
+    }
+    .timeline-year{ font-size:11.5px; }
+    .timeline-title{ font-size:15px; }
+    .timeline-marker::after{ bottom:-24px; }
   }
 
   /* PROJECT WINDOW — spawned per project, all identical size, all independently draggable */
@@ -892,9 +1034,84 @@
       <div class="about-content">
         <h1 id="journeyTitle">My Journey</h1>
 
-        <div class="about-bio">
-          <p>Replace this with your story — where you started, the milestones along the way, and what led you to where you are today.</p>
-          <p>This window is intentionally roomier than the others, so feel free to add more sections, photos, or a timeline here.</p>
+        <div class="timeline">
+
+          <div class="timeline-item">
+            <div class="timeline-year">2024 – Present</div>
+            <div class="timeline-marker"><span class="timeline-dot dot-current"></span></div>
+            <div class="timeline-content">
+              <div class="timeline-title">Assistant Professor in Art and Design</div>
+              <div class="timeline-sub">University of Southern Indiana · Evansville, IN</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-year"></div>
+            <div class="timeline-marker"><span class="timeline-dot"></span></div>
+            <div class="timeline-content">
+              <div class="timeline-title">Web Designer &amp; Developer</div>
+              <div class="timeline-sub">ISU Graduate College · Ames, IA</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-year">2022 – 2024</div>
+            <div class="timeline-marker"><span class="timeline-dot dot-isu"></span></div>
+            <div class="timeline-content">
+              <div class="timeline-title"><img class="timeline-logo" src="assets/isu.svg" alt="">Iowa State University</div>
+              <div class="timeline-sub">Ames, IA</div>
+              <div class="timeline-degree"><span class="degree-tag tag-isu">MS</span>Human-Computer Interaction</div>
+              <div class="timeline-degree"><span class="degree-tag tag-isu">MFA</span>Integrated Visual Arts, Emphasis in Digital Art</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-year"></div>
+            <div class="timeline-marker"><span class="timeline-dot"></span></div>
+            <div class="timeline-content">
+              <div class="timeline-title">Designer &amp; Brand Strategist</div>
+              <div class="timeline-sub">ISU Extension and Outreach · Ames, IA</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-year"></div>
+            <div class="timeline-marker"><span class="timeline-dot"></span></div>
+            <div class="timeline-content">
+              <div class="timeline-title">Digital Designer</div>
+              <div class="timeline-sub">Stanford University School of Medicine · Stanford, CA</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-year"></div>
+            <div class="timeline-marker"><span class="timeline-dot"></span></div>
+            <div class="timeline-content">
+              <div class="timeline-title">3D Game Artist</div>
+              <div class="timeline-sub">Reworld Inc. · Bellevue, WA</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-year"></div>
+            <div class="timeline-marker"><span class="timeline-dot"></span></div>
+            <div class="timeline-content">
+              <div class="timeline-title">IT Specialist</div>
+              <div class="timeline-sub">Clemson Computing and Information Technology (CCIT) · Clemson, SC</div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-year">2016 – 2020</div>
+            <div class="timeline-marker"><span class="timeline-dot dot-unl"></span></div>
+            <div class="timeline-content">
+              <div class="timeline-title"><img class="timeline-logo" src="assets/unl.jpg" alt="">University of Nebraska–Lincoln</div>
+              <div class="timeline-sub">Lincoln, NE</div>
+              <div class="timeline-degree"><span class="degree-tag tag-unl">BA</span>Film Studies, minor in English</div>
+              <div class="timeline-degree"><span class="degree-tag tag-unl">BFA</span>Theatre-Film &amp; New Media (now Emerging Media Art)</div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
