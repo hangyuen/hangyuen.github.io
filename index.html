@@ -530,6 +530,18 @@
     min-height:160px;
   }
 
+  /* JOURNEY MODAL — same window chrome as About Me, sized larger than Let's Connect */
+  #journeyWindow{
+    max-width:680px;
+    max-height:88vh;
+  }
+  #journeyWindow .about-content{
+    padding:34px 36px 40px;
+  }
+  #journeyWindow .about-content h1{
+    font-size:34px;
+  }
+
   /* PROJECT WINDOW — spawned per project, all identical size, all independently draggable */
   .project-window{
     position:fixed;
@@ -818,10 +830,12 @@
 
 <div class="dock">
   <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="assets/hyuan.png" alt="Hang Yuan"></button>
+  <button type="button" class="dock-item brand" id="journeyTrigger" data-tip="Journey">
+    <img src="assets/Journey.png" alt="Journey">
+  </button>
   <button type="button" class="dock-item brand" id="contactTrigger" data-tip="Contact Me">
     <img src="assets/Mail.png" alt="Mail">
   </button>
-  <div class="dock-divider"></div>
   <a class="dock-item brand" href="https://www.instagram.com/hang_yuan_/" target="_blank" rel="noopener" data-tip="Instagram">
     <img src="assets/Instagram.svg" alt="Instagram">
   </a>
@@ -862,6 +876,25 @@
           <p>I'm Hang <span style="color:#9a9a9a;">/hʌŋ/</span>, an interdisciplinary designer and creative technologist based in Evansville, IN — or anywhere.</p>
           <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people.</p>
           <p>Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY MODAL -->
+<div class="about-overlay" id="journeyOverlay" aria-hidden="true">
+  <div class="about-window" id="journeyWindow" role="dialog" aria-modal="true" aria-labelledby="journeyTitle">
+    <div class="about-titlebar" id="journeyTitlebar">
+      <button type="button" class="about-dot red" id="journeyClose" aria-label="Close"></button>
+    </div>
+    <div class="about-scroll">
+      <div class="about-content">
+        <h1 id="journeyTitle">My Journey</h1>
+
+        <div class="about-bio">
+          <p>Replace this with your story — where you started, the milestones along the way, and what led you to where you are today.</p>
+          <p>This window is intentionally roomier than the others, so feel free to add more sections, photos, or a timeline here.</p>
         </div>
       </div>
     </div>
@@ -926,9 +959,9 @@
 </template>
 
 <script>
-  // Global z-index counter shared by ALL floating windows (About, Contact,
-  // and every project window), so whichever one was opened/clicked most
-  // recently always renders on top of the others.
+  // Global z-index counter shared by ALL floating windows (About, Journey,
+  // Contact, and every project window), so whichever one was opened/clicked
+  // most recently always renders on top of the others.
   let topZIndex = 60;
   function bringOverlayToFront(el){
     topZIndex += 1;
@@ -1019,8 +1052,9 @@
   const aboutTitlebar = aboutOverlay.querySelector('.about-titlebar');
 
   function openAbout(){
-    // if the other modal is open, swap directly instead of requiring two clicks
+    // if another modal is open, swap directly instead of requiring two clicks
     closeContact();
+    closeJourney();
     // reset any previous drag position/size so it always reopens centered at its normal width
     aboutWindow.style.position = '';
     aboutWindow.style.left = '';
@@ -1120,6 +1154,103 @@
   aboutTitlebar.addEventListener('pointerup', endAboutDrag);
   aboutTitlebar.addEventListener('pointercancel', endAboutDrag);
 
+  // JOURNEY MODAL — same window chrome/drag pattern as About Me, just a larger window
+  const journeyTrigger = document.getElementById('journeyTrigger');
+  const journeyOverlay = document.getElementById('journeyOverlay');
+  const journeyClose = document.getElementById('journeyClose');
+  const journeyWindow = document.getElementById('journeyWindow');
+  const journeyTitlebar = document.getElementById('journeyTitlebar');
+
+  function openJourney(){
+    // if another modal is open, swap directly instead of requiring two clicks
+    closeAbout();
+    closeContact();
+    journeyWindow.style.position = '';
+    journeyWindow.style.left = '';
+    journeyWindow.style.top = '';
+    journeyWindow.style.margin = '';
+    journeyWindow.style.width = '';
+    journeyWindow.style.height = '';
+    journeyWindow.style.maxWidth = '';
+    journeyWindow.style.transform = '';
+    journeyOverlay.classList.add('open');
+    journeyOverlay.setAttribute('aria-hidden', 'false');
+    bringOverlayToFront(journeyOverlay);
+  }
+  function closeJourney(){
+    journeyOverlay.classList.remove('open');
+    journeyOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  journeyTrigger.addEventListener('click', openJourney);
+  journeyClose.addEventListener('click', closeJourney);
+  journeyOverlay.addEventListener('pointerdown', (e) => {
+    if (e.target === journeyOverlay) closeJourney();
+    else bringOverlayToFront(journeyOverlay);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeJourney();
+  });
+
+  // Drag the Journey window around by its titlebar — identical pattern to About Me
+  let journeyDragging = false, journeyMoved = 0;
+  let jDragStartX, jDragStartY, jWinStartLeft, jWinStartTop;
+
+  journeyTitlebar.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('#journeyClose')) return;
+    journeyDragging = true;
+    journeyMoved = 0;
+    journeyTitlebar.classList.add('dragging');
+    journeyTitlebar.setPointerCapture(e.pointerId);
+
+    const rect = journeyWindow.getBoundingClientRect();
+    jWinStartLeft = rect.left;
+    jWinStartTop = rect.top;
+    jDragStartX = e.clientX;
+    jDragStartY = e.clientY;
+
+    journeyWindow.style.transition = 'none';
+    journeyWindow.style.position = 'fixed';
+    journeyWindow.style.margin = '0';
+    journeyWindow.style.width = rect.width + 'px';
+    journeyWindow.style.height = rect.height + 'px';
+    journeyWindow.style.maxWidth = rect.width + 'px';
+    journeyWindow.style.left = jWinStartLeft + 'px';
+    journeyWindow.style.top = jWinStartTop + 'px';
+    journeyWindow.style.transform = 'none';
+
+    void journeyWindow.offsetHeight;
+    journeyWindow.style.transition = '';
+  });
+
+  journeyTitlebar.addEventListener('pointermove', (e) => {
+    if (!journeyDragging) return;
+    const dx = e.clientX - jDragStartX;
+    const dy = e.clientY - jDragStartY;
+    journeyMoved = Math.max(journeyMoved, Math.abs(dx), Math.abs(dy));
+
+    const rect = journeyWindow.getBoundingClientRect();
+    let newLeft = jWinStartLeft + dx;
+    let newTop = jWinStartTop + dy;
+
+    const margin = 24;
+    newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
+    newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
+
+    journeyWindow.style.left = newLeft + 'px';
+    journeyWindow.style.top = newTop + 'px';
+  });
+
+  const endJourneyDrag = (e) => {
+    if (!journeyDragging) return;
+    journeyDragging = false;
+    journeyTitlebar.classList.remove('dragging');
+    journeyTitlebar.releasePointerCapture(e.pointerId);
+  };
+
+  journeyTitlebar.addEventListener('pointerup', endJourneyDrag);
+  journeyTitlebar.addEventListener('pointercancel', endJourneyDrag);
+
   // CONTACT ME MODAL — same window chrome/drag behavior as About Me, plus a form
   const contactTrigger = document.getElementById('contactTrigger');
   const contactOverlay = document.getElementById('contactOverlay');
@@ -1131,8 +1262,9 @@
   const contactStatus = document.getElementById('contactStatus');
 
   function openContact(){
-    // if the other modal is open, swap directly instead of requiring two clicks
+    // if another modal is open, swap directly instead of requiring two clicks
     closeAbout();
+    closeJourney();
     contactWindow.style.position = '';
     contactWindow.style.left = '';
     contactWindow.style.top = '';
