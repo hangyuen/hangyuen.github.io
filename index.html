@@ -244,6 +244,7 @@
     height:100%;
     object-fit:cover;
     border-radius:16px;
+    filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22));
   }
   .dock-item svg{ width:26px; height:26px; }
   .dock-item.brand{
@@ -256,6 +257,17 @@
     height:100%;
     object-fit:cover;
     border-radius:16px;
+    filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22));
+  }
+  /* subtle glossy highlight across the top half of each icon, like a real app icon */
+  .dock-item.avatar::after,
+  .dock-item.brand::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:16px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0) 55%);
+    pointer-events:none;
   }
 
   .dock-divider{
