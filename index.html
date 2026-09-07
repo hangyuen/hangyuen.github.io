@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #f5f5f7;
+    --bg: #232325;
     --white: #ffffff;
     --ink: #1d1d1f;
     --dim: #86868b;
@@ -137,8 +137,8 @@
   .icon-label{
     font-size:14px;
     font-weight:500;
-    color:var(--ink);
-    text-shadow:0 1px 3px rgba(255,255,255,0.4);
+    color:#f5f5f5;
+    text-shadow:0 1px 3px rgba(0,0,0,0.45);
     white-space:nowrap;
     padding:2px 9px;
     border-radius:6px;
@@ -204,8 +204,17 @@
     font:inherit;
     cursor:pointer;
     padding:0;
+    border:none;
+    outline:none;
     -webkit-appearance:none;
     appearance:none;
+  }
+  button.dock-item:hover,
+  button.dock-item:focus,
+  button.dock-item:focus-visible,
+  button.dock-item:active{
+    border:none;
+    outline:none;
   }
   .dock-item[data-tip]::after{
     content:attr(data-tip);
@@ -556,9 +565,8 @@
     margin-bottom:30px;
   }
 
-  /* JOURNEY — simplified: two plain paragraphs (current role, then education),
-     with small inline institution logos. No years, no colored degree tags,
-     no card styling. */
+  /* JOURNEY — simplified: plain paragraph(s), with small inline institution logos.
+     No years, no colored degree tags, no card styling. */
   .journey-section + .journey-section{
     margin-top:22px;
   }
@@ -910,7 +918,6 @@
         <h1 id="journeyTitle">My Journey</h1>
 
         <div class="journey-section">
-          <div class="journey-label">Education</div>
           <p class="journey-text">
             Hang holds an MFA in Integrated Visual Arts, emphasis in Digital Art, and an MS in Human-Computer Interaction from <img class="journey-logo" src="assets/isu.svg" alt="Iowa State University logo">Iowa State University, and a BFA and BA from <img class="journey-logo" src="assets/unl.png" alt="University of Nebraska–Lincoln logo">the University of Nebraska–Lincoln.
           </p>
