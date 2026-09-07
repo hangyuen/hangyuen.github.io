@@ -116,6 +116,12 @@
     user-select:none;
     pointer-events:none;
   }
+  /* Slightly darker background for VR and AR covers */
+  .icon.p1 .icon-box,
+  .icon.p2 .icon-box{
+    background:linear-gradient(145deg, #3a3a3c, #242426);
+  }
+
   /* Give only the Computer Modeling cover a subtle 3D tilt */
   .icon.p3 .icon-box{
     perspective:600px;
@@ -131,8 +137,8 @@
     transform:translateY(-4px) scale(1.04);
   }
   .icon.selected .icon-box{
-    background:linear-gradient(145deg, rgba(10,132,255,0.30), rgba(10,132,255,0.14));
-    box-shadow:0 0 0 3px rgba(10,132,255,0.85), 0 10px 24px rgba(0,0,0,0.12);
+    background:linear-gradient(145deg, rgba(142,142,147,0.30), rgba(142,142,147,0.14));
+    box-shadow:0 0 0 3px rgba(142,142,147,0.85), 0 10px 24px rgba(0,0,0,0.12);
   }
   .icon-label{
     font-size:14px;
@@ -145,8 +151,8 @@
     transition:background 0.15s ease, color 0.15s ease;
   }
   .icon.selected .icon-label{
-    background:rgba(10,132,255,0.55);
-    color:#ffffff;
+    background:rgba(142,142,147,0.35);
+    color:#0a84ff;
     text-shadow:none;
   }
 
@@ -242,7 +248,8 @@
   }
   .dock-item:hover{ transform:translateY(-6px) scale(1.1); }
   .dock-item.avatar{
-    background:transparent;
+    background:rgba(0,0,0,0.18);
+    border-radius:16px;
     border:none;
     font-weight:700;
     font-size:16px;
@@ -858,8 +865,8 @@
 
 <div class="dock">
   <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="assets/hyuan.png" alt="Hang Yuan"><span class="icon-gloss"></span></button>
-  <button type="button" class="dock-item brand" id="journeyTrigger" data-tip="Journey">
-    <img src="assets/Journey.png" alt="Journey"><span class="icon-gloss"></span>
+  <button type="button" class="dock-item brand" id="journeyTrigger" data-tip="Voyage">
+    <img src="assets/voyage.png" alt="Voyage"><span class="icon-gloss"></span>
   </button>
   <button type="button" class="dock-item brand" id="contactTrigger" data-tip="Contact Me">
     <img src="assets/Mail.png" alt="Mail"><span class="icon-gloss"></span>
@@ -918,7 +925,7 @@
     </div>
     <div class="about-scroll">
       <div class="about-content">
-        <h1 id="journeyTitle">My Journey</h1>
+        <h1 id="journeyTitle">Voyage</h1>
 
         <div class="journey-section">
           <p class="journey-text">
@@ -1494,7 +1501,7 @@
         },
         {
           title: 'Unveiling an Interactive and Immersive Virtual Reality (VR) Experience through Digital Construction of a Historical Landscape Painting',
-          meta: 'Yuan, Hang · MFA/MS Thesis · 2024',
+          meta: 'Yuan, H. · MFA/MS Thesis · 2024',
           venue: 'Advisors: Johnny DiBlasi, Kimberly Zarecor, Ritwik Banerji, Emily Morgan, Austin Stewart. Graduate Theses and Dissertations, Iowa State University.',
           link: 'https://doi.org/10.31274/td-20240617-84'
         }
