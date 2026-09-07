@@ -3,1725 +3,342 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hang Yuan's Web</title>
+<meta name="format-detection" content="address=no, telephone=no, email=no, date=no">
+<title>Digital Arts · Hang Yuan's Web</title>
 <link rel="icon" type="image/png" href="assets/hy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #101012;
-    --white: #ffffff;
+    --bg: #ffffff;
     --ink: #1d1d1f;
-    --dim: #86868b;
+    --dim: #6e6e73;
+    --accent: #0071e3;
+    --hairline: rgba(0,0,0,0.08);
+    /* 1368px ≈ the logical width of a 12.3" laptop/tablet screen (e.g. a
+       Surface Pro 12.3", 2736×1824 physical @ 2x). The whole page is
+       designed at that width; --page-scale then enlarges everything
+       uniformly on wider screens instead of just adding side margin, and
+       never shrinks below 1x on smaller screens (real responsiveness for
+       phones/tablets is handled separately by the max-width:900px/560px
+       rules further down). */
+    --page-scale: clamp(1, calc(100vw / 1368), 1.8);
+    --page-gutter: clamp(40px, 9vw, 123px);
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
-
   html, body{ height:100%; }
 
   body{
     background:var(--bg);
     color:var(--ink);
-    font-family:'Inter', sans-serif;
-    overflow-x:hidden;
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* Everything lives inside .page-scale, laid out as if the screen were
+     always exactly 1368px wide (≈12.3", a 12.3" screen's logical width,
+     e.g. Surface Pro). Below that width it behaves completely normally.
+     At or above it, the media query pins the layout to that 1368px canvas
+     and scales the whole thing up with the real screen, so a bigger
+     monitor enlarges everything in proportion instead of just adding
+     side margin. */
+  .page-scale{
+    width:100%;
+  }
+  @media (min-width:1368px){
+    .page-scale{
+      width:1368px;
+      margin:0 auto;
+      transform-origin:top center;
+      transform:scale(var(--page-scale));
+    }
   }
 
   a{ color:inherit; text-decoration:none; }
 
-  /* STAGE — full-screen area that will later hold a background video/image.
-     To add it: give .stage a background-image, or insert a <video class="stage-media">
-     as the FIRST child of .stage (position it absolute, inset:0, object-fit:cover). */
-  .stage{
-    position:relative;
-    width:100%;
-    height:100vh;
-    min-height:640px;
-    background:var(--bg) url('assets/bg.jpg') center center / cover no-repeat;
-    overflow:hidden;
+  :focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+    border-radius:4px;
   }
 
-  /* FLOATING PROJECT ICONS */
-  .icon{
-    position:absolute;
-    transform:translate(-50%,-50%);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
-    cursor:grab;
-    touch-action:none;
-    user-select:none;
-  }
-  .icon.dragging{
-    cursor:grabbing;
-    z-index:5;
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration:0.01ms !important; scroll-behavior:auto !important; }
   }
 
-  /* Inner wrapper that carries the gentle drifting animation, kept
-     separate from the outer .icon element so the drag logic (which sets
-     left/top directly on .icon) never fights with the animated transform. */
-  .icon-float{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
-    animation-name: iconFloat;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-    will-change: transform;
-  }
-  /* pause the drift while the user is actively dragging the icon */
-  .icon.dragging .icon-float{
-    animation-play-state: paused;
-  }
-
-  @keyframes iconFloat{
-    0%   { transform: translate(0px, 0px); }
-    25%  { transform: translate(2px, -5px); }
-    50%  { transform: translate(-1px, -9px); }
-    75%  { transform: translate(-3px, -4px); }
-    100% { transform: translate(0px, 0px); }
-  }
-
-  /* slightly different duration/delay per icon so the drifting reads as
-     organic rather than every icon bobbing in perfect unison */
-  .icon.p1 .icon-float{ animation-duration: 8.5s; animation-delay: -1.2s; }
-  .icon.p2 .icon-float{ animation-duration: 7.8s; animation-delay: -4.6s; }
-  .icon.p3 .icon-float{ animation-duration: 9.2s; animation-delay: -0.8s; }
-  .icon.p4 .icon-float{ animation-duration: 7.4s; animation-delay: -3.1s; }
-  .icon.p5 .icon-float{ animation-duration: 8.9s; animation-delay: -5.4s; }
-  .icon.p6 .icon-float{ animation-duration: 8.1s; animation-delay: -2.3s; }
-
-  .icon-box{
-    width:108px;
-    height:108px;
-    border-radius:24px;
-    background:linear-gradient(145deg, #4a4a4d, #333335);
-    box-shadow:0 10px 24px rgba(0,0,0,0.35);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:12px;
-    color:var(--dim);
-    text-align:center;
-    transition:transform 0.2s ease;
-    overflow:hidden;
-  }
-  .icon-box img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    -webkit-user-drag:none;
-    user-select:none;
-    pointer-events:none;
-  }
-  /* Slightly darker background for VR and AR covers */
-  .icon.p1 .icon-box,
-  .icon.p2 .icon-box{
-    background:linear-gradient(145deg, #3a3a3c, #242426);
-  }
-
-  /* Give only the Computer Modeling cover a subtle 3D tilt */
-  .icon.p3 .icon-box{
-    perspective:600px;
-  }
-  .icon.p3 .icon-box img{
-    transform:rotateY(-10deg) rotateX(6deg) scale(1.08);
-    transition:transform 0.25s ease;
-  }
-  .icon.p3:hover .icon-box img{
-    transform:rotateY(-14deg) rotateX(9deg) scale(1.12);
-  }
-  .icon:hover .icon-box{
-    transform:translateY(-4px) scale(1.04);
-  }
-  .icon.selected .icon-box{
-    background:linear-gradient(145deg, rgba(142,142,147,0.30), rgba(142,142,147,0.14));
-    box-shadow:0 0 0 3px rgba(142,142,147,0.85), 0 10px 24px rgba(0,0,0,0.12);
-  }
-  .icon-label{
-    font-size:14px;
-    font-weight:500;
-    color:#f5f5f5;
-    text-shadow:0 1px 3px rgba(0,0,0,0.45);
-    white-space:nowrap;
-    padding:2px 9px;
-    border-radius:6px;
-    transition:background 0.15s ease, color 0.15s ease;
-  }
-  .icon.selected .icon-label{
-    background:rgba(142,142,147,0.35);
-    color:#0a84ff;
-    text-shadow:none;
-  }
-
-  /* approximate positions, matching the scattered layout */
-  .icon.p1{ top:18%; left:66%; }   /* Mindo Branding */
-  .icon.p2{ top:26%; left:26%; }   /* Attention Type */
-  .icon.p3{ top:35%; left:74%; }   /* Line of Contamination */
-  .icon.p4{ top:41%; left:43%; }   /* Threading Inwards */
-  .icon.p5{ top:52%; left:23%; }   /* Art Book Design */
-  .icon.p6{ top:52%; left:68%; }   /* Voice AI */
-
-  /* DOCK */
-  .dock{
-    position:fixed;
-    left:50%; bottom:34px;
-    transform:translateX(-50%);
-    z-index:100;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:12px 16px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.38), rgba(205,205,212,0.22));
-    border:1px solid rgba(255,255,255,0.55);
-    border-radius:26px;
-    box-shadow:0 12px 28px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -1px 0 rgba(0,0,0,0.05);
-    backdrop-filter:blur(30px) saturate(180%);
-    -webkit-backdrop-filter:blur(30px) saturate(180%);
-  }
-  .dock-item{
-    width:52px;
-    height:52px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:transform 0.15s ease;
-    position:relative;
-  }
-  .dock-item::before{
-    content:'';
-    position:absolute;
-    inset:0;
-    border-radius:inherit;
-    background:rgba(255,255,255,0);
-    transition:background 0.12s ease;
-    pointer-events:none;
-  }
-  .dock-item:active::before{
-    background:rgba(0,0,0,0.35);
-  }
-  .dock-item:active{
-    transform:translateY(-6px) scale(1.05);
-  }
-  button.dock-item{
-    font:inherit;
-    cursor:pointer;
-    padding:0;
-    border:none;
-    outline:none;
-    -webkit-appearance:none;
-    appearance:none;
-  }
-  button.dock-item:hover,
-  button.dock-item:focus,
-  button.dock-item:focus-visible,
-  button.dock-item:active{
-    border:none;
-    outline:none;
-  }
-  .dock-item[data-tip]::after{
-    content:attr(data-tip);
-    position:absolute;
-    bottom:calc(100% + 14px);
-    left:50%;
-    transform:translate(-50%, 4px);
-    background:rgba(235,235,235,0.55);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    color:#1d1d1f;
-    font-size:13px;
-    font-weight:500;
-    padding:6px 14px;
-    border-radius:999px;
-    white-space:nowrap;
-    box-shadow:0 4px 14px rgba(0,0,0,0.25);
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.15s ease, transform 0.15s ease;
-  }
-  .dock-item[data-tip]:hover::after{
-    opacity:1;
-    transform:translate(-50%, 0);
-  }
-  .dock-item:hover{ transform:translateY(-6px) scale(1.1); }
-  .dock-item.avatar{
-    background:rgba(0,0,0,0.18);
-    border-radius:16px;
-    border:none;
-    font-weight:700;
-    font-size:16px;
-    padding:0;
-  }
-  .dock-item.avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    border-radius:16px;
-    filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22));
-  }
-  .dock-item svg{ width:26px; height:26px; }
-  .dock-item.brand{
-    background:transparent;
-    border:none;
-    padding:0;
-  }
-  .dock-item.brand img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    border-radius:16px;
-    filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22));
-  }
-  /* subtle glossy highlight across the top half of each icon, like a real app
-     icon — a real element rather than ::after, since ::after is already used
-     by the tooltip on these same items */
-  .icon-gloss{
-    position:absolute;
-    inset:0;
-    border-radius:16px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0) 55%);
-    pointer-events:none;
-  }
-
-  .dock-divider{
-    width:1px;
-    height:48px;
-    background:rgba(255,255,255,0.16);
-    margin:0 4px;
-  }
-
-  /* ABOUT ME MODAL */
-  .about-overlay{
-    position:fixed;
-    inset:0;
-    z-index:50;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.2s ease;
-  }
-  .about-overlay.open{
-    opacity:1;
-    pointer-events:auto;
-  }
-  .about-window{
-    width:100%;
-    max-width:480px;
-    max-height:82vh;
-    background:#ffffff;
-    color:#111111;
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:0 20px 50px rgba(0,0,0,0.18), 0 4px 14px rgba(0,0,0,0.08);
-    display:flex;
-    flex-direction:column;
-    transform:translateY(10px) scale(0.98);
-    transition:transform 0.2s ease;
-  }
-  .about-overlay.open .about-window{
-    transform:translateY(0) scale(1);
-  }
-  .about-titlebar{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:16px 20px;
-    border-bottom:1px solid #ececec;
-    flex-shrink:0;
-    cursor:grab;
-    touch-action:none;
-    user-select:none;
-  }
-  .about-titlebar.dragging{
-    cursor:grabbing;
-  }
-  .about-dot{ width:16px; height:16px; border-radius:50%; border:none; padding:0; margin:0; box-sizing:border-box; }
-  .about-dot.red{
-    background:#ff5f57;
-    cursor:pointer;
-    position:relative;
-    transition:filter 0.15s ease;
-  }
-  .about-dot.red::after,
-  .about-dot.red::before{
-    content:'';
-    position:absolute;
-    top:50%;
-    left:50%;
-    width:12px;
-    height:2px;
-    margin-top:-1px;
-    margin-left:-6px;
-    background:rgba(75,0,0,0.75);
-    opacity:0;
-    transition:opacity 0.15s ease;
-  }
-  .about-dot.red::after{
-    transform:rotate(45deg);
-  }
-  .about-dot.red::before{
-    transform:rotate(-45deg);
-  }
-  .about-dot.red:hover{ filter:brightness(0.95); }
-  .about-dot.red:hover::after,
-  .about-dot.red:hover::before{ opacity:1; }
-
-  .about-scroll{
-    overflow-y:auto;
-  }
-
-  .about-content{
-    padding:28px 26px 32px;
-  }
-
-  .about-content h1{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:30px;
-    font-weight:700;
-    letter-spacing:-0.02em;
-    margin-bottom:22px;
-  }
-
-  .about-profile{
-    display:flex;
-    gap:18px;
-    align-items:flex-start;
-    margin-bottom:20px;
-  }
-
-  .about-photo{
-    width:116px;
-    height:116px;
-    border-radius:14px;
-    object-fit:cover;
-    background:#e4e4e4;
-    flex-shrink:0;
-  }
-
-  .about-fields{ flex:1; min-width:0; }
-
-  .about-field{
-    display:flex;
-    align-items:baseline;
-    gap:10px;
-    padding:10px 0;
-    border-bottom:1px solid #ececec;
-  }
-  .about-field:first-child{ padding-top:2px; }
-
-  .about-label{
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size:13px;
-    letter-spacing:-0.006em;
-    color:#111;
-    width:64px;
-    flex-shrink:0;
-  }
-
-  .about-value{
-    font-size:14px;
-    color:#9a9a9a;
-  }
-  .about-value.about-link{ color:#2f6fed; }
-
-  .about-bio{
-    background:#f2f2f2;
-    border-radius:14px;
-    padding:20px 22px;
-  }
-  .about-bio p{
-    font-size:15px;
-    line-height:1.55;
-    color:#222;
-  }
-  .about-bio p + p{ margin-top:14px; }
-
-  /* CONTACT ME MODAL — mirrors the About Me window chrome, with a form inside */
-  .contact-intro{
-    font-size:15px;
-    line-height:1.55;
-    color:#555;
-    margin-bottom:24px;
-  }
-
-  .contact-form{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-  }
-
-  .contact-field{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-  }
-
-  .contact-field label{
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size:13px;
-    letter-spacing:-0.006em;
-    color:#8a8a8a;
-  }
-
-  .contact-field input,
-  .contact-field textarea{
-    font-family:'Inter', sans-serif;
-    font-size:15px;
-    color:#111;
-    background:#f2f2f2;
-    border:1px solid transparent;
-    border-radius:12px;
-    padding:12px 14px;
-    outline:none;
-    resize:none;
-    transition:border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
-  }
-
-  .contact-field textarea{
-    min-height:110px;
-    line-height:1.5;
-  }
-
-  .contact-field input::placeholder,
-  .contact-field textarea::placeholder{
-    color:#a8a8a8;
-  }
-
-  .contact-hint{
-    font-size:12px;
-    color:#9a9a9a;
-    margin-top:1px;
-  }
-
-  .contact-field input:hover,
-  .contact-field textarea:hover{
-    background:#ececec;
-  }
-
-  .contact-field input:focus,
-  .contact-field textarea:focus{
-    background:#ffffff;
-    border-color:rgba(10,132,255,0.55);
-  }
-
-  .contact-submit-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    margin-top:4px;
-  }
-
-  .contact-send{
-    font-family:'Inter', sans-serif;
-    font-size:15px;
-    font-weight:600;
-    color:#ffffff;
-    background:#0a84ff;
-    border:none;
-    border-radius:980px;
-    padding:11px 26px;
-    cursor:pointer;
-    transition:transform 0.15s ease, background 0.15s ease;
-  }
-  .contact-send:hover{
-    background:#2f95ff;
-    transform:translateY(-2px);
-  }
-  .contact-send:active{
-    transform:translateY(0) scale(0.97);
-  }
-  .contact-send:disabled{
-    cursor:default;
-    background:#34c759;
-    transform:none;
-  }
-
-  .contact-status{
-    font-size:13px;
-    color:#8a8a8a;
-    opacity:0;
-    transition:opacity 0.2s ease;
-  }
-  .contact-status.visible{
-    opacity:1;
-  }
-
-  #contactWindow{
-    max-width:560px;
-  }
-  #contactWindow .contact-field textarea{
-    min-height:160px;
-  }
-
-  /* JOURNEY MODAL — same window chrome as About Me, sized larger than Let's Connect */
-  #journeyWindow{
-    max-width:680px;
-    max-height:88vh;
-  }
-  #journeyWindow .about-content{
-    padding:34px 36px 40px;
-  }
-  #journeyWindow .about-content h1{
-    font-size:34px;
-    margin-bottom:30px;
-  }
-
-  /* JOURNEY — simplified: plain paragraph(s), with small inline institution logos.
-     No years, no colored degree tags, no card styling. */
-  .journey-section + .journey-section{
-    margin-top:22px;
-  }
-  .journey-label{
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size:12px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:0.06em;
-    color:#8a8a8a;
-    margin-bottom:10px;
-  }
-  .journey-text{
-    font-size:15.5px;
-    line-height:1.75;
-    color:#333;
-  }
-  .journey-logo{
-    height:20px;
-    width:auto;
-    object-fit:contain;
-    vertical-align:middle;
-    margin:0 6px;
-  }
-
-  /* PROJECT WINDOW — spawned per project, all identical size, all independently draggable */
-  .project-window{
-    position:fixed;
-    left:50%;
-    top:50%;
-    width:calc(100% - 48px);
-    max-width:900px;
-    min-width:340px;
-    height:min(680px, 86vh);
-    min-height:340px;
-    background:#ffffff;
-    color:#111111;
-    border-radius:14px;
-    overflow:hidden;
-    resize:both;
-    box-shadow:0 20px 50px rgba(0,0,0,0.18), 0 4px 14px rgba(0,0,0,0.08);
-    display:flex;
-    flex-direction:column;
-    z-index:60;
-    opacity:0;
-    pointer-events:none;
-    transform:translate(-50%, -50%) scale(0.97);
-    transition:transform 0.2s ease, opacity 0.2s ease;
-  }
-  .project-window.open{
-    opacity:1;
-    pointer-events:auto;
-    transform:translate(-50%, -50%) scale(1);
-  }
-  .project-titlebar{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:16px 20px;
-    border-bottom:1px solid #ececec;
-    flex-shrink:0;
-    cursor:grab;
-    touch-action:none;
-    user-select:none;
-  }
-  .project-titlebar.dragging{ cursor:grabbing; }
-  .project-dot{ width:16px; height:16px; border-radius:50%; border:none; padding:0; margin:0; box-sizing:border-box; }
-  .project-dot.red{
-    background:#ff5f57;
-    cursor:pointer;
-    position:relative;
-    transition:filter 0.15s ease;
-  }
-  .project-dot.red::after,
-  .project-dot.red::before{
-    content:'';
-    position:absolute;
-    top:50%; left:50%;
-    width:12px; height:2px;
-    margin-top:-1px; margin-left:-6px;
-    background:rgba(75,0,0,0.75);
-    opacity:0;
-    transition:opacity 0.15s ease;
-  }
-  .project-dot.red::after{ transform:rotate(45deg); }
-  .project-dot.red::before{ transform:rotate(-45deg); }
-  .project-dot.red:hover{ filter:brightness(0.95); }
-  .project-dot.red:hover::after,
-  .project-dot.red:hover::before{ opacity:1; }
-  .project-scroll{
-    overflow-y:auto;
-    flex:1;
-  }
-  .project-content{
-    padding:36px 40px 44px;
-  }
-  .project-content h1{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:38px;
-    font-weight:700;
-    letter-spacing:-0.02em;
-    margin-bottom:16px;
-  }
-  .project-meta{
-    display:none;
-    flex-wrap:wrap;
-    gap:18px 32px;
-    margin-bottom:24px;
-    padding-bottom:22px;
-    border-bottom:1px solid #ececec;
-  }
-  .project-meta-item{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
-  .project-meta-label{
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size:13px;
-    letter-spacing:-0.006em;
-    color:#8a8a8a;
-  }
-  .project-meta-value{
-    font-size:14px;
-    font-weight:500;
-    color:#222;
-  }
-  .project-desc{
-    font-size:15px;
-    line-height:1.6;
-    color:#333;
-    max-width:820px;
-    margin-bottom:28px;
-  }
-  .project-desc p{
-    margin:0;
-  }
-  .project-desc p + p{
-    margin-top:14px;
-  }
-  .project-media{
-    width:100%;
-    aspect-ratio:16/8;
-    border-radius:10px;
-    overflow:hidden;
-    background:#111;
-  }
-  .project-media img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-  .project-pub-list{
-    display:none;
-    flex-direction:column;
-    margin-top:20px;
-  }
-  .pub-entry{
-    padding:14px 0;
-    border-bottom:1px solid #ececec;
-  }
-  .pub-entry:first-child{ padding-top:0; }
-  .pub-entry:last-child{ border-bottom:none; }
-  .pub-entry-title{
-    font-size:17px;
-    font-weight:600;
-    letter-spacing:-0.01em;
-    color:#111;
-    line-height:1.4;
-    margin-bottom:6px;
-  }
-  .pub-entry-meta{
-    font-size:13px;
-    color:#8a8a8a;
-    margin-bottom:8px;
-  }
-  .pub-entry-venue{
-    font-size:14px;
-    line-height:1.55;
-    color:#555;
-    max-width:100%;
-    margin-bottom:10px;
-  }
-  .pub-entry-link{
+  /* PAGE HEADER — back link, title, short intro, all left-aligned with the
+     carousel below */
+  .page-header{
+    max-width:2400px;
+    margin:0 auto;
+    padding:56px var(--page-gutter) 0;
+  }
+  .back-link{
     display:inline-flex;
     align-items:center;
-    gap:4px;
+    gap:6px;
     font-size:14px;
-    font-weight:600;
-    color:#2f6fed;
-    transition:opacity 0.15s ease;
+    font-weight:500;
+    color:var(--dim);
+    padding:4px 0;
+    transition:color 0.15s ease, gap 0.15s ease;
+    margin-bottom:40px;
   }
-  .pub-entry-link:hover{ opacity:0.7; }
-  @media (max-width:640px){
-    .project-content{ padding:26px 22px 32px; }
-    .project-content h1{ font-size:28px; }
+  .back-link:hover{
+    color:var(--accent);
+    gap:9px;
+  }
+  .back-link svg{ width:15px; height:15px; }
+
+  .page-title{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:clamp(34px, 5vw, 56px);
+    font-weight:700;
+    letter-spacing:-0.02em;
+    color:#111111;
+    margin-bottom:14px;
+  }
+  .page-description{
+    font-size:17px;
+    line-height:1.55;
+    color:var(--dim);
+    letter-spacing:-0.011em;
+    margin-bottom:56px;
   }
 
-  .project-embeds{
-    display:none;
-    flex-direction:column;
-    gap:28px;
-    margin-top:28px;
+  /* CAROUSEL — horizontal scroll, snap-to-item, round arrow buttons like
+     the reference. Captions sit under each image at all times, no hover. */
+  .carousel-wrap{
+    position:relative;
+    max-width:2400px;
+    margin:0 auto;
+    padding-bottom:88px;
   }
-  .embed-block-label{
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size:13px;
-    letter-spacing:-0.006em;
-    color:#8a8a8a;
-    margin-bottom:10px;
+
+  .carousel-track{
+    display:flex;
+    gap:40px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    -webkit-overflow-scrolling:touch;
+    padding:0 var(--page-gutter);
+    scrollbar-width:none;
+    -ms-overflow-style:none;
   }
-  .embed-frame{
+  .carousel-track::-webkit-scrollbar{ display:none; }
+
+  .art-item{
+    /* nudged up from ~2.4 items per view to ~2.2, giving each frame a bit
+       more presence while still comfortably fitting a 12.3" screen (the
+       1368px baseline) without crowding it */
+    flex:0 0 calc((100% - 40px) / 2.2);
+    max-width:1000px;
+    scroll-snap-align:start;
+  }
+
+  .art-frame{
     position:relative;
     width:100%;
-    padding-top:56.25%;
-    border-radius:10px;
+    aspect-ratio:3/2;
     overflow:hidden;
-    background:#111;
+    border-radius:18px;
+    background-color:#f0f0f0;
+    background-size:cover;
+    background-position:center;
+    transition:transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .embed-frame iframe{
+  .art-video{
     position:absolute;
     inset:0;
     width:100%;
     height:100%;
     border:0;
   }
-
-  @media (max-width:640px){
-    .icon-box{ width:72px; height:72px; border-radius:16px; }
-    .icon-label{ font-size:12px; }
-    .dock{ gap:8px; padding:8px 10px; bottom:20px; }
-    .dock-item{ width:42px; height:42px; }
-    .about-overlay{ padding:20px; }
-    .about-content{ padding:22px 20px 26px; }
-    .about-content h1{ font-size:24px; }
-    .about-photo{ width:76px; height:76px; }
+  .art-item:hover .art-frame{
+    transform:scale(1.012);
   }
 
-  @media (prefers-reduced-motion: reduce){
-    .icon-float{
-      animation: none !important;
-    }
+  .art-caption{
+    padding-top:14px;
+  }
+  .art-title{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    color:#111111;
+    margin-bottom:4px;
+  }
+  .art-meta{
+    font-size:13px;
+    letter-spacing:-0.006em;
+    color:var(--dim);
+  }
+  .art-description{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size:14.5px;
+    line-height:1.65;
+    color:#4a4a4a;
+    letter-spacing:-0.005em;
+    margin-top:14px;
+  }
+  .art-exhibition{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size:13px;
+    font-style:italic;
+    line-height:1.5;
+    color:var(--dim);
+    margin-top:10px;
+  }
+
+  /* round nav arrows — glassy, inset ON TOP of the image content at each
+     end of the row, echoing the translucent controls on apple.com */
+  .carousel-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.7);
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    border:1px solid rgba(0,0,0,0.06);
+    box-shadow:0 4px 24px rgba(0,0,0,0.12);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:5;
+    transition:background 0.2s ease, opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .carousel-arrow:hover{
+    background:rgba(255,255,255,0.95);
+    transform:translateY(-50%) scale(1.06);
+    box-shadow:0 6px 28px rgba(0,0,0,0.16);
+  }
+  .carousel-arrow.prev{ left:calc(var(--page-gutter) + 20px); }
+  .carousel-arrow.next{ right:calc(var(--page-gutter) + 20px); }
+  .carousel-arrow svg{ width:17px; height:17px; color:#1d1d1f; }
+  .carousel-arrow[disabled]{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  @media (max-width:900px){
+    .art-item{ flex:0 0 78vw; max-width:none; }
+    .carousel-arrow{ display:none; }
+  }
+  @media (max-width:560px){
+    .art-item{ flex:0 0 88vw; }
   }
 </style>
 </head>
 <body>
 
-<div class="stage">
-  <!-- Insert a background <video> or background-image on .stage when ready -->
-
-  <div class="icon p1" data-project="vr">
-    <div class="icon-float">
-      <div class="icon-box"><img src="assets/vr.gif" alt="Virtual Reality"></div>
-      <div class="icon-label">Virtual Reality</div>
-    </div>
-  </div>
-  <div class="icon p2" data-project="ar">
-    <div class="icon-float">
-      <div class="icon-box"><img src="assets/arr.png" alt="Augmented Reality"></div>
-      <div class="icon-label">Augmented Reality</div>
-    </div>
-  </div>
-  <div class="icon p3" data-project="cm">
-    <div class="icon-float">
-      <div class="icon-box"><img src="assets/3d.png" alt="Computer Modeling"></div>
-      <div class="icon-label">Computer Modeling</div>
-    </div>
-  </div>
-  <div class="icon p4" data-project="vfx">
-    <div class="icon-float">
-      <div class="icon-box"><img src="assets/animation.gif" alt="Animation & Visual Effects"></div>
-      <div class="icon-label">Animation &amp; Visual Effects</div>
-    </div>
-  </div>
-  <div class="icon p5" data-project="digital-art">
-    <div class="icon-float">
-      <div class="icon-box"><img src="assets/Digital_Art.png" alt="Digital Arts"></div>
-      <div class="icon-label">Digital Arts</div>
-    </div>
-  </div>
-  <div class="icon p6" data-project="publications">
-    <div class="icon-float">
-      <div class="icon-box"><img src="assets/pb.png" alt="Publications"></div>
-      <div class="icon-label">Publications</div>
-    </div>
-  </div>
-</div>
-
-<div class="dock">
-  <button type="button" class="dock-item avatar" id="aboutTrigger" data-tip="About Me"><img src="assets/hyuan.png" alt="Hang Yuan"><span class="icon-gloss"></span></button>
-  <button type="button" class="dock-item brand" id="journeyTrigger" data-tip="Voyage">
-    <img src="assets/voyage.png" alt="Voyage"><span class="icon-gloss"></span>
-  </button>
-  <button type="button" class="dock-item brand" id="contactTrigger" data-tip="Contact Me">
-    <img src="assets/Mail.png" alt="Mail"><span class="icon-gloss"></span>
-  </button>
-  <a class="dock-item brand" href="https://www.instagram.com/hang_yuan_/" target="_blank" rel="noopener" data-tip="Instagram">
-    <img src="assets/Instagram.svg" alt="Instagram"><span class="icon-gloss"></span>
+<div class="page-scale">
+<div class="page-header">
+  <a class="back-link" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Back
   </a>
-  <a class="dock-item brand" href="https://www.linkedin.com/in/-hangyuan-" target="_blank" rel="noopener" data-tip="LinkedIn">
-    <img src="assets/LinkedIn.png" alt="LinkedIn"><span class="icon-gloss"></span>
-  </a>
+  <h1 class="page-title">Digital Arts</h1>
+  <p class="page-description">A collection of digital painting, illustration, motion graphics, social media, and architectural work. Swipe through to explore.</p>
 </div>
 
-<!-- ABOUT ME MODAL -->
-<div class="about-overlay" id="aboutOverlay" aria-hidden="true">
-  <div class="about-window" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
-    <div class="about-titlebar">
-      <button type="button" class="about-dot red" id="aboutClose" aria-label="Close"></button>
-    </div>
-    <div class="about-scroll">
-      <div class="about-content">
-        <h1 id="aboutTitle">About Me</h1>
-
-        <div class="about-profile">
-          <img class="about-photo" src="assets/hangyuan.jpg" alt="Hang Yuan">
-          <div class="about-fields">
-            <div class="about-field">
-              <span class="about-label">NAME</span>
-              <span class="about-value">Hang Yuan</span>
-            </div>
-            <div class="about-field">
-              <span class="about-label">POSITION</span>
-              <span class="about-value">Asst Prof at USI</span>
-            </div>
-            <div class="about-field">
-              <span class="about-label">MAIL</span>
-              <a class="about-value about-link" href="mailto:hangyuan@yahoo.com">hangyuan@yahoo.com</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="about-bio">
-          <p>I'm Hang <span style="color:#9a9a9a;">/hʌŋ/</span>, an interdisciplinary designer and creative technologist based in Evansville, IN — or anywhere.</p>
-          <p>I mainly work with digital mediums to create interactive experiences and visuals that resonate with people.</p>
-          <p>Currently, I teach digital media and game design courses as an Assistant Professor at the University of Southern Indiana.</p>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="carousel-wrap">
+  <button type="button" class="carousel-arrow prev" id="prevBtn" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="carousel-track" id="track"></div>
+  <button type="button" class="carousel-arrow next" id="nextBtn" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
 </div>
-
-<!-- JOURNEY MODAL -->
-<div class="about-overlay" id="journeyOverlay" aria-hidden="true">
-  <div class="about-window" id="journeyWindow" role="dialog" aria-modal="true" aria-labelledby="journeyTitle">
-    <div class="about-titlebar" id="journeyTitlebar">
-      <button type="button" class="about-dot red" id="journeyClose" aria-label="Close"></button>
-    </div>
-    <div class="about-scroll">
-      <div class="about-content">
-        <h1 id="journeyTitle">Voyage</h1>
-
-        <div class="journey-section">
-          <p class="journey-text">
-            Hang holds an MFA in Integrated Visual Arts, emphasis in Digital Art, and an MS in Human-Computer Interaction from <img class="journey-logo" src="assets/isu.svg" alt="Iowa State University logo">Iowa State University, and a BFA and BA from <img class="journey-logo" src="assets/unl.png" alt="University of Nebraska–Lincoln logo">the University of Nebraska–Lincoln.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
-
-<!-- CONTACT ME MODAL -->
-<div class="about-overlay" id="contactOverlay" aria-hidden="true">
-  <div class="about-window" id="contactWindow" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
-    <div class="about-titlebar" id="contactTitlebar">
-      <button type="button" class="about-dot red" id="contactClose" aria-label="Close"></button>
-    </div>
-    <div class="about-scroll">
-      <div class="about-content">
-        <h1 id="contactTitle">Let's Connect</h1>
-        <p class="contact-intro">Thanks for stopping by! Let me know if there's anything on your mind, a project, a question, or just to say hi.</p>
-
-        <form class="contact-form" id="contactForm">
-          <div class="contact-field">
-            <label for="contactName">Name</label>
-            <input type="text" id="contactName" name="name" placeholder="Your name" required>
-          </div>
-          <div class="contact-field">
-            <label for="contactEmail">Email</label>
-            <input type="email" id="contactEmail" name="email" placeholder="you@example.com" required>
-          </div>
-          <div class="contact-field">
-            <label for="contactMessage">Message</label>
-            <textarea id="contactMessage" name="message" placeholder="What's on your mind?" required></textarea>
-          </div>
-          <div class="contact-submit-row">
-            <button type="submit" class="contact-send" id="contactSend">Send</button>
-            <span class="contact-status" id="contactStatus">Thanks, your message is on its way!</span>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PROJECT WINDOW TEMPLATE — cloned once per opened project, so several can be open at once -->
-<template id="projectWindowTemplate">
-  <div class="project-window" role="dialog" aria-modal="false">
-    <div class="project-titlebar">
-      <button type="button" class="project-dot red" aria-label="Close"></button>
-    </div>
-    <div class="project-scroll">
-      <div class="project-content">
-        <h1 class="project-title"></h1>
-        <div class="project-meta"></div>
-        <div class="project-desc"></div>
-        <div class="project-pub-list"></div>
-
-        <div class="project-media">
-          <img class="project-image" src="" alt="">
-        </div>
-
-        <div class="project-embeds"></div>
-      </div>
-    </div>
-  </div>
-</template>
 
 <script>
-  // Global z-index counter shared by ALL floating windows (About, Journey,
-  // Contact, and every project window), so whichever one was opened/clicked
-  // most recently always renders on top of the others.
-  let topZIndex = 60;
-  function bringOverlayToFront(el){
-    topZIndex += 1;
-    el.style.zIndex = topZIndex;
+  // Replace this with your real 6 pieces: image path, title, medium, year.
+  const artworks = [
+    { image: 'assets/Open Field, Open Love.jpg', title: 'Open Field, Open Love', medium: 'Digital Painting', year: '2026', aspect: '16/9', dimensions: '32 x 18 inches',
+      description: "A figure stands alone in a windswept field, arms thrown open toward a golden retriever running to meet them. The grass bends and blurs around both figures, caught mid-motion, as if the whole landscape is moving with them. Open Field, Open Love speaks to the quiet work of reaching outward after isolation: the vulnerability of opening your arms before you know if anyone will meet you there, and the relief when something does.",
+      exhibition: "Exhibited in Loneliness, Isolation and Connection, Ludington Area Center for the Arts, Ludington, MI, 2025." },
+    { image: 'assets/Upstream.jpg', title: 'Upstream', medium: 'Digital Painting', year: '2024', aspect: '16/9', dimensions: '32 x 18 inches',
+      description: "A figure sits chest-deep in a rushing current, calmly reading, anchored against the pull of the water by the quiet act of attention. Around them, the riverbank has burst into a wild tangle of wildflowers: lavender, goldenrod, poppies, and loosestrife crowding the frame in full bloom. Upstream holds two kinds of resistance at once: the physical push of the current, and the mental stillness required to stay present within it. Blooming, here, isn't passive. It happens even as things move against you.",
+      exhibition: "Exhibited in Bloom, Mainframe Studios, Des Moines, IA, 2024." },
+    { title: 'JoinJade', medium: 'Digital Motion Graphics', year: '2021', aspect: '16/9', video: '4YP7FZZNVCo', dimensions: '1920 x 1080 px',
+      description: "Produced for JoinJade, a global public health campaign founded in 2001 by the Asian Liver Center at Stanford University to fight the stigma, transmission, and mortality linked to hepatitis B and liver cancer. This motion graphics piece opened the 2021 World Hepatitis Day event (July 28) at Stanford.",
+      exhibition: "Exhibited at the Asian Liver Center, Stanford University, Palo Alto, CA, 2021." },
+    { image: 'assets/Digital_Art.png', title: 'Untitled Piece 03', medium: 'Mixed media / digital', year: '2026' },
+    { image: 'assets/Digital_Art.png', title: 'Untitled Piece 04', medium: 'Digital painting', year: '2025' },
+    { image: 'assets/Digital_Art.png', title: 'Untitled Piece 05', medium: 'Digital illustration', year: '2025' },
+    { image: 'assets/Digital_Art.png', title: 'Untitled Piece 06', medium: 'Digital painting', year: '2025' }
+  ];
+
+  const track = document.getElementById('track');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  track.innerHTML = artworks.map(art => `
+    <div class="art-item">
+      ${art.video
+        ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}><iframe class="art-video" src="https://www.youtube.com/embed/${art.video}" title="${art.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`
+        : `<div class="art-frame" style="background-image:url('${art.image}');${art.aspect ? ` aspect-ratio:${art.aspect};` : ''}" role="img" aria-label="${art.title}"></div>`}
+      <div class="art-caption">
+        <div class="art-title">${art.title}</div>
+        <div class="art-meta">${[art.medium, art.dimensions, art.exhibition ? null : art.year].filter(Boolean).join(', ')}</div>
+        ${art.description ? `<p class="art-description">${art.description}</p>` : ''}
+        ${art.exhibition ? `<p class="art-exhibition">${art.exhibition}</p>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  function itemStep(){
+    const item = track.querySelector('.art-item');
+    if (!item) return 0;
+    const gap = parseFloat(getComputedStyle(track).gap) || 0;
+    // offsetWidth is the element's local (pre-scale) layout width, which is
+    // what scrollBy expects — getBoundingClientRect would return the
+    // on-screen (post page-scale) size and overshoot once scale > 1.
+    return item.offsetWidth + gap;
   }
 
-  // Makes each .icon draggable within .stage, using mouse or touch.
-  const stage = document.querySelector('.stage');
-  const icons = document.querySelectorAll('.icon');
-
-  icons.forEach(icon => {
-    let dragging = false;
-    let startX, startY, startLeftPx, startTopPx, moved;
-
-    icon.addEventListener('pointerdown', (e) => {
-      dragging = true;
-      moved = 0;
-      icon.classList.add('dragging');
-      icon.setPointerCapture(e.pointerId);
-
-      const stageRect = stage.getBoundingClientRect();
-      const iconRect = icon.getBoundingClientRect();
-
-      // convert current center position to px within the stage
-      startLeftPx = iconRect.left - stageRect.left + iconRect.width / 2;
-      startTopPx = iconRect.top - stageRect.top + iconRect.height / 2;
-
-      startX = e.clientX;
-      startY = e.clientY;
-
-      // switch from % to px so dragging is smooth
-      icon.style.left = startLeftPx + 'px';
-      icon.style.top = startTopPx + 'px';
-    });
-
-    icon.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      moved = Math.max(moved, Math.abs(dx), Math.abs(dy));
-
-      const stageRect = stage.getBoundingClientRect();
-      let newLeft = startLeftPx + dx;
-      let newTop = startTopPx + dy;
-
-      // keep icon roughly within the stage bounds
-      newLeft = Math.max(20, Math.min(stageRect.width - 20, newLeft));
-      newTop = Math.max(20, Math.min(stageRect.height - 20, newTop));
-
-      icon.style.left = newLeft + 'px';
-      icon.style.top = newTop + 'px';
-    });
-
-    const endDrag = (e) => {
-      if (!dragging) return;
-      dragging = false;
-      icon.classList.remove('dragging');
-      icon.releasePointerCapture(e.pointerId);
-
-      // treat as a click (select + open) only if it barely moved
-      if (moved < 10) {
-        const alreadySelected = icon.classList.contains('selected');
-        icons.forEach(i => i.classList.remove('selected'));
-        if (!alreadySelected) icon.classList.add('selected');
-
-        const key = icon.dataset.project;
-        if (key) openProject(key);
-      }
-    };
-
-    icon.addEventListener('pointerup', endDrag);
-    icon.addEventListener('pointercancel', endDrag);
-
-  });
-
-  // clicking empty stage area deselects all icons
-  stage.addEventListener('pointerdown', (e) => {
-    if (e.target === stage) {
-      icons.forEach(i => i.classList.remove('selected'));
-    }
-  });
-
-  // ABOUT ME MODAL logic
-  const aboutTrigger = document.getElementById('aboutTrigger');
-  const aboutOverlay = document.getElementById('aboutOverlay');
-  const aboutClose = document.getElementById('aboutClose');
-  const aboutWindow = aboutOverlay.querySelector('.about-window');
-  const aboutTitlebar = aboutOverlay.querySelector('.about-titlebar');
-
-  function openAbout(){
-    // if another modal is open, swap directly instead of requiring two clicks
-    closeContact();
-    closeJourney();
-    // reset any previous drag position/size so it always reopens centered at its normal width
-    aboutWindow.style.position = '';
-    aboutWindow.style.left = '';
-    aboutWindow.style.top = '';
-    aboutWindow.style.margin = '';
-    aboutWindow.style.width = '';
-    aboutWindow.style.height = '';
-    aboutWindow.style.maxWidth = '';
-    aboutWindow.style.transform = '';
-    aboutOverlay.classList.add('open');
-    aboutOverlay.setAttribute('aria-hidden', 'false');
-    bringOverlayToFront(aboutOverlay);
+  // vertically center the arrow buttons against the actual rendered
+  // image height. Uses offsetTop/offsetHeight (local layout units, same
+  // space as the arrows' own `top`) rather than getBoundingClientRect,
+  // since the latter reflects on-screen size after page-scale and would
+  // misplace the buttons once scale > 1.
+  const wrap = document.querySelector('.carousel-wrap');
+  function positionArrows(){
+    const frame = track.querySelector('.art-frame');
+    if (!frame) return;
+    const top = frame.offsetTop + frame.offsetHeight / 2;
+    prevBtn.style.top = top + 'px';
+    nextBtn.style.top = top + 'px';
   }
-  function closeAbout(){
-    aboutOverlay.classList.remove('open');
-    aboutOverlay.setAttribute('aria-hidden', 'true');
+  positionArrows();
+  window.addEventListener('resize', positionArrows);
+
+  prevBtn.addEventListener('click', () => {
+    track.scrollBy({ left: -itemStep(), behavior: 'smooth' });
+  });
+  nextBtn.addEventListener('click', () => {
+    track.scrollBy({ left: itemStep(), behavior: 'smooth' });
+  });
+
+  // hide the prev/next arrow when there's nothing left to scroll to on that side
+  function updateArrowState(){
+    const maxScroll = track.scrollWidth - track.clientWidth - 1;
+    prevBtn.disabled = track.scrollLeft <= 0;
+    nextBtn.disabled = track.scrollLeft >= maxScroll;
   }
-
-  aboutTrigger.addEventListener('click', openAbout);
-  aboutClose.addEventListener('click', closeAbout);
-  aboutOverlay.addEventListener('pointerdown', (e) => {
-    if (e.target === aboutOverlay) closeAbout();
-    else bringOverlayToFront(aboutOverlay);
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeAbout();
-  });
-
-  // Drag the About Me window around by its titlebar
-  let aboutDragging = false, aboutMoved = 0;
-  let dragStartX, dragStartY, winStartLeft, winStartTop;
-
-  aboutTitlebar.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('#aboutClose')) return; // don't drag when closing
-    aboutDragging = true;
-    aboutMoved = 0;
-    aboutTitlebar.classList.add('dragging');
-    aboutTitlebar.setPointerCapture(e.pointerId);
-
-    const rect = aboutWindow.getBoundingClientRect();
-    winStartLeft = rect.left;
-    winStartTop = rect.top;
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
-
-    // freeze transitions first: switching from the flex-centered layout
-    // (plus its entrance transform) to a fixed pixel position must happen
-    // instantly, otherwise the transform transition animates the window
-    // from its old transform down to none, which reads as a jump to the
-    // top-left before snapping back to where it should be
-    aboutWindow.style.transition = 'none';
-
-    // switch to fixed positioning at the current visual spot, and LOCK the
-    // rendered pixel size so it can't stretch to the full viewport width
-    // once it's no longer sized by the flex overlay
-    aboutWindow.style.position = 'fixed';
-    aboutWindow.style.margin = '0';
-    aboutWindow.style.width = rect.width + 'px';
-    aboutWindow.style.height = rect.height + 'px';
-    aboutWindow.style.maxWidth = rect.width + 'px';
-    aboutWindow.style.left = winStartLeft + 'px';
-    aboutWindow.style.top = winStartTop + 'px';
-    aboutWindow.style.transform = 'none';
-
-    // force a reflow so the transition:none is applied before we restore
-    // the transition property, then restore it for future open/close animations
-    void aboutWindow.offsetHeight;
-    aboutWindow.style.transition = '';
-  });
-
-  aboutTitlebar.addEventListener('pointermove', (e) => {
-    if (!aboutDragging) return;
-    const dx = e.clientX - dragStartX;
-    const dy = e.clientY - dragStartY;
-    aboutMoved = Math.max(aboutMoved, Math.abs(dx), Math.abs(dy));
-
-    const rect = aboutWindow.getBoundingClientRect();
-    let newLeft = winStartLeft + dx;
-    let newTop = winStartTop + dy;
-
-    // keep a bit of the titlebar reachable within the viewport
-    const margin = 24;
-    newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
-    newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
-
-    aboutWindow.style.left = newLeft + 'px';
-    aboutWindow.style.top = newTop + 'px';
-  });
-
-  const endAboutDrag = (e) => {
-    if (!aboutDragging) return;
-    aboutDragging = false;
-    aboutTitlebar.classList.remove('dragging');
-    aboutTitlebar.releasePointerCapture(e.pointerId);
-  };
-
-  aboutTitlebar.addEventListener('pointerup', endAboutDrag);
-  aboutTitlebar.addEventListener('pointercancel', endAboutDrag);
-
-  // JOURNEY MODAL — same window chrome/drag pattern as About Me, just a larger window
-  const journeyTrigger = document.getElementById('journeyTrigger');
-  const journeyOverlay = document.getElementById('journeyOverlay');
-  const journeyClose = document.getElementById('journeyClose');
-  const journeyWindow = document.getElementById('journeyWindow');
-  const journeyTitlebar = document.getElementById('journeyTitlebar');
-
-  function openJourney(){
-    // if another modal is open, swap directly instead of requiring two clicks
-    closeAbout();
-    closeContact();
-    journeyWindow.style.position = '';
-    journeyWindow.style.left = '';
-    journeyWindow.style.top = '';
-    journeyWindow.style.margin = '';
-    journeyWindow.style.width = '';
-    journeyWindow.style.height = '';
-    journeyWindow.style.maxWidth = '';
-    journeyWindow.style.transform = '';
-    journeyOverlay.classList.add('open');
-    journeyOverlay.setAttribute('aria-hidden', 'false');
-    bringOverlayToFront(journeyOverlay);
-  }
-  function closeJourney(){
-    journeyOverlay.classList.remove('open');
-    journeyOverlay.setAttribute('aria-hidden', 'true');
-  }
-
-  journeyTrigger.addEventListener('click', openJourney);
-  journeyClose.addEventListener('click', closeJourney);
-  journeyOverlay.addEventListener('pointerdown', (e) => {
-    if (e.target === journeyOverlay) closeJourney();
-    else bringOverlayToFront(journeyOverlay);
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeJourney();
-  });
-
-  // Drag the Journey window around by its titlebar — identical pattern to About Me
-  let journeyDragging = false, journeyMoved = 0;
-  let jDragStartX, jDragStartY, jWinStartLeft, jWinStartTop;
-
-  journeyTitlebar.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('#journeyClose')) return;
-    journeyDragging = true;
-    journeyMoved = 0;
-    journeyTitlebar.classList.add('dragging');
-    journeyTitlebar.setPointerCapture(e.pointerId);
-
-    const rect = journeyWindow.getBoundingClientRect();
-    jWinStartLeft = rect.left;
-    jWinStartTop = rect.top;
-    jDragStartX = e.clientX;
-    jDragStartY = e.clientY;
-
-    journeyWindow.style.transition = 'none';
-    journeyWindow.style.position = 'fixed';
-    journeyWindow.style.margin = '0';
-    journeyWindow.style.width = rect.width + 'px';
-    journeyWindow.style.height = rect.height + 'px';
-    journeyWindow.style.maxWidth = rect.width + 'px';
-    journeyWindow.style.left = jWinStartLeft + 'px';
-    journeyWindow.style.top = jWinStartTop + 'px';
-    journeyWindow.style.transform = 'none';
-
-    void journeyWindow.offsetHeight;
-    journeyWindow.style.transition = '';
-  });
-
-  journeyTitlebar.addEventListener('pointermove', (e) => {
-    if (!journeyDragging) return;
-    const dx = e.clientX - jDragStartX;
-    const dy = e.clientY - jDragStartY;
-    journeyMoved = Math.max(journeyMoved, Math.abs(dx), Math.abs(dy));
-
-    const rect = journeyWindow.getBoundingClientRect();
-    let newLeft = jWinStartLeft + dx;
-    let newTop = jWinStartTop + dy;
-
-    const margin = 24;
-    newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
-    newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
-
-    journeyWindow.style.left = newLeft + 'px';
-    journeyWindow.style.top = newTop + 'px';
-  });
-
-  const endJourneyDrag = (e) => {
-    if (!journeyDragging) return;
-    journeyDragging = false;
-    journeyTitlebar.classList.remove('dragging');
-    journeyTitlebar.releasePointerCapture(e.pointerId);
-  };
-
-  journeyTitlebar.addEventListener('pointerup', endJourneyDrag);
-  journeyTitlebar.addEventListener('pointercancel', endJourneyDrag);
-
-  // CONTACT ME MODAL — same window chrome/drag behavior as About Me, plus a form
-  const contactTrigger = document.getElementById('contactTrigger');
-  const contactOverlay = document.getElementById('contactOverlay');
-  const contactClose = document.getElementById('contactClose');
-  const contactWindow = document.getElementById('contactWindow');
-  const contactTitlebar = document.getElementById('contactTitlebar');
-  const contactForm = document.getElementById('contactForm');
-  const contactSend = document.getElementById('contactSend');
-  const contactStatus = document.getElementById('contactStatus');
-
-  function openContact(){
-    // if another modal is open, swap directly instead of requiring two clicks
-    closeAbout();
-    closeJourney();
-    contactWindow.style.position = '';
-    contactWindow.style.left = '';
-    contactWindow.style.top = '';
-    contactWindow.style.margin = '';
-    contactWindow.style.width = '';
-    contactWindow.style.height = '';
-    contactWindow.style.maxWidth = '';
-    contactWindow.style.transform = '';
-    contactOverlay.classList.add('open');
-    contactOverlay.setAttribute('aria-hidden', 'false');
-    bringOverlayToFront(contactOverlay);
-  }
-  function closeContact(){
-    contactOverlay.classList.remove('open');
-    contactOverlay.setAttribute('aria-hidden', 'true');
-  }
-
-  contactTrigger.addEventListener('click', openContact);
-  contactClose.addEventListener('click', closeContact);
-  contactOverlay.addEventListener('pointerdown', (e) => {
-    if (e.target === contactOverlay) closeContact();
-    else bringOverlayToFront(contactOverlay);
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeContact();
-  });
-
-  // drag the Let's Connect window by its titlebar — identical pattern to About Me
-  let contactDragging = false, contactMoved = 0;
-  let cDragStartX, cDragStartY, cWinStartLeft, cWinStartTop;
-
-  contactTitlebar.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('#contactClose')) return;
-    contactDragging = true;
-    contactMoved = 0;
-    contactTitlebar.classList.add('dragging');
-    contactTitlebar.setPointerCapture(e.pointerId);
-
-    const rect = contactWindow.getBoundingClientRect();
-    cWinStartLeft = rect.left;
-    cWinStartTop = rect.top;
-    cDragStartX = e.clientX;
-    cDragStartY = e.clientY;
-
-    contactWindow.style.transition = 'none';
-    contactWindow.style.position = 'fixed';
-    contactWindow.style.margin = '0';
-    contactWindow.style.width = rect.width + 'px';
-    contactWindow.style.height = rect.height + 'px';
-    contactWindow.style.maxWidth = rect.width + 'px';
-    contactWindow.style.left = cWinStartLeft + 'px';
-    contactWindow.style.top = cWinStartTop + 'px';
-    contactWindow.style.transform = 'none';
-
-    void contactWindow.offsetHeight;
-    contactWindow.style.transition = '';
-  });
-
-  contactTitlebar.addEventListener('pointermove', (e) => {
-    if (!contactDragging) return;
-    const dx = e.clientX - cDragStartX;
-    const dy = e.clientY - cDragStartY;
-    contactMoved = Math.max(contactMoved, Math.abs(dx), Math.abs(dy));
-
-    const rect = contactWindow.getBoundingClientRect();
-    let newLeft = cWinStartLeft + dx;
-    let newTop = cWinStartTop + dy;
-
-    const margin = 24;
-    newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
-    newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
-
-    contactWindow.style.left = newLeft + 'px';
-    contactWindow.style.top = newTop + 'px';
-  });
-
-  const endContactDrag = (e) => {
-    if (!contactDragging) return;
-    contactDragging = false;
-    contactTitlebar.classList.remove('dragging');
-    contactTitlebar.releasePointerCapture(e.pointerId);
-  };
-
-  contactTitlebar.addEventListener('pointerup', endContactDrag);
-  contactTitlebar.addEventListener('pointercancel', endContactDrag);
-
-  // form submit — posts directly to Formspree, so the message lands in the inbox
-  // even if the visitor has no mail app configured on their device
-  contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById('contactName').value.trim();
-    const email = document.getElementById('contactEmail').value.trim();
-    const message = document.getElementById('contactMessage').value.trim();
-    if (!name || !email || !message) return;
-
-    contactSend.textContent = 'Sending…';
-    contactSend.disabled = true;
-
-    try {
-      const response = await fetch('https://formspree.io/f/xaeyjgba', {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: new FormData(contactForm)
-      });
-
-      if (response.ok) {
-        contactSend.textContent = 'Sent ✓';
-        contactStatus.textContent = 'Thanks, your message is on its way!';
-        contactStatus.classList.add('visible');
-        setTimeout(() => {
-          contactSend.textContent = 'Send';
-          contactSend.disabled = false;
-          contactStatus.classList.remove('visible');
-          contactForm.reset();
-        }, 2400);
-      } else {
-        throw new Error('Formspree responded with an error');
-      }
-    } catch (err) {
-      contactSend.textContent = 'Send';
-      contactSend.disabled = false;
-      contactStatus.textContent = "Something went wrong, mind trying again?";
-      contactStatus.classList.add('visible');
-      setTimeout(() => contactStatus.classList.remove('visible'), 3000);
-    }
-  });
-
-  // PROJECT WINDOWS — each opened project spawns its own independent, draggable window.
-  // Several can be open at once. Re-opening an already-open project just brings it to front.
-  const projectData = {
-    'vr': {
-      title: 'Virtual Reality',
-      desc: 'Immersive experiences built for headsets and beyond.',
-      client: 'Placeholder Client',
-      year: '2026',
-      type: 'Virtual Reality',
-      credits: 'Solo Project',
-      image: 'assets/vr.gif'
-    },
-    'ar': {
-      title: "Howl's Moving Castle (AR)",
-      desc: [
-        "This augmented reality piece brings the castle from Studio Ghibli's Howl's Moving Castle (Hayao Miyazaki, 2004) into the room. Once the app detects the image target, the iconic walking castle appears in the audience's space, ready to be explored from any angle through interactive elements. Clouds drift past, smoke curls from its chimneys, and fire flickers beneath it as it strides forward.",
-        "The castle was fully modeled in Autodesk Maya, reinterpreting the original 2D film in three dimensions, then textured with Substance Designer and Substance Painter. Every surface and mechanical detail was designed to hold up under close inspection from any viewing angle, and the finished model was brought into Unity, where the AR experience was built and tuned for real-time interaction."
-      ],
-      meta: [
-        { label: 'Type', value: 'Augmented Reality' },
-        { label: 'Built With', value: 'Autodesk Maya, Substance, Unity' },
-        { label: 'Exhibition', value: 'Lockwood Cafe, Ames, IA' },
-        { label: 'Date', value: 'May 2023' }
-      ],
-      video: 'pIK76hhme4I',
-      sketchfab: 'c77dced0571944fbac9ec956a35fd2c5'
-    },
-    'cm': {
-      title: 'Computer Modeling',
-      desc: '3D modeling, sculpting, and technical builds.',
-      client: 'Placeholder Client',
-      year: '2026',
-      type: 'Computer Modeling',
-      credits: 'Solo Project',
-      image: 'assets/3d.png'
-    },
-    'vfx': {
-      title: 'Animation & Visual Effects',
-      desc: 'Motion, animation, and visual effects work.',
-      client: 'Placeholder Client',
-      year: '2026',
-      type: 'Animation & VFX',
-      credits: 'Solo Project',
-      image: 'assets/animation.gif'
-    },
-    'digital-art': {
-      title: 'Digital Arts',
-      desc: 'Illustration and digital artwork.',
-      client: 'Placeholder Client',
-      year: '2026',
-      type: 'Digital Art',
-      credits: 'Solo Project',
-      image: 'assets/Digital_Art.png'
-    },
-    'publications': {
-      title: 'Publications',
-      desc: '',
-      entries: [
-        {
-          title: 'Impression, Sunrise: What Monet Teaches Game Design Teams About Feeling Before Knowing',
-          meta: 'Yuan, H., & Yang, Z. · 2026',
-          venue: 'Companion of the Computer-Supported Cooperative Work and Social Computing (CSCW Companion \'26), October 10–14, 2026, Salt Lake City, UT, USA. ACM, New York, NY, USA.',
-          link: 'https://doi.org/10.1145/3785651.3831536'
-        },
-        {
-          title: 'Character.exe: Exploring Agency Through Narrative Choices',
-          meta: 'Yuan, H., & Gude, R. · 2026',
-          venue: 'HCI International 2026 Posters (Communications in Computer and Information Science, Vol. 3048, pp. 394–403). Springer, Cham.',
-          link: 'https://doi.org/10.1007/978-3-032-30816-0_39'
-        },
-        {
-          title: 'Unveiling an Interactive and Immersive Virtual Reality (VR) Experience through Digital Construction of a Historical Landscape Painting',
-          meta: 'Yuan, H. · MFA/MS Thesis · 2024',
-          venue: 'Advisors: Johnny DiBlasi, Kimberly Zarecor, Ritwik Banerji, Emily Morgan, Austin Stewart. Graduate Theses and Dissertations, Iowa State University.',
-          link: 'https://doi.org/10.31274/td-20240617-84'
-        }
-      ]
-    }
-  };
-
-  const projectTemplate = document.getElementById('projectWindowTemplate');
-  const openProjectWindows = {}; // key -> window element currently open
-
-  function bringToFront(win){
-    bringOverlayToFront(win);
-  }
-
-  function openProject(key){
-    // Digital Arts lives on its own dedicated gallery page, not a popup window
-    if (key === 'digital-art') {
-      window.location.href = 'digital-arts.html';
-      return;
-    }
-
-    // if this project's window is already open, just focus it instead of duplicating
-    if (openProjectWindows[key]) {
-      bringToFront(openProjectWindows[key]);
-      return;
-    }
-
-    const data = projectData[key];
-    if (!data) return;
-
-    const frag = projectTemplate.content.cloneNode(true);
-    const win = frag.querySelector('.project-window');
-
-    win.querySelector('.project-title').textContent = data.title;
-
-    const descEl = win.querySelector('.project-desc');
-    const metaEl = win.querySelector('.project-meta');
-    const mediaEl = win.querySelector('.project-media');
-    const listEl = win.querySelector('.project-pub-list');
-    const embedsEl = win.querySelector('.project-embeds');
-    const img = win.querySelector('.project-image');
-
-    if (data.meta && data.meta.length) {
-      metaEl.style.display = 'flex';
-      metaEl.innerHTML = data.meta.map(m => `
-        <div class="project-meta-item">
-          <span class="project-meta-label">${m.label}</span>
-          <span class="project-meta-value">${m.value}</span>
-        </div>`).join('');
-    } else {
-      metaEl.style.display = 'none';
-      metaEl.innerHTML = '';
-    }
-
-    if (data.entries && data.entries.length) {
-      // publication-style content: hide the plain description and image,
-      // render a clean list of citation entries instead
-      descEl.style.display = 'none';
-      mediaEl.style.display = 'none';
-      listEl.style.display = 'flex';
-      listEl.innerHTML = data.entries.map(entry => `
-        <div class="pub-entry">
-          <div class="pub-entry-title">${entry.title}</div>
-          <div class="pub-entry-meta">${entry.meta}</div>
-          <div class="pub-entry-venue">${entry.venue}</div>
-          <a class="pub-entry-link" href="${entry.link}" target="_blank" rel="noopener">View paper →</a>
-        </div>
-      `).join('');
-    } else {
-      descEl.style.display = '';
-      const paragraphs = Array.isArray(data.desc) ? data.desc : [data.desc];
-      descEl.innerHTML = paragraphs.map(p => `<p></p>`).join('');
-      descEl.querySelectorAll('p').forEach((pEl, i) => { pEl.textContent = paragraphs[i]; });
-      listEl.style.display = 'none';
-      if (data.image) {
-        mediaEl.style.display = '';
-        img.src = data.image;
-        img.alt = data.title;
-      } else {
-        mediaEl.style.display = 'none';
-      }
-    }
-
-    if (data.video || data.sketchfab) {
-      embedsEl.style.display = 'flex';
-      let embedsHtml = '';
-      if (data.video) {
-        embedsHtml += `
-          <div>
-            <div class="embed-block-label">Watch it in action</div>
-            <div class="embed-frame">
-              <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-          </div>`;
-      }
-      if (data.sketchfab) {
-        embedsHtml += `
-          <div>
-            <div class="embed-block-label">3D Model</div>
-            <div class="embed-frame">
-              <iframe src="https://sketchfab.com/models/${data.sketchfab}/embed" title="${data.title} 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
-            </div>
-          </div>`;
-      }
-      embedsEl.innerHTML = embedsHtml;
-    } else {
-      embedsEl.style.display = 'none';
-      embedsEl.innerHTML = '';
-    }
-
-    // cascade each newly opened window slightly so multiple stacks are visible,
-    // rather than perfectly overlapping in the exact center
-    const openCount = Object.keys(openProjectWindows).length;
-    const cascade = (openCount % 6) * 26;
-    win.style.marginLeft = cascade + 'px';
-    win.style.marginTop = cascade + 'px';
-
-    document.body.appendChild(win);
-    openProjectWindows[key] = win;
-    bringToFront(win);
-
-    // trigger the open transition on the next frame
-    requestAnimationFrame(() => {
-      win.classList.add('open');
-    });
-
-    setupProjectWindow(win, key);
-  }
-
-  function closeProjectWindow(win, key){
-    win.classList.remove('open');
-    delete openProjectWindows[key];
-    // remove from the DOM after the closing transition finishes
-    setTimeout(() => {
-      if (win.parentNode) win.parentNode.removeChild(win);
-    }, 200);
-  }
-
-  function setupProjectWindow(win, key){
-    const titlebar = win.querySelector('.project-titlebar');
-    const closeBtn = win.querySelector('.project-dot.red');
-
-    // bring to front whenever this window is interacted with
-    win.addEventListener('pointerdown', () => bringToFront(win));
-
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeProjectWindow(win, key);
-    });
-
-    // drag by the titlebar, same pattern as the About Me window
-    let dragging = false, moved = 0;
-    let dragStartX, dragStartY, winStartLeft, winStartTop;
-
-    titlebar.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('.project-dot.red')) return;
-      dragging = true;
-      moved = 0;
-      titlebar.classList.add('dragging');
-      titlebar.setPointerCapture(e.pointerId);
-
-      const rect = win.getBoundingClientRect();
-      winStartLeft = rect.left;
-      winStartTop = rect.top;
-      dragStartX = e.clientX;
-      dragStartY = e.clientY;
-
-      // freeze the transition first: the window is centered with
-      // left:50%/top:50% PLUS transform:translate(-50%,-50%), so swapping
-      // to a fixed left/top with transform:none must happen instantly.
-      // Otherwise the transform transition (0.2s ease) animates away from
-      // the -50%/-50% offset while left/top have already jumped to their
-      // final pixel values, which looks like a snap to the top-left corner
-      // that then eases back to the middle.
-      win.style.transition = 'none';
-
-      // lock the current rendered size/position in px so switching away from
-      // the centered transform can't cause it to jump or stretch
-      win.style.width = rect.width + 'px';
-      win.style.height = rect.height + 'px';
-      win.style.maxWidth = rect.width + 'px';
-      win.style.margin = '0';
-      win.style.left = winStartLeft + 'px';
-      win.style.top = winStartTop + 'px';
-      win.style.transform = 'none';
-
-      // force a reflow so transition:none takes effect before we restore it,
-      // then restore the transition for future opacity/close animations
-      void win.offsetHeight;
-      win.style.transition = '';
-    });
-
-    titlebar.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const dx = e.clientX - dragStartX;
-      const dy = e.clientY - dragStartY;
-      moved = Math.max(moved, Math.abs(dx), Math.abs(dy));
-
-      const rect = win.getBoundingClientRect();
-      let newLeft = winStartLeft + dx;
-      let newTop = winStartTop + dy;
-
-      const margin = 24;
-      newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
-      newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
-
-      win.style.left = newLeft + 'px';
-      win.style.top = newTop + 'px';
-    });
-
-    const endDrag = (e) => {
-      if (!dragging) return;
-      dragging = false;
-      titlebar.classList.remove('dragging');
-      titlebar.releasePointerCapture(e.pointerId);
-    };
-
-    titlebar.addEventListener('pointerup', endDrag);
-    titlebar.addEventListener('pointercancel', endDrag);
-  }
+  track.addEventListener('scroll', updateArrowState);
+  window.addEventListener('resize', updateArrowState);
+  updateArrowState();
 </script>
 
 </body>
