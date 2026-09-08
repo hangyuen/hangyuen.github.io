@@ -599,6 +599,90 @@
     margin:0 6px;
   }
 
+  /* LEAVING SITE MODAL — small, glassy, friendly heads-up before handing
+     off to a third-party login-walled platform */
+  #leavingWindow{
+    max-width:380px;
+    background:rgba(255,255,255,0.72);
+    border:1px solid rgba(255,255,255,0.6);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+  }
+  #leavingWindow .about-titlebar{
+    border-bottom:1px solid rgba(0,0,0,0.06);
+  }
+  .leaving-content{
+    padding:22px 30px 32px;
+    text-align:left;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .leaving-icon{
+    width:56px;
+    height:56px;
+    border-radius:14px;
+    margin:6px 0 18px;
+    background:linear-gradient(145deg, #4a4a4d, #2c2c2e);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 18px rgba(0,0,0,0.18);
+  }
+  .leaving-icon img{
+    width:30px;
+    height:30px;
+    object-fit:contain;
+  }
+  .leaving-content h1{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    margin-bottom:10px;
+  }
+  .leaving-body{
+    font-size:14.5px;
+    line-height:1.55;
+    color:#666;
+    margin-bottom:26px;
+  }
+  .leaving-actions{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+  }
+  .leaving-continue,
+  .leaving-cancel{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', sans-serif;
+    font-size:15.5px;
+    font-weight:600;
+    border-radius:12px;
+    padding:11px 14px;
+    text-align:center;
+    cursor:pointer;
+    transition:transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+  }
+  .leaving-continue{
+    background:#0a84ff;
+    color:#ffffff;
+    border:none;
+    display:block;
+  }
+  .leaving-continue:hover{
+    background:#2f95ff;
+    transform:translateY(-1px);
+  }
+  .leaving-cancel{
+    background:#f2f2f2;
+    color:#1d1d1f;
+    border:none;
+  }
+  .leaving-cancel:hover{
+    background:#e8e8e8;
+  }
+
   /* PROJECT WINDOW — spawned per project, all identical size, all independently draggable */
   .project-window{
     position:fixed;
@@ -904,12 +988,12 @@
   <button type="button" class="dock-item brand" id="contactTrigger" data-tip="Contact Me">
     <img src="assets/Mail.png" alt="Mail"><span class="icon-gloss"></span>
   </button>
-  <a class="dock-item brand" href="https://www.instagram.com/hang_yuan_/" target="_blank" rel="noopener" data-tip="Instagram">
+  <button type="button" class="dock-item brand" id="instagramTrigger" data-tip="Instagram" data-leaving-url="https://www.instagram.com/hang_yuan_/" data-leaving-platform="Instagram">
     <img src="assets/Instagram.svg" alt="Instagram"><span class="icon-gloss"></span>
-  </a>
-  <a class="dock-item brand" href="https://www.linkedin.com/in/-hangyuan-" target="_blank" rel="noopener" data-tip="LinkedIn">
+  </button>
+  <button type="button" class="dock-item brand" id="linkedinTrigger" data-tip="LinkedIn" data-leaving-url="https://www.linkedin.com/in/-hangyuan-" data-leaving-platform="LinkedIn">
     <img src="assets/LinkedIn.png" alt="LinkedIn"><span class="icon-gloss"></span>
-  </a>
+  </button>
 </div>
 
 <!-- ABOUT ME MODAL -->
@@ -1021,6 +1105,26 @@
             <span class="contact-status" id="contactStatus">Thanks, your message is on its way!</span>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEAVING SITE MODAL — a friendly heads-up before handing off to a
+     third-party login-walled platform (Instagram, LinkedIn) -->
+<div class="about-overlay" id="leavingOverlay" aria-hidden="true">
+  <div class="about-window" id="leavingWindow" role="dialog" aria-modal="true" aria-labelledby="leavingTitle">
+    <div class="about-titlebar" id="leavingTitlebar">
+      <button type="button" class="about-dot red" id="leavingClose" aria-label="Close"></button>
+    </div>
+    <div class="about-scroll">
+      <div class="about-content leaving-content">
+        <h1 id="leavingTitle">Heading out?</h1>
+        <p class="leaving-body" id="leavingBody"></p>
+        <div class="leaving-actions">
+          <button type="button" class="leaving-cancel" id="leavingCancel">Stay here</button>
+          <a class="leaving-continue" id="leavingContinue" href="#" target="_blank" rel="noopener">Take me there</a>
+        </div>
       </div>
     </div>
   </div>
@@ -1146,6 +1250,7 @@
     // if another modal is open, swap directly instead of requiring two clicks
     closeContact();
     closeJourney();
+    closeLeaving();
     // reset any previous drag position/size so it always reopens centered at its normal width
     aboutWindow.style.position = '';
     aboutWindow.style.left = '';
@@ -1256,6 +1361,7 @@
     // if another modal is open, swap directly instead of requiring two clicks
     closeAbout();
     closeContact();
+    closeLeaving();
     journeyWindow.style.position = '';
     journeyWindow.style.left = '';
     journeyWindow.style.top = '';
@@ -1356,6 +1462,7 @@
     // if another modal is open, swap directly instead of requiring two clicks
     closeAbout();
     closeJourney();
+    closeLeaving();
     contactWindow.style.position = '';
     contactWindow.style.left = '';
     contactWindow.style.top = '';
@@ -1441,6 +1548,135 @@
 
   contactTitlebar.addEventListener('pointerup', endContactDrag);
   contactTitlebar.addEventListener('pointercancel', endContactDrag);
+
+  // LEAVING SITE MODAL — friendly heads-up before handing off to a
+  // third-party login-walled platform, triggered by Instagram/LinkedIn
+  const leavingOverlay = document.getElementById('leavingOverlay');
+  const leavingWindow = document.getElementById('leavingWindow');
+  const leavingTitlebar = document.getElementById('leavingTitlebar');
+  const leavingClose = document.getElementById('leavingClose');
+  const leavingCancel = document.getElementById('leavingCancel');
+  const leavingContinue = document.getElementById('leavingContinue');
+  const leavingTitle = document.getElementById('leavingTitle');
+  const leavingBody = document.getElementById('leavingBody');
+
+  const leavingCopy = {
+    Instagram: {
+      title: 'Off to Instagram?',
+      body: "They're going to ask you to log in over there, that part's on them, not me. I'll keep the lights on here until you get back."
+    },
+    LinkedIn: {
+      title: 'Off to LinkedIn?',
+      body: "Fair warning, LinkedIn will want you signed in before it shows you anything. No hard feelings if you come back and just close the tab instead."
+    }
+  };
+
+  function openLeaving(platform, url){
+    const copy = leavingCopy[platform] || { title: 'Heading out?', body: "You're about to leave this site for a third-party page that may ask you to log in." };
+    leavingTitle.textContent = copy.title;
+    leavingBody.textContent = copy.body;
+    leavingContinue.href = url;
+    leavingContinue.textContent = `Take me to ${platform}`;
+
+    // if another modal is open, swap directly instead of requiring two clicks
+    closeAbout();
+    closeJourney();
+    closeContact();
+    leavingWindow.style.position = '';
+    leavingWindow.style.left = '';
+    leavingWindow.style.top = '';
+    leavingWindow.style.margin = '';
+    leavingWindow.style.width = '';
+    leavingWindow.style.height = '';
+    leavingWindow.style.maxWidth = '';
+    leavingWindow.style.transform = '';
+    leavingOverlay.classList.add('open');
+    leavingOverlay.setAttribute('aria-hidden', 'false');
+    bringOverlayToFront(leavingOverlay);
+  }
+  function closeLeaving(){
+    leavingOverlay.classList.remove('open');
+    leavingOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  document.getElementById('instagramTrigger').addEventListener('click', () => {
+    const btn = document.getElementById('instagramTrigger');
+    openLeaving(btn.dataset.leavingPlatform, btn.dataset.leavingUrl);
+  });
+  document.getElementById('linkedinTrigger').addEventListener('click', () => {
+    const btn = document.getElementById('linkedinTrigger');
+    openLeaving(btn.dataset.leavingPlatform, btn.dataset.leavingUrl);
+  });
+
+  leavingClose.addEventListener('click', closeLeaving);
+  leavingCancel.addEventListener('click', closeLeaving);
+  leavingContinue.addEventListener('click', closeLeaving);
+  leavingOverlay.addEventListener('pointerdown', (e) => {
+    if (e.target === leavingOverlay) closeLeaving();
+    else bringOverlayToFront(leavingOverlay);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLeaving();
+  });
+
+  // drag the Leaving modal by its titlebar — identical pattern to About Me
+  let leavingDragging = false, leavingMoved = 0;
+  let lDragStartX, lDragStartY, lWinStartLeft, lWinStartTop;
+
+  leavingTitlebar.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('#leavingClose')) return;
+    leavingDragging = true;
+    leavingMoved = 0;
+    leavingTitlebar.classList.add('dragging');
+    leavingTitlebar.setPointerCapture(e.pointerId);
+
+    const rect = leavingWindow.getBoundingClientRect();
+    lWinStartLeft = rect.left;
+    lWinStartTop = rect.top;
+    lDragStartX = e.clientX;
+    lDragStartY = e.clientY;
+
+    leavingWindow.style.transition = 'none';
+    leavingWindow.style.position = 'fixed';
+    leavingWindow.style.margin = '0';
+    leavingWindow.style.width = rect.width + 'px';
+    leavingWindow.style.height = rect.height + 'px';
+    leavingWindow.style.maxWidth = rect.width + 'px';
+    leavingWindow.style.left = lWinStartLeft + 'px';
+    leavingWindow.style.top = lWinStartTop + 'px';
+    leavingWindow.style.transform = 'none';
+
+    void leavingWindow.offsetHeight;
+    leavingWindow.style.transition = '';
+  });
+
+  leavingTitlebar.addEventListener('pointermove', (e) => {
+    if (!leavingDragging) return;
+    const dx = e.clientX - lDragStartX;
+    const dy = e.clientY - lDragStartY;
+    leavingMoved = Math.max(leavingMoved, Math.abs(dx), Math.abs(dy));
+
+    const rect = leavingWindow.getBoundingClientRect();
+    let newLeft = lWinStartLeft + dx;
+    let newTop = lWinStartTop + dy;
+
+    const margin = 24;
+    newLeft = Math.max(margin - rect.width, Math.min(window.innerWidth - margin, newLeft));
+    newTop = Math.max(0, Math.min(window.innerHeight - margin, newTop));
+
+    leavingWindow.style.left = newLeft + 'px';
+    leavingWindow.style.top = newTop + 'px';
+  });
+
+  const endLeavingDrag = (e) => {
+    if (!leavingDragging) return;
+    leavingDragging = false;
+    leavingTitlebar.classList.remove('dragging');
+    leavingTitlebar.releasePointerCapture(e.pointerId);
+  };
+
+  leavingTitlebar.addEventListener('pointerup', endLeavingDrag);
+  leavingTitlebar.addEventListener('pointercancel', endLeavingDrag);
 
   // form submit — posts directly to Formspree, so the message lands in the inbox
   // even if the visitor has no mail app configured on their device
