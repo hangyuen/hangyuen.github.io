@@ -1261,6 +1261,224 @@
     }
   }
 
+  /* SYNTHESIZER PROJECT WINDOW — dark/black Apple-style variant, used only
+     for this one project. Same .project-window size/behavior as every
+     other project, just a black palette instead of white. */
+  .project-window.dark{
+    background:#0b0b0d;
+    color:#f5f5f7;
+  }
+  .project-window.dark .project-titlebar{
+    border-bottom-color:rgba(255,255,255,0.08);
+  }
+  .project-window.dark .project-content h1{
+    color:#ffffff;
+  }
+  .project-window.dark .project-meta{
+    border-bottom-color:rgba(255,255,255,0.08);
+  }
+  .project-window.dark .project-meta-label{
+    color:#8a8a8e;
+  }
+  .project-window.dark .project-meta-value{
+    color:#f5f5f7;
+  }
+  .project-window.dark .project-desc{
+    color:#c7c7cc;
+  }
+  .project-window.dark .project-desc p{
+    color:#c7c7cc;
+  }
+
+  /* Full-bleed edge-to-edge layout for the Synthesizer window only:
+     canvas fills the entire window body, title/meta/paragraph text are
+     hidden visually (kept for screen readers), and a dark toolbar sits
+     flush against the bottom edge — matching the reference screenshot. */
+  .project-window.dark .project-scroll{
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .project-window.dark .project-content{
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    flex:1;
+    min-height:0;
+  }
+  .project-window.dark .project-content h1,
+  .project-window.dark .project-meta{
+    display:none !important;
+  }
+  .project-window.dark .project-desc{
+    position:relative;
+    margin:0;
+    max-width:none;
+    flex:1;
+    min-height:0;
+    display:flex;
+  }
+  /* screen-reader-only: the placeholder paragraph stays in the DOM for
+     accessibility but takes no visual space, since the canvas is the UI */
+  .project-window.dark .project-desc > p{
+    position:absolute;
+    width:1px; height:1px;
+    padding:0; margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0;
+  }
+
+  .synth-viz{
+    flex:1;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+  .synth-stage{
+    position:relative;
+    flex:1;
+    min-height:0;
+    background:#050506;
+    overflow:hidden;
+  }
+  .synth-stage canvas{
+    position:absolute;
+    inset:0;
+    display:block;
+    width:100%;
+    height:100%;
+    cursor:crosshair;
+    touch-action:none;
+  }
+
+  .synth-toolbar{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:16px 22px;
+    background:rgba(12,12,14,0.72);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    border-top:1px solid rgba(255,255,255,0.08);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .synth-key{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", 'Inter', sans-serif;
+    font-variant-numeric:tabular-nums;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    color:#f5f5f7;
+    min-width:32px;
+  }
+  .synth-toolbar-center{
+    display:flex;
+    align-items:flex-end;
+    gap:22px;
+    flex:1;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .synth-knobs{
+    display:flex;
+    align-items:flex-end;
+    gap:20px;
+  }
+  .synth-knob{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    user-select:none;
+    cursor:ns-resize;
+  }
+  .synth-knob-dial{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:radial-gradient(circle at 34% 26%, #45454a, #17171a 74%);
+    box-shadow:0 3px 8px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.06);
+    position:relative;
+  }
+  .synth-knob-indicator{
+    position:absolute;
+    top:3px; left:50%;
+    width:2px; height:8px;
+    margin-left:-1px;
+    background:#0a84ff;
+    border-radius:1px;
+    transform-origin:50% 13px;
+  }
+  .synth-knob-label{
+    font-size:9.5px;
+    font-weight:600;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:#8a8a8e;
+  }
+  .synth-knob-value{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', sans-serif;
+    font-variant-numeric:tabular-nums;
+    font-size:10px;
+    font-weight:500;
+    color:#6e6e73;
+  }
+  .synth-divider{
+    width:1px;
+    height:34px;
+    background:rgba(255,255,255,0.1);
+  }
+  .synth-waves{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .synth-wave-btn,
+  .synth-reset-btn{
+    width:32px; height:32px;
+    border-radius:8px;
+    background:rgba(255,255,255,0.06);
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#9a9a9e;
+    cursor:pointer;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .synth-wave-btn svg{ width:16px; height:16px; }
+  .synth-wave-btn.active{
+    background:#0a84ff;
+    color:#ffffff;
+  }
+  .synth-reset-btn{
+    font-size:14px;
+    font-weight:600;
+  }
+  .synth-reset-btn:hover{
+    background:rgba(255,255,255,0.14);
+    color:#ffffff;
+  }
+  .synth-hint{
+    font-family:'Inter', sans-serif;
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:#5f5f63;
+    white-space:nowrap;
+  }
+
+  @media (max-width:640px){
+    .synth-toolbar{ flex-wrap:wrap; row-gap:12px; padding:12px 16px; }
+    .synth-hint{ display:none; }
+    .synth-toolbar-center{ order:3; width:100%; justify-content:space-between; }
+  }
+
 </style>
 </head>
 <body>
@@ -1337,10 +1555,10 @@
       <div class="icon-label">Publications</div>
     </div>
   </div>
-  <div class="icon p7" data-project="impression">
+  <div class="icon p7" data-project="synthesizer">
     <div class="icon-float">
-      <div class="icon-box"><img src="assets/Impression.png" alt="Impression, Sunrise"></div>
-      <div class="icon-label">Impression, Sunrise</div>
+      <div class="icon-box"><img src="assets/Impression.png" alt="Synthesizer"></div>
+      <div class="icon-label">Synthesizer</div>
     </div>
   </div>
 </div>
@@ -2259,6 +2477,17 @@
       credits: 'Solo Project',
       image: 'assets/Digital_Art.png'
     },
+    'synthesizer': {
+      title: 'Synthesizer',
+      desc: 'A generative audio-visual synthesizer exploring sound as sculpture, translating oscillator shape, harmonic content, and envelope into something you can watch as well as hear.',
+      meta: [
+        { label: 'Type', value: 'Generative Audio' },
+        { label: 'Built With', value: 'Web Audio API, Canvas' },
+        { label: 'Date', value: '2026' }
+      ],
+      dark: true,
+      custom: 'synthesizer'
+    },
     'publications': {
       title: 'Publications',
       desc: '',
@@ -2299,12 +2528,6 @@
       return;
     }
 
-    // Impression, Sunrise lives on its own dedicated page, not a popup window
-    if (key === 'impression') {
-      window.location.href = 'impression.html';
-      return;
-    }
-
     // if this project's window is already open, just focus it instead of duplicating
     if (openProjectWindows[key]) {
       bringToFront(openProjectWindows[key]);
@@ -2316,6 +2539,7 @@
 
     const frag = projectTemplate.content.cloneNode(true);
     const win = frag.querySelector('.project-window');
+    if (data.dark) win.classList.add('dark');
 
     win.querySelector('.project-title').textContent = data.title;
 
@@ -2365,6 +2589,62 @@
       } else {
         mediaEl.style.display = 'none';
       }
+    }
+
+    let synthInit = null;
+    if (data.custom === 'synthesizer') {
+      const vizId = 'synth-' + Math.random().toString(36).slice(2, 9);
+      descEl.insertAdjacentHTML('beforeend', `
+        <div class="synth-viz" data-synth-id="${vizId}">
+          <div class="synth-stage">
+            <canvas class="synth-canvas"></canvas>
+          </div>
+          <div class="synth-toolbar">
+            <div class="synth-key">G4</div>
+            <div class="synth-toolbar-center">
+              <div class="synth-knobs">
+                <div class="synth-knob" data-param="decay" data-min="0" data-max="1" data-step="0.02" data-value="0.4">
+                  <div class="synth-knob-dial"><div class="synth-knob-indicator"></div></div>
+                  <div class="synth-knob-label">Decay</div>
+                  <div class="synth-knob-value">0.40</div>
+                </div>
+                <div class="synth-knob" data-param="reverb" data-min="0" data-max="1" data-step="0.02" data-value="0.3">
+                  <div class="synth-knob-dial"><div class="synth-knob-indicator"></div></div>
+                  <div class="synth-knob-label">Reverb</div>
+                  <div class="synth-knob-value">0.30</div>
+                </div>
+                <div class="synth-knob" data-param="size" data-min="0" data-max="1" data-step="0.02" data-value="0.5">
+                  <div class="synth-knob-dial"><div class="synth-knob-indicator"></div></div>
+                  <div class="synth-knob-label">Size</div>
+                  <div class="synth-knob-value">0.50</div>
+                </div>
+                <div class="synth-knob" data-param="spread" data-min="0" data-max="1" data-step="0.02" data-value="0.5">
+                  <div class="synth-knob-dial"><div class="synth-knob-indicator"></div></div>
+                  <div class="synth-knob-label">Spread</div>
+                  <div class="synth-knob-value">0.50</div>
+                </div>
+              </div>
+              <div class="synth-divider"></div>
+              <div class="synth-waves">
+                <button type="button" class="synth-wave-btn active" data-wave="sine" aria-label="Sine wave">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12 C5 4,9 4,12 12 C15 20,19 20,22 12"/></svg>
+                </button>
+                <button type="button" class="synth-wave-btn" data-wave="triangle" aria-label="Triangle wave">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17 L7 6 L12 17 L17 6 L22 17"/></svg>
+                </button>
+                <button type="button" class="synth-wave-btn" data-wave="sawtooth" aria-label="Sawtooth wave">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17 L2 7 L9 17 L9 7 L16 17 L16 7 L22 17"/></svg>
+                </button>
+                <button type="button" class="synth-wave-btn" data-wave="square" aria-label="Square wave">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7 L2 17 L9 17 L9 7 L16 7 L16 17 L22 17"/></svg>
+                </button>
+                <button type="button" class="synth-reset-btn" aria-label="Clear">✕</button>
+              </div>
+            </div>
+            <div class="synth-hint">Click or drag to play · Scroll knobs</div>
+          </div>
+        </div>`);
+      synthInit = () => initSynthViz(win.querySelector(`[data-synth-id="${vizId}"]`));
     }
 
     if (data.interleaveVideo && (data.video || data.sketchfab)) {
@@ -2440,16 +2720,417 @@
       win.classList.add('open');
     });
 
+    if (synthInit) {
+      win._cleanup = synthInit();
+    }
+
     setupProjectWindow(win, key);
   }
 
   function closeProjectWindow(win, key){
+    if (typeof win._cleanup === 'function') win._cleanup();
     win.classList.remove('open');
     delete openProjectWindows[key];
     // remove from the DOM after the closing transition finishes
     setTimeout(() => {
       if (win.parentNode) win.parentNode.removeChild(win);
     }, 200);
+  }
+
+  // SYNTHESIZER DATA VISUALIZATION — an animated spectrum + live oscilloscope
+  // waveform drawn on canvas, plus a waveform-shape picker. Returns a cleanup
+  // function that stops the animation loop (called when the window closes).
+  function initSynthViz(root){
+    if (!root) return () => {};
+    const canvas = root.querySelector('.synth-canvas');
+    const ctx = canvas.getContext('2d');
+    const waveBtns = [...root.querySelectorAll('.synth-wave-btn')];
+    const knobEls = [...root.querySelectorAll('.synth-knob')];
+    const resetBtn = root.querySelector('.synth-reset-btn');
+    const keyLabel = root.querySelector('.synth-key');
+
+    let wave = 'sine';
+    let raf = null;
+    let cw = 0, ch = 0;
+
+    const params = { decay: 0.4, reverb: 0.3, size: 0.5, spread: 0.5 };
+
+    // note names spanning a few octaves, mapped linearly across the canvas
+    // width so clicking left-to-right plays low-to-high, like a keyboard
+    const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    const notes = [];
+    for (let oct = 2; oct <= 6; oct++) {
+      NOTE_NAMES.forEach(n => notes.push(n + oct));
+    }
+    function noteAt(xFrac){
+      const i = Math.max(0, Math.min(notes.length - 1, Math.round(xFrac * (notes.length - 1))));
+      return notes[i];
+    }
+    function noteFreq(xFrac){
+      // A4 = 440Hz reference; notes[] runs from C2, so index 33 lands on A4
+      const i = Math.max(0, Math.min(notes.length - 1, Math.round(xFrac * (notes.length - 1))));
+      const semitonesFromA4 = i - 33;
+      return 440 * Math.pow(2, semitonesFromA4 / 12);
+    }
+
+    // AUDIO ENGINE — real Web Audio synthesis, using the same waveform,
+    // decay, reverb, size, and spread controls as the visuals. Built lazily
+    // on the first interaction (autoplay policies require a user gesture).
+    let audioCtx = null, masterGain = null, compressor = null, reverbSend = null, reverbReturn = null;
+    function ensureAudio(){
+      if (audioCtx) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return;
+      }
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      audioCtx = new AC();
+
+      compressor = audioCtx.createDynamicsCompressor();
+      compressor.threshold.value = -14;
+      compressor.knee.value = 24;
+      compressor.ratio.value = 4;
+      compressor.attack.value = 0.003;
+      compressor.release.value = 0.25;
+
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 0.85;
+      masterGain.connect(compressor);
+      compressor.connect(audioCtx.destination);
+
+      // simple feedback-delay reverb: a few short delay taps with a
+      // lowpass filter in the loop, cheaper and click-free vs. a convolver
+      reverbSend = audioCtx.createGain();
+      reverbSend.gain.value = 1;
+      reverbReturn = audioCtx.createGain();
+      reverbReturn.gain.value = 0.9;
+
+      const delayTimes = [0.031, 0.047, 0.063];
+      delayTimes.forEach(dt => {
+        const delay = audioCtx.createDelay(1.0);
+        delay.delayTime.value = dt;
+        const feedback = audioCtx.createGain();
+        feedback.gain.value = 0.42;
+        const filt = audioCtx.createBiquadFilter();
+        filt.type = 'lowpass';
+        filt.frequency.value = 2600;
+
+        reverbSend.connect(delay);
+        delay.connect(filt);
+        filt.connect(feedback);
+        feedback.connect(delay);
+        filt.connect(reverbReturn);
+      });
+      reverbReturn.connect(masterGain);
+    }
+
+    function playNote(freq, velocity){
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+
+      // "size" adds unison voices (richness/thickness), "spread" pans
+      // them wider across the stereo field
+      const voiceCount = 1 + Math.round(params.size * 3);
+      const decayTime = 0.18 + params.decay * 1.6;
+      const peak = (0.22 / Math.sqrt(voiceCount)) * velocity;
+      const reverbAmount = params.reverb * 0.8;
+
+      for (let v = 0; v < voiceCount; v++) {
+        const osc = audioCtx.createOscillator();
+        osc.type = wave;
+        const detuneSpan = voiceCount > 1 ? (v / (voiceCount - 1) - 0.5) * (6 + params.size * 10) : 0;
+        osc.frequency.value = freq;
+        osc.detune.value = detuneSpan;
+
+        const pan = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+        if (pan) pan.pan.value = voiceCount > 1 ? (v / (voiceCount - 1) - 0.5) * 2 * params.spread : 0;
+
+        const env = audioCtx.createGain();
+        env.gain.setValueAtTime(0, now);
+        env.gain.linearRampToValueAtTime(peak, now + 0.006);
+        env.gain.setTargetAtTime(0, now + 0.006, decayTime * 0.35);
+
+        const dryGain = audioCtx.createGain();
+        dryGain.gain.value = 1 - reverbAmount * 0.5;
+        const wetGain = audioCtx.createGain();
+        wetGain.gain.value = reverbAmount;
+
+        osc.connect(env);
+        if (pan) {
+          env.connect(pan);
+          pan.connect(dryGain);
+          pan.connect(wetGain);
+        } else {
+          env.connect(dryGain);
+          env.connect(wetGain);
+        }
+        dryGain.connect(masterGain);
+        wetGain.connect(reverbSend);
+
+        osc.start(now);
+        osc.stop(now + decayTime * 3 + 0.2);
+        osc.onended = () => {
+          osc.disconnect(); env.disconnect(); dryGain.disconnect(); wetGain.disconnect();
+          if (pan) pan.disconnect();
+        };
+      }
+    }
+
+    // starfield, regenerated on resize: a sparse scatter of background
+    // stars plus a denser diagonal band (the "Milky Way" arm), like the
+    // reference photo. A soft nebula glow is pre-rendered once per resize
+    // so it doesn't have to be redrawn with expensive gradients every frame.
+    let stars = [];
+    let nebulaCanvas = null;
+    // each waveform gets its own band orientation + nebula color palette,
+    // so switching sine/triangle/sawtooth/square visibly reshapes the sky
+    const NEBULA_THEMES = {
+      sine:     { angle: -0.62, color: '120,150,210', blobs: 5, spreadMul: 1.0  }, // blue
+      triangle: { angle:  0.62, color: '170,120,215', blobs: 4, spreadMul: 0.85 }, // purple
+      sawtooth: { angle:  1.55, color: '110,205,180', blobs: 6, spreadMul: 1.15 }, // teal/green
+      square:   { angle:  0.0,  color: '225,150,90',  blobs: 4, spreadMul: 0.9  }  // amber
+    };
+    function bandGeometry(theme){
+      const cx = cw / 2, cy = ch / 2;
+      const diag = Math.hypot(cw, ch) * 0.75;
+      const dx = Math.cos(theme.angle) * diag;
+      const dy = Math.sin(theme.angle) * diag;
+      return { bx1: cx - dx, by1: cy - dy, bx2: cx + dx, by2: cy + dy };
+    }
+
+    function makeStars(){
+      const theme = NEBULA_THEMES[wave] || NEBULA_THEMES.sine;
+      const { bx1, by1, bx2, by2 } = bandGeometry(theme);
+
+      const scattered = Math.round((cw * ch) / 5500) + 40;
+      const banded = Math.round((cw * ch) / 1800) + 60;
+
+      const list = [];
+      for (let i = 0; i < scattered; i++) {
+        list.push(makeStar(Math.random() * cw, Math.random() * ch));
+      }
+      for (let i = 0; i < banded; i++) {
+        const f = Math.random();
+        const cx = bx1 + (bx2 - bx1) * f;
+        const cy = by1 + (by2 - by1) * f;
+        // gaussian-ish scatter perpendicular to the band, denser near the core
+        const spread = (Math.random() + Math.random() + Math.random() - 1.5) * (cw * 0.09) * theme.spreadMul;
+        // perpendicular direction to the band
+        const dx = (by2 - by1), dy = -(bx2 - bx1);
+        const len = Math.hypot(dx, dy) || 1;
+        list.push(makeStar(cx + (dx / len) * spread, cy + (dy / len) * spread));
+      }
+      stars = list;
+
+      // pre-render the nebula haze onto an offscreen canvas at CSS resolution
+      nebulaCanvas = document.createElement('canvas');
+      nebulaCanvas.width = Math.max(1, Math.round(cw));
+      nebulaCanvas.height = Math.max(1, Math.round(ch));
+      const nctx = nebulaCanvas.getContext('2d');
+      const blobs = theme.blobs;
+      for (let i = 0; i < blobs; i++) {
+        const f = (i + 0.5) / blobs;
+        const cx = bx1 + (bx2 - bx1) * f;
+        const cy = by1 + (by2 - by1) * f;
+        const r = Math.max(cw, ch) * (0.2 + Math.random() * 0.1) * theme.spreadMul;
+        const g = nctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        g.addColorStop(0, `rgba(${theme.color},0.16)`);
+        g.addColorStop(0.5, `rgba(${theme.color},0.07)`);
+        g.addColorStop(1, `rgba(${theme.color},0)`);
+        nctx.fillStyle = g;
+        nctx.fillRect(0, 0, nebulaCanvas.width, nebulaCanvas.height);
+      }
+    }
+    function makeStar(x, y){
+      const warm = Math.random() < 0.18;
+      return {
+        x, y,
+        r: Math.random() * 1.3 + 0.25,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.7 + 0.25,
+        base: Math.random() * 0.55 + 0.2,
+        tint: warm ? '255,244,230' : '220,232,255'
+      };
+    }
+    // soft nebula "puffs", spawned by clicking or dragging on the stage.
+    // No fireworks — just gentle glowing clouds in the current waveform's
+    // nebula color, that bloom outward and fade.
+    let sparks = [];
+    function spawnPuff(x, y, strength){
+      const theme = NEBULA_THEMES[wave] || NEBULA_THEMES.sine;
+      const maxR = (30 + params.spread * 120) * (0.55 + params.size * 1.2) * strength;
+      const count = 1 + Math.round(params.size * 2);
+      for (let i = 0; i < count; i++) {
+        const offR = i === 0 ? 0 : maxR * 0.2 * Math.random();
+        const ang = Math.random() * Math.PI * 2;
+        sparks.push({
+          x: x + Math.cos(ang) * offR,
+          y: y + Math.sin(ang) * offR,
+          age: 0,
+          life: 1,
+          maxR: maxR * (0.7 + Math.random() * 0.5),
+          color: theme.color
+        });
+      }
+      if (sparks.length > 240) sparks.splice(0, sparks.length - 240);
+    }
+
+    function resize(){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cw = rect.width;
+      ch = rect.height;
+      canvas.width = Math.max(1, Math.round(cw * dpr));
+      canvas.height = Math.max(1, Math.round(ch * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      makeStars();
+    }
+
+    // the nebula haze is invisible at rest and only glows in while the
+    // user is actively playing — "energy" rises on each note and decays
+    // back toward zero when idle
+    let energy = 0;
+
+    let t = 0;
+    function draw(){
+      // pure black at rest; only fades toward a dark navy while energy
+      // (from playing) is present, so an idle screen is genuinely black
+      const fadeAlpha = Math.max(0.05, 0.32 - params.reverb * 0.27);
+      const navyMix = Math.min(1, energy);
+      ctx.fillStyle = `rgba(${Math.round(4 * navyMix)},${Math.round(7 * navyMix)},${Math.round(18 * navyMix)},${fadeAlpha})`;
+      ctx.fillRect(0, 0, cw, ch);
+
+      energy *= 0.965;
+      const skyAlpha = Math.min(1, energy);
+      if (nebulaCanvas && energy > 0.01) {
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalAlpha = 0.55 * skyAlpha;
+        ctx.drawImage(nebulaCanvas, 0, 0, cw, ch);
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      // starfield only shows while playing — invisible on an idle black screen
+      if (skyAlpha > 0.01) {
+        for (const s of stars) {
+          const a = s.base * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase)) * skyAlpha;
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${s.tint},${a})`;
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // decay controls how slowly each puff's life drains — higher decay
+      // means it lingers longer before fading out
+      const lifeStep = (0.008 + (1 - params.decay) * 0.055) * 0.6;
+      const next = [];
+      for (const s of sparks) {
+        s.age = Math.min(1, s.age + 0.045);
+        s.life -= lifeStep;
+        if (s.life <= 0) continue;
+
+        const eased = 1 - Math.pow(1 - s.age, 2);
+        const r = Math.max(1, s.maxR * eased);
+        const alpha = Math.max(0, s.life) * 0.5;
+        const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r);
+        g.addColorStop(0, `rgba(${s.color},${alpha})`);
+        g.addColorStop(0.55, `rgba(${s.color},${alpha * 0.4})`);
+        g.addColorStop(1, `rgba(${s.color},0)`);
+        ctx.beginPath();
+        ctx.fillStyle = g;
+        ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+        ctx.fill();
+        next.push(s);
+      }
+      sparks = next;
+
+      t += 0.02;
+      raf = requestAnimationFrame(draw);
+    }
+
+    // pointer interaction — click or drag across the stage to play
+    let dragging = false;
+    let lastTrailAt = 0;
+    function playAt(x, y, big){
+      const xFrac = Math.max(0, Math.min(1, x / cw));
+      keyLabel.textContent = noteAt(xFrac);
+      spawnPuff(x, y, big ? 1 : 0.5);
+      energy = Math.min(1.4, energy + (big ? 0.6 : 0.28));
+      ensureAudio();
+      playNote(noteFreq(xFrac), big ? 1 : 0.55);
+    }
+    canvas.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      canvas.setPointerCapture(e.pointerId);
+      const rect = canvas.getBoundingClientRect();
+      playAt(e.clientX - rect.left, e.clientY - rect.top, true);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const now = performance.now();
+      if (now - lastTrailAt < 35) return;
+      lastTrailAt = now;
+      const rect = canvas.getBoundingClientRect();
+      playAt(e.clientX - rect.left, e.clientY - rect.top, false);
+    });
+    const stopDrag = () => { dragging = false; };
+    canvas.addEventListener('pointerup', stopDrag);
+    canvas.addEventListener('pointercancel', stopDrag);
+
+    // knobs — scroll to adjust, matching the "scroll knobs" hint
+    knobEls.forEach(knob => {
+      const param = knob.dataset.param;
+      const min = parseFloat(knob.dataset.min);
+      const max = parseFloat(knob.dataset.max);
+      const step = parseFloat(knob.dataset.step);
+      const indicator = knob.querySelector('.synth-knob-indicator');
+      const valueEl = knob.querySelector('.synth-knob-value');
+
+      function apply(value){
+        value = Math.max(min, Math.min(max, value));
+        params[param] = value;
+        knob.dataset.value = value;
+        const norm = (value - min) / (max - min);
+        indicator.style.transform = `rotate(${-135 + norm * 270}deg)`;
+        valueEl.textContent = value.toFixed(2);
+      }
+
+      knob.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -step : step;
+        apply(parseFloat(knob.dataset.value) + delta);
+      }, { passive: false });
+
+      apply(parseFloat(knob.dataset.value));
+    });
+
+    waveBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        wave = btn.dataset.wave;
+        waveBtns.forEach(b => b.classList.toggle('active', b === btn));
+        makeStars();
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      sparks = [];
+      energy = 0;
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, cw, ch);
+    });
+
+    resize();
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, cw, ch);
+    raf = requestAnimationFrame(draw);
+    window.addEventListener('resize', resize);
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      if (audioCtx) audioCtx.close().catch(() => {});
+    };
   }
 
   function setupProjectWindow(win, key){
@@ -2590,7 +3271,7 @@
     keys.forEach(k => {
       const w = openProjectWindows[k];
       const z = parseInt(w.style.zIndex || '0', 10);
-      if (z > topZ) { topZ = z; topKey = k; topWin = w; }
+      if (z > topZ) { topKey = k; topWin = w; topZ = z; }
     });
 
     if (topWin) closeProjectWindow(topWin, topKey);
