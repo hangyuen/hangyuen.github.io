@@ -23,86 +23,34 @@
   body{
     font-family:var(--sys);
     color:var(--ink);
-    background:
-      radial-gradient(ellipse 90% 70% at 20% -10%, #eef4fb 0%, transparent 55%),
-      radial-gradient(ellipse 90% 70% at 100% 0%, #fbeeee 0%, transparent 50%),
-      #f5f5f7;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:32px 18px;
+    background:#aebbc0;
+    height:100vh;
+    width:100vw;
+    overflow:hidden;
+    position:relative;
   }
   a{ color:inherit; text-decoration:none; }
 
-  .mac-window{
-    width:100%;
-    max-width:980px;
-    background:#ffffff;
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow:0 24px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08);
-  }
-
-  /* TITLEBAR — same chrome language as the main site's modals: a single
-     functional red "close" dot, centered title, hairline rule below. */
-  .mac-titlebar{
-    position:relative;
+  /* PAINTING — fills the entire viewport */
+  .canvas-wrap{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    background:#aebbc0;
     display:flex;
     align-items:center;
-    padding:13px 18px;
-    border-bottom:1px solid var(--hair);
-  }
-  .mac-dot{
-    width:14px; height:14px; border-radius:50%;
-    border:none; padding:0; margin:0; box-sizing:border-box;
-    background:#ff5f57;
-    cursor:pointer;
-    position:relative;
-    transition:filter 0.15s ease;
-    flex-shrink:0;
-  }
-  .mac-dot::after,
-  .mac-dot::before{
-    content:'';
-    position:absolute; top:50%; left:50%;
-    width:10px; height:1.6px;
-    margin-top:-0.8px; margin-left:-5px;
-    background:rgba(75,0,0,0.75);
-    opacity:0;
-    transition:opacity 0.15s ease;
-  }
-  .mac-dot::after{ transform:rotate(45deg); }
-  .mac-dot::before{ transform:rotate(-45deg); }
-  .mac-dot:hover{ filter:brightness(0.95); }
-  .mac-dot:hover::after,
-  .mac-dot:hover::before{ opacity:1; }
-
-  .mac-title{
-    position:absolute;
-    left:50%; top:50%;
-    transform:translate(-50%,-50%);
-    font-size:13px;
-    font-weight:600;
-    letter-spacing:-0.006em;
-    color:var(--ink);
-  }
-  .mac-title span{
-    font-weight:400;
-    color:var(--dim);
-    margin-left:6px;
-  }
-
-  /* CANVAS */
-  .canvas-wrap{
-    position:relative;
-    width:100%;
-    aspect-ratio:16/9;
-    background:#aebbc0;
+    justify-content:center;
     overflow:hidden;
   }
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+  }
   canvas{
-    display:block; width:100%; height:100%;
+    display:block;
+    width:100%; height:100%;
     image-rendering:pixelated; image-rendering:crisp-edges;
     touch-action:none; cursor:grab;
   }
@@ -116,7 +64,7 @@
     background-size:6px 6px;
   }
   .canvas-hint{
-    position:absolute; left:14px; bottom:14px;
+    position:absolute; left:16px; bottom:16px;
     padding:7px 12px;
     background:rgba(255,255,255,0.72);
     backdrop-filter:blur(14px) saturate(160%);
@@ -125,12 +73,55 @@
     font-size:11.5px;
     color:#2a2a2c;
     box-shadow:0 4px 14px rgba(0,0,0,0.12);
+    z-index:5;
   }
   @media (max-width:640px){ .canvas-hint{ display:none; } }
 
-  /* CONTROLS — a settings-panel strip below the canvas, always visible */
-  .controls{
-    padding:20px 24px 22px;
+  /* CONTROLS TOGGLE — small floating handle, always visible */
+  .controls-toggle{
+    position:fixed;
+    right:18px; bottom:18px;
+    z-index:20;
+    font-family:var(--sys);
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink);
+    background:rgba(255,255,255,0.82);
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
+    border:none;
+    border-radius:980px;
+    padding:10px 18px;
+    cursor:pointer;
+    box-shadow:0 6px 20px rgba(0,0,0,0.18);
+    transition:background 0.15s ease, transform 0.15s ease;
+  }
+  .controls-toggle:hover{ transform:translateY(-1px); }
+
+  /* CONTROLS PANEL — floats over the painting, doesn't box it in */
+  .controls-panel{
+    position:fixed;
+    right:18px; bottom:70px;
+    z-index:20;
+    width:320px;
+    max-width:calc(100vw - 36px);
+    max-height:min(72vh, 560px);
+    overflow-y:auto;
+    background:rgba(255,255,255,0.88);
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    border-radius:16px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.1);
+    padding:16px 18px 18px;
+    opacity:0;
+    transform:translateY(10px) scale(0.98);
+    pointer-events:none;
+    transition:opacity 0.18s ease, transform 0.18s ease;
+  }
+  .controls-panel.open{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    pointer-events:auto;
   }
 
   .segmented{
@@ -139,7 +130,7 @@
     padding:3px;
     background:var(--panel);
     border-radius:10px;
-    margin-bottom:18px;
+    margin-bottom:16px;
   }
   .segmented button{
     flex:1;
@@ -149,7 +140,7 @@
     border-radius:8px;
     font:inherit;
     font-family:var(--sys);
-    font-size:12.5px;
+    font-size:12px;
     font-weight:500;
     color:var(--dim);
     cursor:pointer;
@@ -164,24 +155,24 @@
   .panel-sub{
     font-size:12px;
     color:var(--dim2);
-    margin:-10px 0 16px;
+    margin:-8px 0 14px;
   }
 
   .control{
     display:grid;
-    grid-template-columns:96px 1fr 46px;
-    gap:12px;
+    grid-template-columns:88px 1fr 42px;
+    gap:10px;
     align-items:center;
-    margin:14px 0;
+    margin:12px 0;
   }
   .control label{
-    font-size:13px;
+    font-size:12.5px;
     color:#3a3a3c;
   }
   .control output{
     text-align:right;
     font-variant-numeric:tabular-nums;
-    font-size:12px;
+    font-size:11.5px;
     color:var(--dim);
   }
   input[type="range"]{
@@ -193,29 +184,29 @@
   .pill{
     border:0; border-radius:999px; padding:7px 14px;
     background:var(--panel); color:var(--ink);
-    cursor:pointer; font:inherit; font-family:var(--sys); font-size:12.5px; font-weight:500;
+    cursor:pointer; font:inherit; font-family:var(--sys); font-size:12px; font-weight:500;
     transition:background 0.15s ease, color 0.15s ease;
   }
   .pill.active{ background:var(--blue); color:#fff; }
 
   .smallnote{
-    font-size:12px;
+    font-size:11.5px;
     line-height:1.5;
     color:var(--dim2);
-    margin-top:14px;
+    margin-top:12px;
   }
 
   .footer-row{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    margin-top:20px;
-    padding-top:16px;
+    margin-top:16px;
+    padding-top:14px;
     border-top:1px solid var(--hair);
   }
   .text-btn{
     font-family:var(--sys);
-    font-size:12.5px;
+    font-size:12px;
     font-weight:500;
     color:var(--dim);
     background:none;
@@ -227,7 +218,7 @@
   .text-btn:hover{ color:var(--ink); }
   .pill-btn{
     font-family:var(--sys);
-    font-size:12.5px;
+    font-size:12px;
     font-weight:600;
     color:#fff;
     background:var(--blue);
@@ -241,45 +232,39 @@
   .pill-btn:active{ transform:translateY(0) scale(0.97); }
 
   @media (max-width:640px){
-    body{ padding:0; }
-    .mac-window{ border-radius:0; max-width:100%; min-height:100vh; display:flex; flex-direction:column; }
-    .canvas-wrap{ flex-shrink:0; }
-    .controls{ padding:18px 18px 20px; flex:1; }
-    .control{ grid-template-columns:82px 1fr 40px; }
+    .controls-panel{ right:10px; left:10px; width:auto; bottom:64px; }
+    .controls-toggle{ right:10px; bottom:14px; }
   }
 </style>
 </head>
 <body>
 
-  <main class="mac-window">
-    <div class="mac-titlebar">
-      <button class="mac-dot" id="closeBtn" aria-label="Back to hangyuan.github.io"></button>
-      <div class="mac-title">Impression, Sunrise<span>Claude Monet, 1872</span></div>
-    </div>
-
-    <div class="canvas-wrap">
+  <div class="canvas-wrap">
+    <div class="stage">
       <canvas id="scene" width="209" height="118" aria-label="Interactive pixel version of Impression, Sunrise. Drag the sun and boat."></canvas>
       <div class="grain" aria-hidden="true"></div>
       <div class="canvas-hint">Drag the sun or the boat directly</div>
     </div>
+  </div>
 
-    <section class="controls">
-      <nav class="segmented" id="tabs" aria-label="Painting controls">
-        <button data-panel="sun" class="active">Sun</button>
-        <button data-panel="boat">Boat</button>
-        <button data-panel="water">Water</button>
-        <button data-panel="fog">Fog</button>
-        <button data-panel="mood">Mood</button>
-      </nav>
+  <button class="controls-toggle" id="controlsToggle">Adjust painting</button>
 
-      <div id="panelBody"></div>
+  <section class="controls-panel" id="controlsPanel">
+    <nav class="segmented" id="tabs" aria-label="Painting controls">
+      <button data-panel="sun" class="active">Sun</button>
+      <button data-panel="boat">Boat</button>
+      <button data-panel="water">Water</button>
+      <button data-panel="fog">Fog</button>
+      <button data-panel="mood">Mood</button>
+    </nav>
 
-      <div class="footer-row">
-        <button class="text-btn" id="resetBtn">Reset</button>
-        <button class="pill-btn" id="pauseBtn">Pause</button>
-      </div>
-    </section>
-  </main>
+    <div id="panelBody"></div>
+
+    <div class="footer-row">
+      <button class="text-btn" id="resetBtn">Reset</button>
+      <button class="pill-btn" id="pauseBtn">Pause</button>
+    </div>
+  </section>
 
 <script>
 (() => {
@@ -291,9 +276,12 @@
   const tabButtons = [...document.querySelectorAll('#tabs button')];
   const pauseBtn = document.getElementById('pauseBtn');
   const resetBtn = document.getElementById('resetBtn');
-  const closeBtn = document.getElementById('closeBtn');
+  const controlsToggle = document.getElementById('controlsToggle');
+  const controlsPanel = document.getElementById('controlsPanel');
 
-  closeBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
+  controlsToggle.addEventListener('click', () => {
+    controlsPanel.classList.toggle('open');
+  });
 
   const base = new Image();
   base.src = 'assets/Impression.png';
@@ -306,10 +294,10 @@
   };
 
   const defaults = {
-    sunX: 123, sunY: 42, sunSize: 3.3, sunGlow: 0.42,
-    boatX: 95, boatY: 89, boatScale: 1,
-    waterSpeed: 0.65, waterStrength: 1.35, wind: 0.35,
-    fog: 0.16, clarity: 0.18, atmosphere: 0,
+    sunX: 123, sunY: 42, sunSize: 3.0, sunGlow: 0.28,
+    boatX: 95, boatY: 89, boatScale: 0.85,
+    waterSpeed: 0.45, waterStrength: 0.9, wind: 0.2,
+    fog: 0.24, clarity: 0.28, atmosphere: 0,
     paused: false
   };
   const state = {...defaults};
@@ -419,8 +407,8 @@
     const p = canvasPoint(ev);
     const ds = Math.hypot(p.x-state.sunX,p.y-state.sunY);
     const db = Math.hypot(p.x-state.boatX,p.y-state.boatY);
-    if(ds < 11){ dragging='sun'; renderPanel('sun'); }
-    else if(db < 14){ dragging='boat'; renderPanel('boat'); }
+    if(ds < 11){ dragging='sun'; renderPanel('sun'); controlsPanel.classList.add('open'); }
+    else if(db < 14){ dragging='boat'; renderPanel('boat'); controlsPanel.classList.add('open'); }
     else return;
     canvas.setPointerCapture(ev.pointerId);
     canvas.classList.add('dragging');
