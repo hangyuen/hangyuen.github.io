@@ -181,6 +181,7 @@
   .icon.p4 .icon-float{ animation-duration: 7.4s; animation-delay: -3.1s; }
   .icon.p5 .icon-float{ animation-duration: 8.9s; animation-delay: -5.4s; }
   .icon.p6 .icon-float{ animation-duration: 8.1s; animation-delay: -2.3s; }
+  .icon.p7 .icon-float{ animation-duration: 8.3s; animation-delay: -3.9s; }
 
   .icon-box{
     width:108px;
@@ -252,6 +253,7 @@
   .icon.p4{ top:41%; left:43%; }   /* Threading Inwards */
   .icon.p5{ top:52%; left:23%; }   /* Art Book Design */
   .icon.p6{ top:52%; left:68%; }   /* Voice AI */
+  .icon.p7{ top:70%; left:47%; }   /* Impression, Sunrise */
 
   /* DOCK */
   .dock{
@@ -1335,6 +1337,12 @@
       <div class="icon-label">Publications</div>
     </div>
   </div>
+  <div class="icon p7" data-project="impression">
+    <div class="icon-float">
+      <div class="icon-box"><img src="assets/Impression.png" alt="Impression, Sunrise"></div>
+      <div class="icon-label">Impression, Sunrise</div>
+    </div>
+  </div>
 </div>
 
 <div class="dock">
@@ -2288,6 +2296,12 @@
     // Digital Arts lives on its own dedicated gallery page, not a popup window
     if (key === 'digital-art') {
       window.location.href = 'digital-arts.html';
+      return;
+    }
+
+    // Impression, Sunrise lives on its own dedicated page, not a popup window
+    if (key === 'impression') {
+      window.location.href = 'impression.html';
       return;
     }
 
