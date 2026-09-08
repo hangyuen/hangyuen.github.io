@@ -1,422 +1,194 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cosmic Dust Presence</title>
-  <style>
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #03050a;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    canvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    #video {
-      position: fixed;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #hud {
-      position: fixed;
-      left: 22px;
-      bottom: 20px;
-      color: rgba(255,255,255,.62);
-      font-size: 12px;
-      letter-spacing: .08em;
-      line-height: 1.55;
-      pointer-events: none;
-      user-select: none;
-      mix-blend-mode: screen;
-    }
-
-    #status {
-      position: fixed;
-      top: 18px;
-      right: 20px;
-      color: rgba(255,255,255,.55);
-      font-size: 11px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      pointer-events: none;
-    }
-
-    #start {
-      position: fixed;
-      inset: 0;
-      margin: auto;
-      width: max-content;
-      height: max-content;
-      padding: 13px 18px;
-      border: 1px solid rgba(255,255,255,.22);
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      color: white;
-      font-size: 14px;
-      letter-spacing: .02em;
-      cursor: pointer;
-    }
-
-    #start:hover {
-      background: rgba(255,255,255,.1);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cosmic Dust</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+video{position:fixed;left:-9999px;width:320px;height:240px}
+#start{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:5;border:1px solid #ffffff44;border-radius:30px;padding:14px 22px;background:#ffffff12;color:#fff;font:14px -apple-system,BlinkMacSystemFont,sans-serif}
+#status{position:fixed;top:18px;right:18px;color:#ffffff88;font:11px -apple-system,BlinkMacSystemFont,sans-serif;z-index:5}
+</style>
 </head>
 <body>
-  <video id="video" autoplay muted playsinline></video>
-  <canvas id="canvas"></canvas>
+<video id="video" autoplay muted playsinline></video>
+<canvas id="canvas"></canvas>
+<button id="start">Allow Camera</button>
+<div id="status">camera idle</div>
 
-  <div id="status">camera idle</div>
-  <div id="hud">
-    move closer → gravity increases<br>
-    move away → dust expands
-  </div>
+<script>
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+const video=document.getElementById("video");
+const start=document.getElementById("start");
+const status=document.getElementById("status");
 
-  <button id="start">Enter the Field</button>
+let W,H,DPR;
+let particles=[];
+let cameraOn=false;
+let proximity=.15;
+let targetProximity=.15;
+let fieldX=.5, targetX=.5;
+let prevFieldX=.5;
+let wind=0;
+let scanCanvas=document.createElement("canvas");
+let scanCtx=scanCanvas.getContext("2d",{willReadFrequently:true});
+scanCanvas.width=96;
+scanCanvas.height=72;
 
-  <script type="module">
-    import {
-      FaceLandmarker,
-      FilesetResolver
-    } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22";
+function resize(){
+  W=innerWidth; H=innerHeight; DPR=Math.min(devicePixelRatio||1,2);
+  canvas.width=W*DPR; canvas.height=H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  makeParticles();
+}
+function makeParticles(){
+  particles=[];
+  const count=Math.min(3600,Math.max(1800,Math.floor(W*H/380)));
+  for(let i=0;i<count;i++){
+    particles.push({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-.5)*.08,vy:(Math.random()-.5)*.08,
+      s:.35+Math.random()*1.25,
+      a:.08+Math.random()*.42,
+      seed:Math.random()*1000
+    });
+  }
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d", { alpha: false });
-    const video = document.getElementById("video");
-    const startBtn = document.getElementById("start");
-    const statusEl = document.getElementById("status");
+// No external libraries.
+// We estimate "near/far" from frame-to-frame image energy in the center.
+// This makes the page much more reliable on GitHub Pages / mobile Safari.
+function analyzeCamera(){
+  if(!cameraOn || video.readyState<2)return;
+  try{
+    scanCtx.save();
+    scanCtx.scale(-1,1);
+    scanCtx.drawImage(video,-96,0,96,72);
+    scanCtx.restore();
+    const d=scanCtx.getImageData(0,0,96,72).data;
 
-    let W = innerWidth, H = innerHeight, DPR = Math.min(devicePixelRatio || 1, 2);
-    let faceLandmarker = null;
-    let running = false;
-    let lastVideoTime = -1;
+    let total=0, weightedX=0, weight=0;
+    let centerEnergy=0, edgeEnergy=0, centerN=0, edgeN=0;
 
-    // Presence state
-    const presence = {
-      detected: false,
-      x: 0.5,
-      y: 0.5,
-      proximity: 0,
-      targetProximity: 0,
-      vx: 0,
-      vy: 0,
-      energy: 0,
-      lastX: 0.5,
-      lastY: 0.5
-    };
+    for(let y=0;y<72;y+=2){
+      for(let x=0;x<96;x+=2){
+        const i=(y*96+x)*4;
+        const lum=(d[i]+d[i+1]+d[i+2])/3;
+        const contrast=Math.abs(lum-110)+12;
+        total+=lum;
+        weightedX+=x*contrast;
+        weight+=contrast;
 
-    function resize() {
-      W = innerWidth;
-      H = innerHeight;
-      DPR = Math.min(devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(W * DPR);
-      canvas.height = Math.floor(H * DPR);
-      canvas.style.width = W + "px";
-      canvas.style.height = H + "px";
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      createParticles();
-    }
-
-    // -----------------------
-    // Particle system
-    // -----------------------
-    const particles = [];
-    let particleCount = 2600;
-
-    function rand(a, b) {
-      return a + Math.random() * (b - a);
-    }
-
-    function createParticles() {
-      particles.length = 0;
-      particleCount = Math.round(Math.min(3400, Math.max(1800, W * H / 420)));
-
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          vx: rand(-0.06, 0.06),
-          vy: rand(-0.06, 0.06),
-          size: Math.random() < 0.9 ? rand(0.35, 1.1) : rand(1.2, 2.2),
-          alpha: rand(0.05, 0.42),
-          seed: Math.random() * 1000,
-          depth: rand(0.2, 1),
-          orbit: rand(-1, 1),
-          twinkle: rand(0.25, 1.2)
-        });
+        const nx=Math.abs(x-48)/48;
+        const ny=Math.abs(y-36)/36;
+        if(nx<.42 && ny<.55){centerEnergy+=contrast;centerN++}
+        else{edgeEnergy+=contrast;edgeN++}
       }
     }
 
-    function softClamp(v, min, max) {
-      return Math.max(min, Math.min(max, v));
+    targetX=clamp((weightedX/(weight||1))/96,.18,.82);
+
+    // Center dominance works as a lightweight proximity proxy.
+    const c=centerEnergy/(centerN||1);
+    const e=edgeEnergy/(edgeN||1);
+    const ratio=c/(e||1);
+    targetProximity=clamp(.18+(ratio-.82)*1.15,.08,1);
+
+    status.textContent="camera active";
+  }catch(e){}
+}
+
+function frame(t){
+  requestAnimationFrame(frame);
+  if(cameraOn && (t|0)%3===0) analyzeCamera();
+
+  proximity+=(targetProximity-proximity)*.035;
+  fieldX+=(targetX-fieldX)*.07;
+  wind+=(fieldX-prevFieldX)*2.2;
+  wind*=.90;
+  prevFieldX=fieldX;
+
+  ctx.fillStyle="rgba(2,4,10,.34)";
+  ctx.fillRect(0,0,W,H);
+
+  const gx=fieldX*W, gy=H*.48;
+  const radius=Math.min(W,H)*(.20+proximity*.38);
+
+  const bg=ctx.createRadialGradient(gx,gy,0,gx,gy,radius*1.8);
+  bg.addColorStop(0,`rgba(40,55,90,${.025+proximity*.055})`);
+  bg.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.save();
+  ctx.globalCompositeOperation="lighter";
+
+  for(const p of particles){
+    const dx=gx-p.x, dy=gy-p.y;
+    const dist=Math.sqrt(dx*dx+dy*dy)+1;
+    const influence=Math.max(0,1-dist/(radius*2.2));
+
+    // Near = stronger gravity = visibly denser cloud.
+    const pull=(.0015+proximity*.045)*influence*influence;
+    p.vx+=dx/dist*pull;
+    p.vy+=dy/dist*pull;
+
+    // Left/right movement creates a dust current.
+    p.vx+=wind*influence*.22;
+
+    // Cosmic drift.
+    p.vx+=Math.sin(t*.00018+p.seed)*.00045;
+    p.vy+=Math.cos(t*.00015+p.seed*.7)*.00045;
+
+    // Far = gentle expansion.
+    if(proximity<.35){
+      const ex=p.x-W/2, ey=p.y-H/2, ed=Math.sqrt(ex*ex+ey*ey)+1;
+      const push=(.35-proximity)*.00045;
+      p.vx+=ex/ed*push;
+      p.vy+=ey/ed*push;
     }
 
-    function drawBackground(t) {
-      const g = ctx.createRadialGradient(
-        W * (0.5 + (presence.x - 0.5) * 0.08),
-        H * (0.48 + (presence.y - 0.5) * 0.05),
-        0,
-        W * 0.5,
-        H * 0.5,
-        Math.max(W, H) * 0.75
-      );
+    p.vx*=.994; p.vy*=.994;
+    p.x+=p.vx; p.y+=p.vy;
 
-      const glow = 0.018 + presence.proximity * 0.032;
-      g.addColorStop(0, `rgba(18,24,40,${0.9 + glow})`);
-      g.addColorStop(0.45, "rgba(7,10,18,1)");
-      g.addColorStop(1, "rgba(2,4,8,1)");
+    if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;
+    if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;
 
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
+    const alpha=p.a*(.42+proximity*1.55);
+    const size=p.s*(.72+proximity*.52);
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(205,220,245,${Math.min(alpha,.8)})`;
+    ctx.fill();
+  }
+  ctx.restore();
+}
 
-      // very faint cosmic haze
-      ctx.save();
-      ctx.globalCompositeOperation = "screen";
-      for (let i = 0; i < 3; i++) {
-        const px = W * (0.25 + i * 0.26) + Math.sin(t * 0.00008 + i) * 80;
-        const py = H * (0.3 + i * 0.13);
-        const rg = ctx.createRadialGradient(px, py, 0, px, py, Math.min(W, H) * 0.25);
-        rg.addColorStop(0, `rgba(120,150,210,${0.006 + presence.proximity * 0.007})`);
-        rg.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = rg;
-        ctx.fillRect(0, 0, W, H);
-      }
-      ctx.restore();
-    }
+start.onclick=async()=>{
+  status.textContent="requesting camera…";
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:"user"},audio:false
+    });
+    video.srcObject=stream;
+    await video.play();
+    cameraOn=true;
+    start.remove();
+    status.textContent="camera active";
+  }catch(e){
+    status.textContent="camera blocked";
+    start.textContent="Retry Camera";
+    alert("Camera could not start. Please allow camera access in your browser settings.");
+  }
+};
 
-    function updateParticles(t) {
-      const cx = presence.x * W;
-      const cy = presence.y * H;
-
-      const prox = presence.proximity;
-      const fieldRadius = Math.min(W, H) * (0.22 + prox * 0.28);
-      const gravity = 0.002 + prox * 0.032;
-      const windX = presence.vx * W * 0.0036;
-      const windY = presence.vy * H * 0.0026;
-
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-
-      for (const p of particles) {
-        // low-frequency drifting
-        const n1 = Math.sin(t * 0.00022 + p.seed) + Math.cos(t * 0.00015 + p.seed * 0.37);
-        const n2 = Math.cos(t * 0.00019 + p.seed * 1.7) - Math.sin(t * 0.00012 + p.seed * 0.53);
-
-        p.vx += n1 * 0.0008 * p.depth;
-        p.vy += n2 * 0.0008 * p.depth;
-
-        if (presence.detected || presence.energy > 0.01) {
-          const dx = cx - p.x;
-          const dy = cy - p.y;
-          const d2 = dx * dx + dy * dy;
-          const d = Math.sqrt(d2) + 0.0001;
-
-          // Attraction: stronger when near camera
-          if (d < fieldRadius * 2.4) {
-            const falloff = 1 - softClamp(d / (fieldRadius * 2.4), 0, 1);
-            const pull = gravity * falloff * falloff * p.depth;
-
-            p.vx += (dx / d) * pull;
-            p.vy += (dy / d) * pull;
-
-            // subtle swirl
-            const swirl = 0.003 * prox * falloff * p.orbit;
-            p.vx += (-dy / d) * swirl;
-            p.vy += ( dx / d) * swirl;
-
-            // movement causes cosmic disturbance
-            p.vx += windX * falloff * p.depth;
-            p.vy += windY * falloff * p.depth;
-          }
-        }
-
-        // When user is far, universe "expands" softly away from center
-        const ex = p.x - W * 0.5;
-        const ey = p.y - H * 0.5;
-        const ed = Math.sqrt(ex * ex + ey * ey) + 1;
-        const expansion = (1 - prox) * 0.000018;
-        p.vx += (ex / ed) * expansion;
-        p.vy += (ey / ed) * expansion;
-
-        // friction
-        p.vx *= 0.992;
-        p.vy *= 0.992;
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // wrap particles around edges
-        if (p.x < -8) p.x = W + 8;
-        if (p.x > W + 8) p.x = -8;
-        if (p.y < -8) p.y = H + 8;
-        if (p.y > H + 8) p.y = -8;
-
-        // brightness / density illusion increases with proximity
-        const tw = 0.74 + Math.sin(t * 0.001 * p.twinkle + p.seed) * 0.26;
-        const localAlpha = p.alpha * (0.45 + prox * 1.6) * tw * (0.35 + presence.energy * 0.65);
-        const localSize = p.size * (0.72 + prox * 0.7);
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, localSize, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(205,220,245,${softClamp(localAlpha, 0, 0.78)})`;
-        ctx.fill();
-
-        // tiny halo on larger particles
-        if (p.size > 1.45 && prox > 0.25) {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, localSize * 3.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(120,155,220,${localAlpha * 0.05})`;
-          ctx.fill();
-        }
-      }
-
-      ctx.restore();
-    }
-
-    function animate(t) {
-      requestAnimationFrame(animate);
-
-      // smooth presence
-      presence.proximity += (presence.targetProximity - presence.proximity) * 0.055;
-      const targetEnergy = presence.detected ? 1 : 0.08;
-      presence.energy += (targetEnergy - presence.energy) * (presence.detected ? 0.035 : 0.012);
-
-      // decay movement
-      presence.vx *= 0.9;
-      presence.vy *= 0.9;
-
-      drawBackground(t);
-      updateParticles(t);
-
-      if (running && faceLandmarker && video.readyState >= 2) {
-        detectFace();
-      }
-    }
-
-    // -----------------------
-    // Face tracking
-    // -----------------------
-    async function setupFaceLandmarker() {
-      statusEl.textContent = "loading vision";
-
-      const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm"
-      );
-
-      faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath:
-            "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-          delegate: "GPU"
-        },
-        runningMode: "VIDEO",
-        numFaces: 1,
-        outputFaceBlendshapes: false,
-        outputFacialTransformationMatrixes: false
-      });
-
-      statusEl.textContent = "vision ready";
-    }
-
-    function detectFace() {
-      if (video.currentTime === lastVideoTime) return;
-      lastVideoTime = video.currentTime;
-
-      const now = performance.now();
-      const result = faceLandmarker.detectForVideo(video, now);
-
-      if (result.faceLandmarks && result.faceLandmarks.length > 0) {
-        const lm = result.faceLandmarks[0];
-
-        let minX = 1, maxX = 0, minY = 1, maxY = 0;
-        for (const p of lm) {
-          if (p.x < minX) minX = p.x;
-          if (p.x > maxX) maxX = p.x;
-          if (p.y < minY) minY = p.y;
-          if (p.y > maxY) maxY = p.y;
-        }
-
-        // Mirror camera X for intuitive movement
-        const faceX = 1 - (minX + maxX) * 0.5;
-        const faceY = (minY + maxY) * 0.5;
-        const faceWidth = maxX - minX;
-
-        const dx = faceX - presence.lastX;
-        const dy = faceY - presence.lastY;
-
-        presence.vx = presence.vx * 0.45 + dx * 0.55;
-        presence.vy = presence.vy * 0.45 + dy * 0.55;
-
-        presence.x += (faceX - presence.x) * 0.28;
-        presence.y += (faceY - presence.y) * 0.28;
-
-        // Tuned for typical laptop / phone front-camera distance.
-        // faceWidth ~0.12 far, ~0.45 near.
-        presence.targetProximity = softClamp((faceWidth - 0.10) / 0.34, 0, 1);
-        presence.detected = true;
-
-        presence.lastX = faceX;
-        presence.lastY = faceY;
-
-        statusEl.textContent =
-          `presence ${Math.round(presence.targetProximity * 100)}%`;
-      } else {
-        presence.detected = false;
-        presence.targetProximity *= 0.97;
-        statusEl.textContent = "no presence";
-      }
-    }
-
-    async function startExperience() {
-      startBtn.disabled = true;
-      startBtn.textContent = "Requesting Camera…";
-
-      try {
-        await setupFaceLandmarker();
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "user",
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
-          audio: false
-        });
-
-        video.srcObject = stream;
-        await video.play();
-
-        running = true;
-        startBtn.remove();
-        statusEl.textContent = "camera active";
-      } catch (err) {
-        console.error(err);
-        startBtn.disabled = false;
-        startBtn.textContent = "Camera unavailable — retry";
-        statusEl.textContent = "camera blocked";
-      }
-    }
-
-    startBtn.addEventListener("click", startExperience);
-    addEventListener("resize", resize);
-
-    resize();
-    requestAnimationFrame(animate);
-  </script>
+resize();
+addEventListener("resize",resize);
+requestAnimationFrame(frame);
+</script>
 </body>
 </html>
