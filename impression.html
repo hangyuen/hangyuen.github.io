@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Impression, Sunrise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0a84ff;
+    --blue-hover:#2f95ff;
+    --ink:#1d1d1f;
+    --dim:#8a8a8e;
+    --dim2:#9a9a9e;
+    --hair:#ececec;
+    --panel:#f2f2f2;
+    --sys: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", 'Inter', "Helvetica Neue", Arial, sans-serif;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    font-family:var(--sys);
+    color:var(--ink);
+    background:
+      radial-gradient(ellipse 90% 70% at 20% -10%, #eef4fb 0%, transparent 55%),
+      radial-gradient(ellipse 90% 70% at 100% 0%, #fbeeee 0%, transparent 50%),
+      #f5f5f7;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 18px;
+  }
+  a{ color:inherit; text-decoration:none; }
+
+  .mac-window{
+    width:100%;
+    max-width:980px;
+    background:#ffffff;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  /* TITLEBAR — same chrome language as the main site's modals: a single
+     functional red "close" dot, centered title, hairline rule below. */
+  .mac-titlebar{
+    position:relative;
+    display:flex;
+    align-items:center;
+    padding:13px 18px;
+    border-bottom:1px solid var(--hair);
+  }
+  .mac-dot{
+    width:14px; height:14px; border-radius:50%;
+    border:none; padding:0; margin:0; box-sizing:border-box;
+    background:#ff5f57;
+    cursor:pointer;
+    position:relative;
+    transition:filter 0.15s ease;
+    flex-shrink:0;
+  }
+  .mac-dot::after,
+  .mac-dot::before{
+    content:'';
+    position:absolute; top:50%; left:50%;
+    width:10px; height:1.6px;
+    margin-top:-0.8px; margin-left:-5px;
+    background:rgba(75,0,0,0.75);
+    opacity:0;
+    transition:opacity 0.15s ease;
+  }
+  .mac-dot::after{ transform:rotate(45deg); }
+  .mac-dot::before{ transform:rotate(-45deg); }
+  .mac-dot:hover{ filter:brightness(0.95); }
+  .mac-dot:hover::after,
+  .mac-dot:hover::before{ opacity:1; }
+
+  .mac-title{
+    position:absolute;
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:-0.006em;
+    color:var(--ink);
+  }
+  .mac-title span{
+    font-weight:400;
+    color:var(--dim);
+    margin-left:6px;
+  }
+
+  /* CANVAS */
+  .canvas-wrap{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    background:#aebbc0;
+    overflow:hidden;
+  }
+  canvas{
+    display:block; width:100%; height:100%;
+    image-rendering:pixelated; image-rendering:crisp-edges;
+    touch-action:none; cursor:grab;
+  }
+  canvas.dragging{ cursor:grabbing; }
+  .grain{
+    position:absolute; inset:0; pointer-events:none;
+    mix-blend-mode:soft-light; opacity:.07;
+    background-image:
+      linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.14) 1px, transparent 1px);
+    background-size:6px 6px;
+  }
+  .canvas-hint{
+    position:absolute; left:14px; bottom:14px;
+    padding:7px 12px;
+    background:rgba(255,255,255,0.72);
+    backdrop-filter:blur(14px) saturate(160%);
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+    border-radius:10px;
+    font-size:11.5px;
+    color:#2a2a2c;
+    box-shadow:0 4px 14px rgba(0,0,0,0.12);
+  }
+  @media (max-width:640px){ .canvas-hint{ display:none; } }
+
+  /* CONTROLS — a settings-panel strip below the canvas, always visible */
+  .controls{
+    padding:20px 24px 22px;
+  }
+
+  .segmented{
+    display:flex;
+    gap:2px;
+    padding:3px;
+    background:var(--panel);
+    border-radius:10px;
+    margin-bottom:18px;
+  }
+  .segmented button{
+    flex:1;
+    border:0;
+    background:transparent;
+    padding:7px 4px;
+    border-radius:8px;
+    font:inherit;
+    font-family:var(--sys);
+    font-size:12.5px;
+    font-weight:500;
+    color:var(--dim);
+    cursor:pointer;
+    transition:background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .segmented button.active{
+    background:#ffffff;
+    color:var(--ink);
+    box-shadow:0 1px 4px rgba(0,0,0,0.16);
+  }
+
+  .panel-sub{
+    font-size:12px;
+    color:var(--dim2);
+    margin:-10px 0 16px;
+  }
+
+  .control{
+    display:grid;
+    grid-template-columns:96px 1fr 46px;
+    gap:12px;
+    align-items:center;
+    margin:14px 0;
+  }
+  .control label{
+    font-size:13px;
+    color:#3a3a3c;
+  }
+  .control output{
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+    font-size:12px;
+    color:var(--dim);
+  }
+  input[type="range"]{
+    width:100%;
+    accent-color:var(--blue);
+  }
+
+  .seg{ display:flex; gap:8px; flex-wrap:wrap; margin-top:2px; }
+  .pill{
+    border:0; border-radius:999px; padding:7px 14px;
+    background:var(--panel); color:var(--ink);
+    cursor:pointer; font:inherit; font-family:var(--sys); font-size:12.5px; font-weight:500;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .pill.active{ background:var(--blue); color:#fff; }
+
+  .smallnote{
+    font-size:12px;
+    line-height:1.5;
+    color:var(--dim2);
+    margin-top:14px;
+  }
+
+  .footer-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid var(--hair);
+  }
+  .text-btn{
+    font-family:var(--sys);
+    font-size:12.5px;
+    font-weight:500;
+    color:var(--dim);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:4px 2px;
+    transition:color 0.15s ease;
+  }
+  .text-btn:hover{ color:var(--ink); }
+  .pill-btn{
+    font-family:var(--sys);
+    font-size:12.5px;
+    font-weight:600;
+    color:#fff;
+    background:var(--blue);
+    border:none;
+    border-radius:980px;
+    padding:7px 16px;
+    cursor:pointer;
+    transition:background 0.15s ease, transform 0.15s ease;
+  }
+  .pill-btn:hover{ background:var(--blue-hover); transform:translateY(-1px); }
+  .pill-btn:active{ transform:translateY(0) scale(0.97); }
+
+  @media (max-width:640px){
+    body{ padding:0; }
+    .mac-window{ border-radius:0; max-width:100%; min-height:100vh; display:flex; flex-direction:column; }
+    .canvas-wrap{ flex-shrink:0; }
+    .controls{ padding:18px 18px 20px; flex:1; }
+    .control{ grid-template-columns:82px 1fr 40px; }
+  }
+</style>
+</head>
+<body>
+
+  <main class="mac-window">
+    <div class="mac-titlebar">
+      <button class="mac-dot" id="closeBtn" aria-label="Back to hangyuan.github.io"></button>
+      <div class="mac-title">Impression, Sunrise<span>Claude Monet, 1872</span></div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="scene" width="209" height="118" aria-label="Interactive pixel version of Impression, Sunrise. Drag the sun and boat."></canvas>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="canvas-hint">Drag the sun or the boat directly</div>
+    </div>
+
+    <section class="controls">
+      <nav class="segmented" id="tabs" aria-label="Painting controls">
+        <button data-panel="sun" class="active">Sun</button>
+        <button data-panel="boat">Boat</button>
+        <button data-panel="water">Water</button>
+        <button data-panel="fog">Fog</button>
+        <button data-panel="mood">Mood</button>
+      </nav>
+
+      <div id="panelBody"></div>
+
+      <div class="footer-row">
+        <button class="text-btn" id="resetBtn">Reset</button>
+        <button class="pill-btn" id="pauseBtn">Pause</button>
+      </div>
+    </section>
+  </main>
+
+<script>
+(() => {
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d', { alpha:false });
+  ctx.imageSmoothingEnabled = false;
+
+  const panelBody = document.getElementById('panelBody');
+  const tabButtons = [...document.querySelectorAll('#tabs button')];
+  const pauseBtn = document.getElementById('pauseBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const closeBtn = document.getElementById('closeBtn');
+
+  closeBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
+
+  const base = new Image();
+  base.src = 'assets/Impression.png';
+  base.onerror = () => {
+    ctx.fillStyle = '#aebbc0';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#1c2622';
+    ctx.font = '6px sans-serif';
+    ctx.fillText('Missing assets/Impression.png', 6, canvas.height/2);
+  };
+
+  const defaults = {
+    sunX: 123, sunY: 42, sunSize: 3.3, sunGlow: 0.42,
+    boatX: 95, boatY: 89, boatScale: 1,
+    waterSpeed: 0.65, waterStrength: 1.35, wind: 0.35,
+    fog: 0.16, clarity: 0.18, atmosphere: 0,
+    paused: false
+  };
+  const state = {...defaults};
+
+  let activePanel = 'sun';
+  let dragging = null;
+  let lastFrame = 0;
+
+  const panelDefs = {
+    sun: {
+      sub:'Light & reflection',
+      html:() => `
+        ${slider('sunX','Horizontal',65,170,1,state.sunX,'px')}
+        ${slider('sunY','Height',20,55,1,state.sunY,'px')}
+        ${slider('sunSize','Size',2,6,.1,state.sunSize,'')}
+        ${slider('sunGlow','Glow',0,1,.01,state.sunGlow,'')}
+        <div class="smallnote">Drag the sun in the sky. Its reflection follows automatically.</div>`
+    },
+    boat: {
+      sub:'Position & scale',
+      html:() => `
+        ${slider('boatX','Horizontal',34,174,1,state.boatX,'px')}
+        ${slider('boatScale','Scale',.65,1.55,.05,state.boatScale,'×')}
+        <div class="smallnote">You can also drag the foreground boat directly across the water.</div>`
+    },
+    water: {
+      sub:'Motion & wind',
+      html:() => `
+        ${slider('waterSpeed','Speed',0,2,.01,state.waterSpeed,'')}
+        ${slider('waterStrength','Ripple',0,3,.05,state.waterStrength,'')}
+        ${slider('wind','Wind',-1,1,.01,state.wind,'')}
+        <div class="smallnote">Motion is made by shifting tiny horizontal pixel rows, so the harbor stays recognizable.</div>`
+    },
+    fog: {
+      sub:'Distance & softness',
+      html:() => `
+        ${slider('fog','Density',0,.55,.01,state.fog,'')}
+        ${slider('clarity','Softness',0,.65,.01,state.clarity,'')}
+        <div class="smallnote">Fog sits mostly around the horizon instead of covering the entire painting.</div>`
+    },
+    mood: {
+      sub:'Original palette preserved at 0',
+      html:() => `
+        ${slider('atmosphere','Feeling',-1,1,.01,state.atmosphere,'')}
+        <div class="seg">
+          <button class="pill${state.atmosphere===-0.55?' active':''}" data-mood="-0.55">Cool mist</button>
+          <button class="pill${state.atmosphere===0?' active':''}" data-mood="0">Original</button>
+          <button class="pill${state.atmosphere===0.55?' active':''}" data-mood="0.55">Warm light</button>
+        </div>
+        <div class="smallnote">The default is the original painting palette. This control only adds a subtle optional temperature shift.</div>`
+    }
+  };
+
+  function slider(key,label,min,max,step,value,suffix){
+    return `<div class="control">
+      <label for="${key}">${label}</label>
+      <input id="${key}" data-key="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}">
+      <output id="${key}Out">${format(value)}${suffix}</output>
+    </div>`;
+  }
+  function format(v){ return Math.abs(v) >= 10 ? Number(v).toFixed(0) : Number(v).toFixed(2).replace(/\.00$/,''); }
+
+  function renderPanel(name){
+    activePanel = name;
+    const d = panelDefs[name];
+    panelBody.innerHTML = `<div class="panel-sub">${d.sub}</div>` + d.html();
+    tabButtons.forEach(b=>b.classList.toggle('active', b.dataset.panel===name));
+
+    panelBody.querySelectorAll('input[type=range]').forEach(input=>{
+      input.addEventListener('input', e=>{
+        const key = e.currentTarget.dataset.key;
+        state[key] = Number(e.currentTarget.value);
+        const out = document.getElementById(key+'Out');
+        if(out) out.textContent = format(state[key]) + (key==='sunY'||key==='sunX'||key==='boatX'?'px':key==='boatScale'?'×':'');
+      });
+    });
+    panelBody.querySelectorAll('[data-mood]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state.atmosphere = Number(btn.dataset.mood);
+        renderPanel('mood');
+      });
+    });
+  }
+
+  tabButtons.forEach(btn => btn.addEventListener('click', ()=>renderPanel(btn.dataset.panel)));
+
+  function setPaused(paused){
+    state.paused = paused;
+    pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+  }
+  pauseBtn.addEventListener('click', ()=>setPaused(!state.paused));
+
+  resetBtn.addEventListener('click', ()=>{
+    Object.assign(state, defaults);
+    setPaused(state.paused);
+    renderPanel(activePanel);
+  });
+
+  function canvasPoint(ev){
+    const r = canvas.getBoundingClientRect();
+    return {
+      x:(ev.clientX-r.left)/r.width*canvas.width,
+      y:(ev.clientY-r.top)/r.height*canvas.height
+    };
+  }
+  canvas.addEventListener('pointerdown', ev=>{
+    const p = canvasPoint(ev);
+    const ds = Math.hypot(p.x-state.sunX,p.y-state.sunY);
+    const db = Math.hypot(p.x-state.boatX,p.y-state.boatY);
+    if(ds < 11){ dragging='sun'; renderPanel('sun'); }
+    else if(db < 14){ dragging='boat'; renderPanel('boat'); }
+    else return;
+    canvas.setPointerCapture(ev.pointerId);
+    canvas.classList.add('dragging');
+  });
+  canvas.addEventListener('pointermove', ev=>{
+    if(!dragging) return;
+    const p = canvasPoint(ev);
+    if(dragging==='sun'){
+      state.sunX = clamp(p.x,65,170);
+      state.sunY = clamp(p.y,18,56);
+    } else {
+      state.boatX = clamp(p.x,34,174);
+      state.boatY = clamp(p.y,75,104);
+    }
+    if(activePanel==='sun' || activePanel==='boat') renderPanel(activePanel);
+  });
+  const stopDrag = ()=>{ dragging=null; canvas.classList.remove('dragging'); };
+  canvas.addEventListener('pointerup', stopDrag);
+  canvas.addEventListener('pointercancel', stopDrag);
+
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+
+  function drawBase(time){
+    const W=canvas.width,H=canvas.height, waterY=58;
+    ctx.globalAlpha=1;
+    ctx.filter='none';
+    ctx.drawImage(base,0,0,W,H);
+
+    const speed = state.paused ? 0 : state.waterSpeed;
+    const phase = time*0.001*speed;
+    if(state.waterStrength>0.01){
+      for(let y=waterY;y<H;y++){
+        const depth=(y-waterY)/(H-waterY);
+        const shift =
+          Math.sin(y*.63 + phase*2.8) * state.waterStrength * (.2+.8*depth) +
+          state.wind * depth * 1.6;
+        ctx.drawImage(base,0,y,W,1,Math.round(shift),y,W,1);
+      }
+    }
+
+    if(state.clarity>0.01){
+      ctx.globalAlpha=state.clarity*.16;
+      ctx.drawImage(canvas,1,0,W,H);
+      ctx.globalAlpha=1;
+    }
+  }
+
+  function drawFog(time){
+    if(state.fog<=0) return;
+    const W=canvas.width;
+    ctx.save();
+    const pulse = state.paused ? 0 : Math.sin(time*.00028)*.5+.5;
+    const a=state.fog*(.34+.06*pulse);
+    ctx.globalAlpha=a;
+    ctx.fillStyle='rgb(206,214,211)';
+    ctx.fillRect(0,44,W,13);
+    ctx.globalAlpha=a*.55;
+    ctx.fillRect(0,51,W,9);
+    ctx.restore();
+  }
+
+  function drawSun(time){
+    const {sunX:x,sunY:y,sunSize:s} = state;
+    const H = canvas.height;
+    ctx.save();
+
+    const waterTop=58;
+    if(y < waterTop){
+      const intensity = clamp(1 - (y-18)/50, .35, 1);
+      for(let yy=waterTop+2; yy<H-2; yy+=3){
+        const d=(yy-waterTop)/(H-2-waterTop);
+        const wobble=state.paused?0:Math.sin(yy*.82+time*.0022)*1.6*state.waterStrength;
+        const half=Math.max(1,Math.round((1.2+d*4.4)*intensity));
+        const rx=x+wobble + state.wind*d*2;
+        ctx.fillStyle = yy%6===0 ? 'rgba(246,111,77,.72)' : 'rgba(244,123,89,.53)';
+        ctx.fillRect(Math.round(rx-half),yy,half*2+1,1);
+      }
+    }
+
+    ctx.globalAlpha=.12 + state.sunGlow*.14;
+    ctx.fillStyle='rgb(255,143,98)';
+    const gs=Math.round(s*2.3);
+    ctx.fillRect(Math.round(x-gs),Math.round(y-gs),gs*2+1,gs*2+1);
+
+    ctx.globalAlpha=1;
+    ctx.fillStyle='rgb(244,91,64)';
+    const r=Math.round(s);
+    ctx.fillRect(Math.round(x-r),Math.round(y-r),r*2+1,r*2+1);
+    ctx.fillStyle='rgb(252,127,85)';
+    ctx.fillRect(Math.round(x-r+1),Math.round(y-r+1),Math.max(1,r*2-1),Math.max(1,r*2-1));
+    ctx.restore();
+  }
+
+  function drawBoat(time){
+    const x=Math.round(state.boatX), y=Math.round(state.boatY), s=state.boatScale;
+    const bob = state.paused ? 0 : Math.sin(time*.0017)*.55*(.4+state.waterStrength*.18);
+    ctx.save();
+    ctx.translate(x,Math.round(y+bob));
+    ctx.scale(s,s);
+    ctx.fillStyle='rgb(39,72,68)';
+    ctx.fillRect(-9,1,19,3);
+    ctx.fillRect(-7,4,15,2);
+    ctx.fillStyle='rgb(28,58,56)';
+    ctx.fillRect(-5,-2,3,3);
+    ctx.fillRect(-3,-5,1,4);
+    ctx.fillRect(3,-1,2,2);
+    ctx.fillStyle='rgb(41,71,67)';
+    ctx.fillRect(-3,-8,2,6);
+    ctx.fillRect(-4,-7,4,2);
+    ctx.globalAlpha=.36;
+    ctx.fillRect(-6,8,12,2);
+    ctx.fillRect(-4,11,8,2);
+    ctx.restore();
+  }
+
+  function applyAtmosphere(){
+    const a=state.atmosphere;
+    if(a>0){
+      canvas.style.filter=`sepia(${a*0.08}) saturate(${1+a*0.08}) brightness(${1+a*0.025})`;
+    }else if(a<0){
+      canvas.style.filter=`saturate(${1+a*0.05}) brightness(${1+a*0.02})`;
+    }else{
+      canvas.style.filter='none';
+    }
+  }
+
+  function frame(now){
+    if(!base.complete){ requestAnimationFrame(frame); return; }
+    const time = state.paused ? lastFrame : now;
+    if(!state.paused) lastFrame=now;
+    drawBase(time);
+    drawFog(time);
+    drawSun(time);
+    drawBoat(time);
+    applyAtmosphere();
+    requestAnimationFrame(frame);
+  }
+
+  base.onload=()=>requestAnimationFrame(frame);
+  renderPanel('sun');
+
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setPaused(true);
+  }
+})();
+</script>
+</body>
+</html>
