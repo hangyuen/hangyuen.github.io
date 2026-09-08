@@ -513,6 +513,9 @@
     display:flex;
     gap:5px;
   }
+  .onboard-dots.is-hidden{
+    visibility:hidden;
+  }
   .onboard-dot{
     width:6px;
     height:6px;
@@ -1229,20 +1232,19 @@
 <!-- ONBOARDING TIP — short first-visit walkthrough: theme switcher, project
      icons, dock. Skippable at any step, remembers it's been seen. -->
 <div class="onboard-tip" id="onboardTip" role="dialog" aria-live="polite">
-  <img class="onboard-avatar visible" id="onboardAvatar" src="assets/hyuan.png" alt="Hang Yuan">
-  <div class="onboard-step-label" id="onboardStepLabel">Step 1 of 4</div>
-  <div class="onboard-title" id="onboardTitle">Hey, I'm Hang! 👋</div>
-  <div class="onboard-desc" id="onboardDesc">Interdisciplinary designer, creative technologist, and yes, even an educator (haha). Thanks for stopping by, let's take a quick look around.</div>
+  <img class="onboard-avatar visible" id="onboardAvatar" src="assets/hangyuan.jpg" alt="Hang Yuan">
+  <div class="onboard-step-label" id="onboardStepLabel"></div>
+  <div class="onboard-title" id="onboardTitle">Hey, I'm Hang!</div>
+  <div class="onboard-desc" id="onboardDesc">Thanks for stopping by, let's take a quick look around.</div>
   <div class="onboard-footer">
-    <div class="onboard-dots" id="onboardDots">
-      <span class="onboard-dot is-active"></span>
+    <div class="onboard-dots is-hidden" id="onboardDots">
       <span class="onboard-dot"></span>
       <span class="onboard-dot"></span>
       <span class="onboard-dot"></span>
     </div>
     <div class="onboard-actions">
       <button type="button" class="onboard-skip" id="onboardSkip">Skip</button>
-      <button type="button" class="onboard-next" id="onboardNext">Next</button>
+      <button type="button" class="onboard-next" id="onboardNext">Get Started</button>
     </div>
   </div>
 </div>
@@ -1393,7 +1395,7 @@
     <div class="about-scroll">
       <div class="about-content">
         <h1 id="contactTitle">Let's Connect</h1>
-        <p class="contact-intro">Thanks for stopping by! Let me know if there's anything on your mind, a project, a question, or just to say hi.</p>
+        <p class="contact-intro">Got a project, a question, or just want to say hi? I'd love to hear from you.</p>
 
         <form class="contact-form" id="contactForm">
           <div class="contact-field">
@@ -1499,9 +1501,9 @@
     });
   })();
 
-  // ONBOARDING TIP — 4-step first-visit walkthrough under the theme switcher,
-  // opening with a quick personal intro. Skippable at any point; once
-  // dismissed (skip or finishing the last step) it won't show again.
+  // ONBOARDING TIP — a quick unnumbered intro card, then a 3-step walkthrough
+  // (theme, icons, dock) under the theme switcher. Skippable at any point;
+  // once dismissed (skip or finishing the last step) it won't show again.
   (function(){
     const STORAGE_KEY = 'onboard-tip-seen';
     const tip = document.getElementById('onboardTip');
@@ -1509,26 +1511,32 @@
     const stepLabel = document.getElementById('onboardStepLabel');
     const titleEl = document.getElementById('onboardTitle');
     const descEl = document.getElementById('onboardDesc');
+    const dotsWrap = document.getElementById('onboardDots');
     const dots = tip ? tip.querySelectorAll('.onboard-dot') : [];
     const nextBtn = document.getElementById('onboardNext');
     const skipBtn = document.getElementById('onboardSkip');
     if (!tip) return;
 
+    // step 0 is the intro card (no number, no dots, "Get Started" button).
+    // steps 1–3 are the real walkthrough, numbered "Step 1 of 3" etc.
     const steps = [
-      { title: "Hey, I'm Hang! 👋", desc: "Interdisciplinary designer, creative technologist, and yes, even an educator (haha). Thanks for stopping by, let's take a quick look around.", avatar: true },
+      { title: "Hey, I'm Hang!", desc: "Thanks for stopping by, let's take a quick look around.", avatar: true, intro: true },
       { title: 'Pick your vibe', desc: 'Dark, white, or grey. Tap a swatch up there and watch the whole site change outfits.' },
       { title: 'Those floating icons? Poke them.', desc: 'Each one is a project waiting to show off. Click and it pops open.' },
       { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.' }
     ];
+    const totalRealSteps = steps.length - 1;
     let step = 0;
 
     function render(){
-      stepLabel.textContent = `Step ${step + 1} of ${steps.length}`;
-      titleEl.textContent = steps[step].title;
-      descEl.textContent = steps[step].desc;
-      if (avatarEl) avatarEl.classList.toggle('visible', !!steps[step].avatar);
-      dots.forEach((d, i) => d.classList.toggle('is-active', i === step));
-      nextBtn.textContent = step === steps.length - 1 ? 'Done' : 'Next';
+      const s = steps[step];
+      stepLabel.textContent = s.intro ? '' : `Step ${step} of ${totalRealSteps}`;
+      titleEl.textContent = s.title;
+      descEl.textContent = s.desc;
+      if (avatarEl) avatarEl.classList.toggle('visible', !!s.avatar);
+      dotsWrap.classList.toggle('is-hidden', !!s.intro);
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === step - 1));
+      nextBtn.textContent = s.intro ? 'Get Started' : (step === steps.length - 1 ? 'Done' : 'Next');
     }
 
     function dismiss(){
