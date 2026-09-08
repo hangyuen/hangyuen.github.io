@@ -503,6 +503,18 @@
     color:#6e6e73;
     margin-bottom:16px;
   }
+  .onboard-aside{
+    font-size:11.5px;
+    line-height:1.5;
+    color:#9a9a9e;
+    font-style:italic;
+    margin-top:-9px;
+    margin-bottom:14px;
+    display:none;
+  }
+  .onboard-aside.visible{
+    display:block;
+  }
   .onboard-footer{
     display:flex;
     align-items:center;
@@ -1236,9 +1248,9 @@
   <div class="onboard-step-label" id="onboardStepLabel"></div>
   <div class="onboard-title" id="onboardTitle">Hey, I'm Hang!</div>
   <div class="onboard-desc" id="onboardDesc">Thanks for stopping by, let's take a quick look around.</div>
+  <div class="onboard-aside" id="onboardAside"></div>
   <div class="onboard-footer">
     <div class="onboard-dots is-hidden" id="onboardDots">
-      <span class="onboard-dot"></span>
       <span class="onboard-dot"></span>
       <span class="onboard-dot"></span>
     </div>
@@ -1511,6 +1523,7 @@
     const stepLabel = document.getElementById('onboardStepLabel');
     const titleEl = document.getElementById('onboardTitle');
     const descEl = document.getElementById('onboardDesc');
+    const asideEl = document.getElementById('onboardAside');
     const dotsWrap = document.getElementById('onboardDots');
     const dots = tip ? tip.querySelectorAll('.onboard-dot') : [];
     const nextBtn = document.getElementById('onboardNext');
@@ -1518,12 +1531,13 @@
     if (!tip) return;
 
     // step 0 is the intro card (no number, no dots, "Get Started" button).
-    // steps 1–3 are the real walkthrough, numbered "Step 1 of 3" etc.
+    // steps 1–2 are the real walkthrough, numbered "Step 1 of 2" etc. The
+    // theme switcher isn't a numbered step, it's just a quiet footnote on
+    // the last screen since the swatches are already visible up top.
     const steps = [
       { title: "Hey, I'm Hang!", desc: "Thanks for stopping by, let's take a quick look around.", avatar: true, intro: true },
-      { title: 'Pick your vibe', desc: 'Dark, white, or grey. Tap a swatch up there and watch the whole site change outfits.' },
       { title: 'Those floating icons? Poke them.', desc: 'Each one is a project waiting to show off. Click and it pops open.' },
-      { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.' }
+      { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.', aside: 'Oh, and the swatches up top let you pick your vibe: dark, white, or grey.' }
     ];
     const totalRealSteps = steps.length - 1;
     let step = 0;
@@ -1533,6 +1547,10 @@
       stepLabel.textContent = s.intro ? '' : `Step ${step} of ${totalRealSteps}`;
       titleEl.textContent = s.title;
       descEl.textContent = s.desc;
+      if (asideEl) {
+        asideEl.textContent = s.aside || '';
+        asideEl.classList.toggle('visible', !!s.aside);
+      }
       if (avatarEl) avatarEl.classList.toggle('visible', !!s.avatar);
       dotsWrap.classList.toggle('is-hidden', !!s.intro);
       dots.forEach((d, i) => d.classList.toggle('is-active', i === step - 1));
