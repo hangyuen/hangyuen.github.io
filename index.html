@@ -568,8 +568,8 @@
     padding:34px 36px 40px;
   }
   #journeyWindow .about-content h1{
-    font-size:34px;
-    margin-bottom:30px;
+    font-size:30px;
+    margin-bottom:22px;
   }
 
   /* JOURNEY — simplified: plain paragraph(s), with small inline institution logos.
@@ -621,6 +621,40 @@
     pointer-events:none;
     transform:translate(-50%, -50%) scale(0.97);
     transition:transform 0.2s ease, opacity 0.2s ease;
+  }
+  /* wider variant, opted into per-project via data.wide — used for the
+     Howl's Moving Castle (AR) window's two-column layout */
+  .project-window.wide{
+    max-width:1140px;
+    height:min(760px, 90vh);
+  }
+  /* two-column split: text on the left, video/3D-model embeds on the right */
+  .project-split{
+    display:grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap:40px;
+    align-items:start;
+  }
+  .project-split .project-meta{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:16px 32px;
+    border-bottom:none;
+    padding-bottom:0;
+    margin-bottom:20px;
+  }
+  .project-split .project-desc{
+    margin-bottom:0;
+  }
+  .project-split .project-embeds{
+    margin-top:0;
+    margin-bottom:0;
+    gap:18px;
+  }
+  @media (max-width:780px){
+    .project-split{
+      grid-template-columns: 1fr;
+    }
   }
   .project-window.open{
     opacity:1;
@@ -832,8 +866,8 @@
   </div>
   <div class="icon p2" data-project="ar">
     <div class="icon-float">
-      <div class="icon-box"><img src="assets/arr.png" alt="Augmented Reality"></div>
-      <div class="icon-label">Augmented Reality</div>
+      <div class="icon-box"><img src="assets/arr.png" alt="Howl's Moving Castle (AR)"></div>
+      <div class="icon-label">Howl's Moving Castle (AR)</div>
     </div>
   </div>
   <div class="icon p3" data-project="cm">
@@ -1466,16 +1500,18 @@
       title: "Howl's Moving Castle (AR)",
       desc: [
         "This augmented reality piece brings the castle from Studio Ghibli's Howl's Moving Castle (Hayao Miyazaki, 2004) into the room. Once the app detects the image target, the iconic walking castle appears in the audience's space, ready to be explored from any angle through interactive elements. Clouds drift past, smoke curls from its chimneys, and fire flickers beneath it as it strides forward.",
-        "The castle was fully modeled in Autodesk Maya, reinterpreting the original 2D film in three dimensions, then textured with Substance Designer and Substance Painter. Every surface and mechanical detail was designed to hold up under close inspection from any viewing angle, and the finished model was brought into Unity, where the AR experience was built and tuned for real-time interaction."
+        "The castle was fully modeled in Autodesk Maya, reinterpreting the original 2D film in three dimensions, then textured with Substance Designer and Substance Painter. Every surface and mechanical detail was designed to hold up under close inspection from any viewing angle, and the finished model was brought into Unity, where the AR experience was built and tuned for real-time interaction.",
+        "Most audiences described the piece as an unexpectedly powerful experience, especially in how freely they could assign meaning to the space around them and build a clearer sense of spatial relationships simply through their own exploration. That points to a broader potential for AR in spatial cognition: offering intuitive visual cues that can strengthen learning and reshape how people move through and interact with the space they're in."
       ],
       meta: [
         { label: 'Type', value: 'Augmented Reality' },
-        { label: 'Built With', value: 'Autodesk Maya, Substance, Unity' },
+        { label: 'Built With', value: 'Maya, Substance, Unity' },
         { label: 'Exhibition', value: 'Lockwood Cafe, Ames, IA' },
         { label: 'Date', value: 'May 2023' }
       ],
       video: 'pIK76hhme4I',
-      sketchfab: 'c77dced0571944fbac9ec956a35fd2c5'
+      sketchfab: 'c77dced0571944fbac9ec956a35fd2c5',
+      interleaveVideo: true
     },
     'cm': {
       title: 'Computer Modeling',
@@ -1606,13 +1642,36 @@
       }
     }
 
-    if (data.video || data.sketchfab) {
+    if (data.interleaveVideo && (data.video || data.sketchfab)) {
+      // custom order: first two paragraphs, then the video, then the
+      // remaining paragraph(s), then the 3D model — all inside the
+      // normal .project-desc flow, original single-column frame
+      const paragraphs = Array.isArray(data.desc) ? data.desc : [data.desc];
+      let html = '';
+      paragraphs.slice(0, 2).forEach(p => { html += `<p>${p}</p>`; });
+      if (data.video) {
+        html += `
+          <div class="embed-frame" style="margin:24px 0;">
+            <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>`;
+      }
+      paragraphs.slice(2).forEach(p => { html += `<p>${p}</p>`; });
+      if (data.sketchfab) {
+        html += `
+          <div class="embed-frame" style="margin-top:24px;">
+            <iframe src="https://sketchfab.com/models/${data.sketchfab}/embed" title="${data.title} 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+          </div>`;
+      }
+      descEl.innerHTML = html;
+      embedsEl.style.display = 'none';
+      embedsEl.innerHTML = '';
+    } else if (data.video || data.sketchfab) {
       embedsEl.style.display = 'flex';
       let embedsHtml = '';
       if (data.video) {
         embedsHtml += `
           <div>
-            <div class="embed-block-label">Watch it in action</div>
+            <div class="embed-block-label">AR Demo</div>
             <div class="embed-frame">
               <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
@@ -1628,6 +1687,13 @@
           </div>`;
       }
       embedsEl.innerHTML = embedsHtml;
+
+      // put the video/3D-model up top, above the description, since seeing
+      // it first reads better for visually driven projects like this one
+      const contentEl = win.querySelector('.project-content');
+      contentEl.insertBefore(embedsEl, descEl);
+      embedsEl.style.marginTop = '0';
+      embedsEl.style.marginBottom = '28px';
     } else {
       embedsEl.style.display = 'none';
       embedsEl.innerHTML = '';
