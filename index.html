@@ -1313,8 +1313,8 @@
   </div>
   <div class="icon p3" data-project="cm">
     <div class="icon-float">
-      <div class="icon-box"><img src="assets/3d.png" alt="Computer Modeling"></div>
-      <div class="icon-label">Computer Modeling</div>
+      <div class="icon-box"><img src="assets/3d.png" alt="1982 Benz (Computer Modeling)"></div>
+      <div class="icon-label">1982 Benz (Computer Modeling)</div>
     </div>
   </div>
   <div class="icon p4" data-project="vfx">
@@ -2225,7 +2225,7 @@
       interleaveVideo: true
     },
     'cm': {
-      title: 'Computer Modeling',
+      title: '1982 Benz (Computer Modeling)',
       desc: '3D modeling, sculpting, and technical builds.',
       client: 'Placeholder Client',
       year: '2026',
@@ -2288,6 +2288,13 @@
     // Digital Arts lives on its own dedicated gallery page, not a popup window
     if (key === 'digital-art') {
       window.location.href = 'digital-arts.html';
+      return;
+    }
+
+    // 1982 Benz (Computer Modeling) lives on its own dedicated 3D viewer
+    // page, not a popup window
+    if (key === 'cm') {
+      window.location.href = 'https://hangyuen.github.io/1982mb.html';
       return;
     }
 
