@@ -273,9 +273,7 @@
     { title: 'JoinJade', medium: 'Digital Motion Graphics', year: '2021', aspect: '16/9', video: '4YP7FZZNVCo', dimensions: '1920 x 1080 px',
       description: "Produced for JoinJade, a global public health campaign founded in 2001 by the Asian Liver Center at Stanford University to fight the stigma, transmission, and mortality linked to hepatitis B and liver cancer. This motion graphics piece opened the 2021 World Hepatitis Day event (July 28) at Stanford.",
       exhibition: "Exhibited at the Asian Liver Center, Stanford University, Palo Alto, CA, 2021." },
-    { image: 'assets/unlwatercolor.jpeg', title: 'Nebraska U', medium: 'Watercolor / Digital Architectural Painting', year: '2022', aspect: '1200/1791', matchHeight: true, dimensions: '4 x 3 inches',
-      description: "A soft, sun-warmed watercolor view over the University of Nebraska–Lincoln campus, looking out across the quad toward its historic brick halls.",
-      exhibition: "Featured on the official University of Nebraska–Lincoln Instagram account (@unlincoln), where the post earned over 2,000 likes, 2022." },
+    { image: 'assets/Digital_Art.png', title: 'Untitled Piece 03', medium: 'Mixed media / digital', year: '2026' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 04', medium: 'Digital painting', year: '2025' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 05', medium: 'Digital illustration', year: '2025' },
     { image: 'assets/Digital_Art.png', title: 'Untitled Piece 06', medium: 'Digital painting', year: '2025' }
@@ -285,22 +283,8 @@
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
 
-  // Standard tiles are sized 3:2 by CSS (.art-frame's aspect-ratio) at a
-  // flex-basis of (100% - 40px) / 2.2. When a piece specifies its own
-  // `aspect` (its true original proportions, e.g. a 4:3 photo) we keep
-  // that real aspect ratio uncropped, but scale its flex-basis so the
-  // resulting tile height still matches the standard 3:2 tiles beside it
-  // — only the width adjusts to fit the original shape.
-  function customBasis(aspect){
-    const [w, h] = aspect.split('/').map(Number);
-    // standard height = standardWidth * (2/3); solve new width so that
-    // newWidth * (h/w) = standardWidth * (2/3)
-    const scale = (2 / 3) * (w / h);
-    return `calc(((100% - 40px) / 2.2) * ${scale})`;
-  }
-
   track.innerHTML = artworks.map(art => `
-    <div class="art-item"${art.matchHeight && art.aspect ? ` style="flex:0 0 ${customBasis(art.aspect)};"` : ''}>
+    <div class="art-item">
       ${art.video
         ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}><iframe class="art-video" src="https://www.youtube.com/embed/${art.video}" title="${art.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`
         : `<div class="art-frame" style="background-image:url('${art.image}');${art.aspect ? ` aspect-ratio:${art.aspect};` : ''}" role="img" aria-label="${art.title}"></div>`}
