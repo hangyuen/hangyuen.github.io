@@ -46,7 +46,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     color: rgba(255,255,255,0.6);
     padding: 4px 0;
@@ -67,13 +67,13 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 64px;
+    padding-top: 58px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     z-index: 10;
     pointer-events: none;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0));
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0) 90px);
   }
 
   .heading {
@@ -87,9 +87,12 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* Matches .project-content h1 on index.html/digital-arts.html exactly:
+     same size, weight, and letter-spacing as the Howl's Moving Castle
+     project window title. */
   .model-name {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size: 17px;
+    font-size: 38px;
     font-weight: 700;
     letter-spacing: -0.02em;
     color: rgba(255,255,255,0.92);
@@ -98,16 +101,16 @@
   .model-name .year {
     font-weight: 500;
     color: rgba(255,255,255,0.5);
-    margin-right: 6px;
+    margin-right: 10px;
   }
 
   .info-panel {
-    max-width: 340px;
+    max-width: 360px;
     text-align: left;
   }
 
   .info-meta {
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: -0.006em;
     color: rgba(255,255,255,0.5);
     margin-bottom: 8px;
@@ -115,7 +118,7 @@
 
   .info-description {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.6;
     letter-spacing: -0.005em;
     color: rgba(255,255,255,0.72);
@@ -140,11 +143,15 @@
     to   { opacity: 1; transform: translate(0, 0); }
   }
 
-  .swatches {
+  /* Shared glass-pill base — .swatches and .hint both use this exact
+     block so they render as a matched set (same height, padding, blur,
+     border, shadow). Only gap/content differ. */
+  .swatches,
+  .hint {
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 7px 10px;
+    gap: 10px;
+    padding: 9px 14px;
     border-radius: 980px;
     position: relative;
     background: linear-gradient(155deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.10) 100%);
@@ -159,26 +166,36 @@
     overflow: hidden;
   }
 
-  .swatches::before {
+  .hint {
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    pointer-events: none;
+  }
+
+  .swatches::before,
+  .hint::before {
     content: "";
     position: absolute;
     top: -60%;
     left: -10%;
-    width: 30%;
+    width: 28%;
     height: 140%;
     background: radial-gradient(ellipse at center, rgba(255,255,255,0.16), rgba(255,255,255,0) 70%);
     pointer-events: none;
     z-index: 0;
   }
 
-  .swatches::after {
+  .swatches::after,
+  .hint::after {
     content: "";
     position: absolute;
-    bottom: -85%;
-    right: -25%;
-    width: 40%;
-    height: 160%;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0.28), rgba(0,0,0,0) 70%);
+    bottom: -80%;
+    right: -15%;
+    width: 34%;
+    height: 155%;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.24), rgba(0,0,0,0) 70%);
     pointer-events: none;
     z-index: 0;
   }
@@ -211,61 +228,16 @@
     border: 1.5px solid rgba(255,255,255,0.9);
   }
 
-  .hint {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    border-radius: 980px;
-    position: relative;
-    background: linear-gradient(155deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.10) 100%);
-    backdrop-filter: blur(24px) saturate(200%) brightness(1.1);
-    -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(1.1);
-    border: 0.5px solid rgba(255,255,255,0.22);
-    box-shadow:
-      inset 0 1px 1px rgba(255,255,255,0.45),
-      inset 0 -1px 2px rgba(0,0,0,0.18),
-      0 10px 30px rgba(0,0,0,0.35),
-      0 0 24px rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.8);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: -0.005em;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .hint::before {
-    content: "";
-    position: absolute;
-    top: -60%;
-    left: -10%;
-    width: 25%;
-    height: 140%;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.16), rgba(255,255,255,0) 70%);
-    pointer-events: none;
-  }
-
-  .hint::after {
-    content: "";
-    position: absolute;
-    bottom: -70%;
-    right: -10%;
-    width: 30%;
-    height: 150%;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0.2), rgba(0,0,0,0) 70%);
-    pointer-events: none;
-  }
-
   @media (max-width: 480px) {
     .back-link { left: 16px; top: 16px; }
     .bottom-cluster { left: 16px; right: 16px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
     .info-panel { max-width: 100%; }
-    .info-description { font-size: 13px; }
+    .info-description { font-size: 14px; }
     .swatch { width: 20px; height: 20px; }
-    .swatches { gap: 10px; padding: 8px 12px; }
-    .hint { font-size: 12px; padding: 8px 14px; }
-    .model-name { font-size: 16px; }
+    .swatches, .hint { padding: 9px 14px; }
+    .hint { font-size: 13px; }
+    .model-name { font-size: 28px; }
+    .topbar { padding-top: 48px; }
   }
 </style>
 </head>
@@ -321,12 +293,20 @@
     const viewer = document.getElementById('car');
     const swatchesEl = document.getElementById('swatches');
 
+    // Old-fashioned single-stage lacquer look: matte-ish, low metallic,
+    // instead of a modern glossy clearcoat finish. Applied every time a
+    // color is selected, on top of the chosen base color.
+    const VINTAGE_ROUGHNESS = 0.5;
+    const VINTAGE_METALNESS = 0.12;
+
     function applyColor(rgba) {
       if (!viewer.model) return;
       const materials = viewer.model.materials;
       for (const mat of materials) {
         if (mat.name === 'EXT_Car_Paint' || mat.name === 'ENG_Car_Paint') {
           mat.pbrMetallicRoughness.setBaseColorFactor(rgba);
+          mat.pbrMetallicRoughness.setRoughnessFactor(VINTAGE_ROUGHNESS);
+          mat.pbrMetallicRoughness.setMetallicFactor(VINTAGE_METALNESS);
         }
       }
     }
