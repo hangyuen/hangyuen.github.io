@@ -154,7 +154,7 @@
   }
   .model-brand {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size: clamp(24px, 4vw, 38px);
+    font-size: clamp(20px, 3.2vw, 30px);
     font-weight: 600;
     letter-spacing: -0.015em;
     color: rgba(255,255,255,0.78);
@@ -163,7 +163,10 @@
   }
   .model-code {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size: clamp(40px, 7.5vw, 72px);
+    /* Matches digital-arts.html's .page-title size exactly, so the
+       biggest line of type on this page reads the same scale as the
+       biggest line of type there. */
+    font-size: clamp(34px, 5vw, 56px);
     font-weight: 700;
     letter-spacing: -0.02em;
     color: rgba(255,255,255,0.96);
@@ -334,7 +337,6 @@
     text-shadow: 0 1px 10px rgba(0,0,0,0.85);
   }
 
-  /* ---- Credit / license ---- */
   /* ---- Credit / license: same rounded-corner shape as the info
      cards, but outline-only (no fill), so it reads as related but
      clearly lower priority — fine print, not a main card. ---- */
@@ -481,6 +483,40 @@
     }
   }
 
+  /* Tuned specifically to fit a 14" MacBook's logical viewport
+     (1512×982) with no internal scrolling needed in the text panel.
+     Scoped to max-height so it only kicks in on laptop-scale screens
+     (13"/14" MacBooks land well under 1024px tall); a 16" MacBook
+     (1117px tall) or any external monitor falls outside this and
+     keeps the roomier spacing above, which keeps scaling up the same
+     way digital-arts.html does. overflow-y:auto on .content stays on
+     as a safety net in case of font-rendering differences, but this
+     is tuned to not need it at that size. */
+  @media (min-width: 900px) and (max-height: 1024px) {
+    :root {
+      --swatch-row-width: 228px;
+      --card-padding: 16px;
+    }
+    .content {
+      padding-top: 96px;
+      padding-bottom: 40px;
+    }
+    .model-name { margin-bottom: 20px; }
+    .model-year { margin-bottom: 4px; }
+    .model-brand { font-size: clamp(18px, 2.6vw, 24px); }
+    .model-code { font-size: clamp(30px, 4vw, 44px); line-height: 1; }
+    .info-cards { gap: 12px; margin-bottom: 24px; }
+    .section-heading { font-size: 17px; margin-bottom: 10px; }
+    .section-hint { font-size: 11.5px; margin: -6px 0 10px; }
+    .info-description { font-size: 13.5px; line-height: 1.55; }
+    .color-selected-name { font-size: 15px; }
+    .color-selected-meta { margin-bottom: 12px; }
+    .swatch { width: 28px; height: 28px; }
+    .swatches-row { gap: 12px; }
+    .wheel-note { font-size: 11.5px; line-height: 1.45; }
+    .credit { font-size: 10.5px; line-height: 1.45; }
+  }
+
   @media (max-width: 480px) {
     :root{
       /* Swatches grow to 40px touch targets with 13px gaps here:
@@ -508,8 +544,8 @@
     .wheel-note { font-size: 12.5px; }
     .hero-hint { font-size: 12px; gap: 8px; bottom: 64px; }
     .hint-item svg { width: 12px; height: 12px; }
-    .model-code { font-size: clamp(36px, 13vw, 52px); }
-    .model-brand { font-size: clamp(20px, 6.5vw, 26px); }
+    .model-code { font-size: clamp(28px, 10vw, 40px); }
+    .model-brand { font-size: clamp(17px, 5.5vw, 22px); }
   }
 </style>
 </head>
