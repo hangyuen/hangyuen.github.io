@@ -20,6 +20,10 @@
        gaps = 284px. The title is pinned to this so it wraps at the
        same width as the color picker below it. */
     --swatch-row-width: 284px;
+    /* Dark info cards get their own padding around that same swatch
+       row width, so the color picker still fits exactly inside one. */
+    --card-padding: 22px;
+    --card-width: calc(var(--swatch-row-width) + (var(--card-padding) * 2));
   }
 
   * {
@@ -50,17 +54,16 @@
      the components they override, so they win the cascade.) */
 
   /* ============ HERO ============ */
-  /* Fixed full-viewport backdrop. The 3D model always fills the entire
-     frame, at every scroll position and every breakpoint. The text
-     below scrolls in normal document flow on top of it. */
+  /* On phones/tablets this is a plain first-screen block, model on top,
+     content flows below it (never overlapping, so the model is always
+     freely grabbable). At 900px+ it becomes the right-hand pane of a
+     side-by-side split — see the layout media query below. */
   .hero {
-    position: fixed;
-    inset: 0;
+    position: relative;
     width: 100%;
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
-    z-index: 0;
     background: radial-gradient(ellipse at 50% 45%, #1c1c1e 0%, #000000 72%);
   }
 
@@ -132,7 +135,7 @@
     display: flex;
     flex-direction: column;
     margin: 0 0 32px;
-    max-width: var(--swatch-row-width);
+    max-width: var(--card-width);
   }
   .model-year {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
@@ -206,28 +209,33 @@
     flex-shrink: 0;
   }
 
-  /* ============ CONTENT (overlay, scrolls above the fixed model) ==== */
-  /* The model behind is fixed and always full-frame; this scrolls in
-     normal document flow on top of it, starting right under the back
-     link/scrim so the text sits near the top of the 3D frame rather
-     than after a full first screen of nothing but the car. */
+  /* ============ CONTENT ============ */
+  /* On phones/tablets this sits below the hero in normal flow, solid
+     black background, no overlap with the model at all. At 900px+ it
+     becomes the left-hand pane of the split (see layout media query). */
   .content {
     position: relative;
     z-index: 1;
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 132px var(--page-gutter, 24px) 64px;
+    background: #000000;
+    padding: 64px var(--page-gutter, 24px) 64px;
   }
   .content-inner {
-    max-width: var(--swatch-row-width);
+    max-width: var(--card-width);
     margin: 0;
   }
 
-  .section {
-    margin-bottom: 64px;
+  /* ---- Dark info cards, stacked vertically, left-aligned ---- */
+  .info-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0 0 40px;
   }
-  .section:last-child {
-    margin-bottom: 0;
+  .info-card {
+    background: #1c1c1e;
+    border-radius: 20px;
+    padding: var(--card-padding);
+    text-align: left;
   }
 
   /* Everything shares the card's own width (which matches the title's
@@ -311,9 +319,9 @@
     box-shadow: 0 0 0 2px #000000, 0 0 0 4px #0071e3;
   }
 
-  /* ---- Wheel note (informational, no longer an interactive picker) ---- */
+  /* ---- Wheels & base model note ---- */
   .wheel-note {
-    margin: 0 0 40px;
+    margin: 0;
     font-size: 12.5px;
     line-height: 1.55;
     color: rgba(255,255,255,0.4);
@@ -328,6 +336,7 @@
     letter-spacing: -0.005em;
     color: rgba(255,255,255,0.38);
     text-shadow: 0 1px 10px rgba(0,0,0,0.85);
+    margin: 0;
   }
   .credit a {
     color: rgba(255,255,255,0.55);
@@ -434,15 +443,40 @@
      smaller forced size on narrow screens to avoid overflow — clamp()
      on .model-name already scales it, and wrapping handles the rest. */
 
+  @media (min-width: 900px) {
+    .layout {
+      display: flex;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+    }
+    .hero {
+      order: 2;
+      flex: 1 1 auto;
+      height: 100%;
+    }
+    .content {
+      order: 1;
+      /* Just enough room for the padded card column plus this pane's
+         own side padding — no border or visible line, the model pane
+         simply starts where this one's padding ends. */
+      flex: 0 0 calc(var(--card-width) + var(--page-gutter, 24px) * 2);
+      height: 100%;
+      overflow-y: auto;
+      padding-top: 122px;
+    }
+  }
+
   @media (max-width: 480px) {
     :root{
       /* Swatches grow to 40px touch targets with 13px gaps here:
          6×40 + 5×13 = 305px. */
       --swatch-row-width: 305px;
+      --card-padding: 20px;
     }
     .back-link { left: 16px; padding: 8px 0; }
     .content { padding: 108px 16px 48px; }
-    .section { margin-bottom: 48px; }
+    .info-cards { gap: 14px; margin-bottom: 32px; }
 
     /* Apple HIG calls for 44pt minimum touch targets; 34px swatches and
        22px hotspots are both under that on a phone, where fingers (not
@@ -526,29 +560,34 @@
         <span class="model-code">190E</span>
       </h1>
 
-      <div class="section">
-        <p class="info-meta">Computer Graphics &middot; 2025</p>
-        <p class="info-description">A classic Mercedes-Benz 190E, rebuilt for the web: materials, lighting, and paint were reworked, then brought into an interactive glTF viewer where the color can be swapped live.</p>
-      </div>
+      <div class="info-cards">
+        <div class="info-card">
+          <p class="info-meta">Computer Graphics &middot; 2025</p>
+          <p class="info-description">A classic Mercedes-Benz 190E, rebuilt for the web: materials, lighting, and paint were reworked, then brought into an interactive glTF viewer where the color can be swapped live.</p>
+        </div>
 
-      <div class="section">
-        <h2 class="section-heading">Exterior color</h2>
-        <p class="section-hint">Tap a swatch to preview it on the car.</p>
-        <div class="color-picker">
-          <div class="color-selected-name" id="colorName"><span class="de" id="colorNameDe">Signalrot</span> <span class="en" id="colorNameEn">(Signal Red)</span></div>
-          <div class="color-selected-meta" id="colorMeta">Code 568 &middot; throughout production</div>
-          <div class="swatches-row" id="swatches">
-            <button class="swatch selected" style="background:#7a1414" data-color="0.42,0.045,0.05,1" data-de="Signalrot" data-en="Signal Red" data-years="Code 568 &middot; throughout production" aria-label="Signalrot, Signal Red"></button>
-            <button class="swatch" style="background:#9da4a8" data-color="0.616,0.643,0.659,1" data-de="Astralsilber" data-en="Astral Silver" data-years="Code 735 &middot; 1983&ndash;1989" aria-label="Astralsilber, Astral Silver"></button>
-            <button class="swatch" style="background:#7c766c" data-color="0.486,0.463,0.424,1" data-de="Liasgrau" data-en="Lias Grey" data-years="Code 751 &middot; 1983&ndash;1989" aria-label="Liasgrau, Lias Grey"></button>
-            <button class="swatch" style="background:#14151c" data-color="0.078,0.082,0.110,1" data-de="Blauschwarz" data-en="Blue-Black Metallic" data-years="Evolution I &amp; II signature colour &middot; 1989&ndash;1991" aria-label="Blauschwarz, Blue-Black Metallic"></button>
-            <button class="swatch" style="background:#4c5941" data-color="0.298,0.349,0.255,1" data-de="Achatgr&uuml;n" data-en="Agate Green" data-years="Code 815" aria-label="Achatgr&uuml;n, Agate Green"></button>
-            <button class="swatch" style="background:#ece9e2" data-color="0.925,0.914,0.886,1" data-de="Classicweiss" data-en="Classic White" data-years="Code 737" aria-label="Classicweiss, Classic White"></button>
+        <div class="info-card">
+          <h2 class="section-heading">Exterior color</h2>
+          <p class="section-hint">Tap a swatch to preview it on the car.</p>
+          <div class="color-picker">
+            <div class="color-selected-name" id="colorName"><span class="de" id="colorNameDe">Signalrot</span> <span class="en" id="colorNameEn">(Signal Red)</span></div>
+            <div class="color-selected-meta" id="colorMeta">Code 568 &middot; throughout production</div>
+            <div class="swatches-row" id="swatches">
+              <button class="swatch selected" style="background:#7a1414" data-color="0.42,0.045,0.05,1" data-de="Signalrot" data-en="Signal Red" data-years="Code 568 &middot; throughout production" aria-label="Signalrot, Signal Red"></button>
+              <button class="swatch" style="background:#9da4a8" data-color="0.616,0.643,0.659,1" data-de="Astralsilber" data-en="Astral Silver" data-years="Code 735 &middot; 1983&ndash;1989" aria-label="Astralsilber, Astral Silver"></button>
+              <button class="swatch" style="background:#7c766c" data-color="0.486,0.463,0.424,1" data-de="Liasgrau" data-en="Lias Grey" data-years="Code 751 &middot; 1983&ndash;1989" aria-label="Liasgrau, Lias Grey"></button>
+              <button class="swatch" style="background:#14151c" data-color="0.078,0.082,0.110,1" data-de="Blauschwarz" data-en="Blue-Black Metallic" data-years="Evolution I &amp; II signature colour &middot; 1989&ndash;1991" aria-label="Blauschwarz, Blue-Black Metallic"></button>
+              <button class="swatch" style="background:#4c5941" data-color="0.298,0.349,0.255,1" data-de="Achatgr&uuml;n" data-en="Agate Green" data-years="Code 815" aria-label="Achatgr&uuml;n, Agate Green"></button>
+              <button class="swatch" style="background:#ece9e2" data-color="0.925,0.914,0.886,1" data-de="Classicweiss" data-en="Classic White" data-years="Code 737" aria-label="Classicweiss, Classic White"></button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <p class="wheel-note">Wheels: Gullideckel, the standard 15&Prime; &ldquo;manhole cover&rdquo; alloy fitted to most production 190E models. A future update could add Bundt or Evolution wheel options to switch between.</p>
+        <div class="info-card">
+          <h2 class="section-heading">Wheels &amp; Base Model</h2>
+          <p class="wheel-note">Gullideckel, the standard 15&Prime; &ldquo;manhole cover&rdquo; alloy fitted to most production 190E models. A future update could add Bundt or Evolution wheel options to switch between.</p>
+        </div>
+      </div>
 
       <p class="credit">Base model: &ldquo;1982 Mercedes W201&rdquo; by Dave Love (Tyler_Dave), licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>, provided the core chassis geometry. Additional modeling, exterior surfacing, interior, materials, lighting, paint, and the interactive glTF viewer (rotate, zoom, live color swap) are original work by Hang Yuan.</p>
 
@@ -567,10 +606,15 @@
   <script>
     const viewer = document.getElementById('car');
     const topScrim = document.querySelector('.top-scrim');
+    const contentPanel = document.getElementById('contentPanel');
+    const isDesktopLayout = () => window.matchMedia('(min-width: 900px)').matches;
     function updateScrim() {
-      topScrim.classList.toggle('visible', window.scrollY > 24);
+      const desktop = isDesktopLayout();
+      const y = desktop ? contentPanel.scrollTop : window.scrollY;
+      topScrim.classList.toggle('visible', y > 24);
     }
     window.addEventListener('scroll', updateScrim, { passive: true });
+    contentPanel.addEventListener('scroll', updateScrim, { passive: true });
     window.addEventListener('resize', updateScrim);
     updateScrim();
     const swatchesEl = document.getElementById('swatches');
