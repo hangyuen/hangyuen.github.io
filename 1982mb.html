@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>1982 Mercedes-Benz 190E</title>
+<link rel="icon" type="image/png" href="assets/hy.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <script type="module" src="model-viewer.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +20,7 @@
     margin: 0;
     padding: 0;
     background: #000000;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -65,7 +66,7 @@
   .back-link {
     text-decoration: none;
     position: fixed;
-    top: 22px;
+    top: 56px;
     left: var(--page-gutter, 24px);
     display: inline-flex;
     align-items: center;
@@ -120,6 +121,9 @@
     letter-spacing: -0.02em;
     color: rgba(255,255,255,0.92);
     margin: 0 0 48px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .model-name .year {
@@ -189,8 +193,8 @@
     animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
   }
   .scroll-cue svg {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     animation: bob 1.8s ease-in-out infinite;
   }
   .scroll-cue span {
@@ -207,7 +211,7 @@
     position: relative;
     z-index: 1;
     background: #000000;
-    padding: 88px var(--page-gutter, 24px) 64px;
+    padding: 122px var(--page-gutter, 24px) 64px;
   }
   .content-inner {
     max-width: 640px;
@@ -221,6 +225,18 @@
     margin-bottom: 0;
   }
 
+  /* Everything except the title lines up to the same width as the six
+     color swatches, instead of stretching edge-to-edge of the panel. */
+  .section-heading,
+  .info-description,
+  .info-meta,
+  .color-selected-name,
+  .color-selected-meta,
+  .wheel-note,
+  .credit {
+    max-width: 284px;
+  }
+
   .section-heading {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     font-size: 20px;
@@ -228,6 +244,12 @@
     letter-spacing: -0.01em;
     color: rgba(255,255,255,0.94);
     margin: 0 0 14px;
+  }
+
+  .section-hint {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.4);
+    margin: -8px 0 16px;
   }
 
   .info-description {
@@ -247,12 +269,6 @@
   }
 
   /* ---- Color picker ---- */
-  .color-picker {
-    border-radius: 18px;
-    background: rgba(255,255,255,0.04);
-    border: 0.5px solid rgba(255,255,255,0.08);
-    padding: 20px;
-  }
   .color-selected-name {
     font-size: 17px;
     font-weight: 600;
@@ -289,71 +305,15 @@
     transform: scale(1.08);
   }
   .swatch.selected {
-    box-shadow: 0 0 0 2px #000000, 0 0 0 4px rgba(255,255,255,0.9);
+    box-shadow: 0 0 0 2px #000000, 0 0 0 4px #0071e3;
   }
 
-  /* ---- Wheel picker ---- */
-  .wheel-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  .wheel-card {
-    appearance: none;
-    cursor: pointer;
-    text-align: left;
-    border-radius: 14px;
-    padding: 14px 16px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    transition: background 0.2s ease, border-color 0.2s ease;
-    position: relative;
-  }
-  .wheel-card:hover {
-    background: rgba(255,255,255,0.07);
-  }
-  .wheel-card.selected {
-    background: rgba(0,113,227,0.14);
-    border-color: rgba(0,113,227,0.55);
-  }
-  .wheel-card-check {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #0071e3;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-  .wheel-card.selected .wheel-card-check {
-    display: flex;
-  }
-  .wheel-card-check svg {
-    width: 10px;
-    height: 10px;
-    color: #fff;
-  }
-  .wheel-card-name {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    color: rgba(255,255,255,0.92);
-    margin-bottom: 4px;
-    padding-right: 18px;
-  }
-  .wheel-card-desc {
-    font-size: 11.5px;
-    line-height: 1.5;
-    color: rgba(255,255,255,0.48);
-  }
+  /* ---- Wheel note (informational, no longer an interactive picker) ---- */
   .wheel-note {
-    margin-top: 12px;
-    font-size: 11.5px;
-    line-height: 1.5;
-    color: rgba(255,255,255,0.32);
+    margin: 0 0 40px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.4);
   }
 
   /* ---- Credit / license ---- */
@@ -375,10 +335,10 @@
 
   /* ============ Design-detail hotspots (on the 3D model) ============ */
   .hotspot {
-    width: 14px;
-    height: 14px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    border: none;
+    border: 2px solid rgba(0,0,0,0.35);
     padding: 0;
     cursor: pointer;
     background: rgba(255,255,255,0.95);
@@ -397,7 +357,7 @@
     pointer-events: auto;
   }
   .hotspot:hover {
-    transform: scale(1.25);
+    transform: scale(1.2);
   }
   .hotspot.active {
     background: #0071e3;
@@ -479,27 +439,60 @@
     }
     .content {
       order: 1;
-      flex: 0 0 420px;
+      flex: 0 0 clamp(500px, calc(62vw + 40px), 760px);
       height: 100%;
       overflow-y: auto;
-      padding-top: 100px;
+      padding-top: 122px;
     }
     .scroll-cue {
       display: none;
     }
+    .content-inner {
+      max-width: none;
+    }
   }
-  @media (min-width: 1200px) {
-    .content {
-      flex-basis: 460px;
+
+  /* Below the desktop split-view, content is nearly full viewport width,
+     but "1982 Mercedes-Benz 190E" is long enough that digital-arts.html's
+     own clamp(34px, 5vw, 56px) would still overflow on phones and small
+     tablets. Scoped smaller size here avoids truncating it. */
+  @media (max-width: 899px) {
+    .model-name {
+      font-size: clamp(22px, 7.2vw, 34px);
     }
   }
 
   @media (max-width: 480px) {
-    .back-link { left: 16px; top: 16px; }
-    .content { padding: 56px 16px 48px; }
+    .back-link { left: 16px; padding: 8px 0; }
+    .content { padding: 122px 16px 48px; }
     .section { margin-bottom: 48px; }
-    .wheel-cards { grid-template-columns: 1fr; }
-    .wheel-card-desc { font-size: 12.5px; }
+
+    /* Apple HIG calls for 44pt minimum touch targets; 34px swatches and
+       22px hotspots are both under that on a phone, where fingers (not
+       a precise cursor) are doing the tapping. */
+    .swatch { width: 40px; height: 40px; }
+    .swatches-row { gap: 13px; }
+    .hotspot { width: 26px; height: 26px; }
+
+    /* Match the six-swatch row's new (slightly wider) intrinsic width:
+       40*6 + 13*5 = 305px. */
+    .section-heading,
+    .info-description,
+    .info-meta,
+    .color-selected-name,
+    .color-selected-meta,
+    .wheel-note,
+    .credit {
+      max-width: 305px;
+    }
+
+    /* iOS's own default body-text size is 17px; 15px reads small next
+       to real Apple UI on a phone screen. */
+    .info-description { font-size: 16.5px; line-height: 1.6; }
+    .color-selected-name { font-size: 18px; }
+    .section-hint { font-size: 13px; }
+
+    .wheel-note { font-size: 12.5px; }
     .hero-hint { font-size: 12px; gap: 8px; bottom: 64px; }
     .hint-item svg { width: 12px; height: 12px; }
     .scroll-cue { bottom: 18px; }
@@ -540,7 +533,7 @@
       camera-controls
       disable-zoom
       auto-rotate
-      auto-rotate-delay="0"
+      auto-rotate-delay="3500"
       rotation-per-second="4deg"
       shadow-intensity="1"
       exposure="1"
@@ -569,15 +562,15 @@
       <h1 class="model-name"><span class="year">1982</span>Mercedes-Benz 190E</h1>
 
       <div class="section">
-        <h2 class="section-heading">The build</h2>
         <p class="info-meta">Computer Graphics &middot; 2026</p>
         <p class="info-description">A classic Mercedes-Benz 190E, rebuilt for the web: materials, lighting, and paint were reworked, then brought into an interactive glTF viewer where the color can be swapped live.</p>
       </div>
 
       <div class="section">
         <h2 class="section-heading">Exterior color</h2>
+        <p class="section-hint">Tap a swatch to preview it on the car.</p>
         <div class="color-picker">
-          <div class="color-selected-name" id="colorName">Signalrot <span class="en">(Signal Red)</span></div>
+          <div class="color-selected-name" id="colorName"><span class="de" id="colorNameDe">Signalrot</span> <span class="en" id="colorNameEn">(Signal Red)</span></div>
           <div class="color-selected-meta" id="colorMeta">Code 568 &middot; throughout production</div>
           <div class="swatches-row" id="swatches">
             <button class="swatch selected" style="background:#7a1414" data-color="0.42,0.045,0.05,1" data-de="Signalrot" data-en="Signal Red" data-years="Code 568 &middot; throughout production" aria-label="Signalrot, Signal Red"></button>
@@ -590,30 +583,7 @@
         </div>
       </div>
 
-      <div class="section">
-        <h2 class="section-heading">Wheels</h2>
-        <!-- Requires separate exported .glb files per style, see the JS
-             comment near WHEEL switching below. Rename data-src paths
-             to match whatever you actually export. -->
-        <div class="wheel-cards" id="wheels">
-          <button class="wheel-card selected" data-src="assets/1982.glb" data-desc="15&Prime; &ldquo;manhole cover&rdquo; alloys, the most common factory wheel on production 190E models.">
-            <span class="wheel-card-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
-            <div class="wheel-card-name">Gullideckel</div>
-            <div class="wheel-card-desc">15&Prime; &ldquo;manhole cover&rdquo; alloys, the most common factory wheel on production 190E models.</div>
-          </button>
-          <button class="wheel-card" data-src="assets/1982-bundt.glb" data-desc="Earlier multi-spoke &ldquo;cake pan&rdquo; design used across Mercedes-Benz from the late 1960s into the mid-&rsquo;80s.">
-            <span class="wheel-card-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
-            <div class="wheel-card-name">Bundt</div>
-            <div class="wheel-card-desc">Earlier multi-spoke &ldquo;cake pan&rdquo; design used from the late 1960s into the mid-&rsquo;80s.</div>
-          </button>
-          <button class="wheel-card" data-src="assets/1982-evolution.glb" data-desc="Wider, more aggressive alloys from the DTM-homologated Evolution I/II specials.">
-            <span class="wheel-card-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
-            <div class="wheel-card-name">Evolution</div>
-            <div class="wheel-card-desc">Wider, more aggressive alloys from the DTM-homologated Evolution I/II specials.</div>
-          </button>
-        </div>
-        <p class="wheel-note">Bundt and Evolution need matching .glb exports at the paths above before they'll actually change anything.</p>
-      </div>
+      <p class="wheel-note">Wheels: Gullideckel, the standard 15&Prime; &ldquo;manhole cover&rdquo; alloy fitted to most production 190E models. A future update could add Bundt or Evolution wheel options to switch between.</p>
 
       <p class="credit">Base model: &ldquo;1982 Mercedes W201&rdquo; by Dave Love (Tyler_Dave), licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>, provided the core chassis geometry. Additional modeling, exterior surfacing, interior, materials, lighting, paint, and the interactive glTF viewer (rotate, zoom, live color swap) are original work by Hang Yuan.</p>
 
@@ -646,6 +616,8 @@
     updateScrim();
     const swatchesEl = document.getElementById('swatches');
     const colorNameEl = document.getElementById('colorName');
+    const colorNameDeEl = document.getElementById('colorNameDe');
+    const colorNameEnEl = document.getElementById('colorNameEn');
     const colorMetaEl = document.getElementById('colorMeta');
 
     // Old-fashioned single-stage lacquer look: matte, low metallic flake,
@@ -666,9 +638,31 @@
       }
     }
 
+    // Reads a swatch's actual paint color and, if it's too dark to read
+    // against this page's black background (like Blauschwarz, which is
+    // nearly black itself), lifts it toward white just enough to stay
+    // legible while still clearly reading as "that" color rather than
+    // turning into plain white text.
+    function readableSwatchColor(btn) {
+      const bg = getComputedStyle(btn).backgroundColor;
+      const m = bg.match(/\d+/g).map(Number);
+      let [r, g, b] = m;
+      const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+      const MIN_LUMINANCE = 100;
+      if (luminance < MIN_LUMINANCE) {
+        const amount = Math.min(0.72, (MIN_LUMINANCE - luminance) / MIN_LUMINANCE * 0.6 + 0.32);
+        r = Math.round(r + (255 - r) * amount);
+        g = Math.round(g + (255 - g) * amount);
+        b = Math.round(b + (255 - b) * amount);
+      }
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
     function updateColorName(btn) {
-      colorNameEl.innerHTML = `${btn.dataset.de} <span class="en">(${btn.dataset.en})</span>`;
+      colorNameDeEl.textContent = btn.dataset.de;
+      colorNameEnEl.textContent = `(${btn.dataset.en})`;
       colorMetaEl.innerHTML = btn.dataset.years;
+      colorNameDeEl.style.color = readableSwatchColor(btn);
     }
 
     swatchesEl.addEventListener('click', (e) => {
@@ -691,6 +685,10 @@
       btn.addEventListener('blur', () => updateColorName(swatchesEl.querySelector('.swatch.selected')));
     });
 
+    // Colorize the name text for whichever swatch starts selected, not
+    // just after the first hover/click.
+    updateColorName(swatchesEl.querySelector('.swatch.selected'));
+
     viewer.addEventListener('load', () => {
       const initial = swatchesEl.querySelector('.swatch.selected');
       const rgba = initial.dataset.color.split(',').map(Number);
@@ -698,6 +696,19 @@
       // Only now do we know model-viewer actually loaded the model and
       // positioned the hotspots in 3D space, so only now reveal them.
       viewer.classList.add('hotspots-ready');
+    });
+
+    // The car keeps auto-rotating, which makes the hotspots a moving
+    // target. Pausing rotation the moment the pointer enters the model
+    // (not just when it's exactly over a hotspot) gives a stable beat to
+    // aim and click, then resumes once the pointer leaves, unless a
+    // detail card is currently open, in which case it stays paused so
+    // the card doesn't go stale mid-read.
+    viewer.addEventListener('pointerenter', () => {
+      viewer.removeAttribute('auto-rotate');
+    });
+    viewer.addEventListener('pointerleave', () => {
+      if (!activeHotspot) viewer.setAttribute('auto-rotate', '');
     });
 
     // Scroll-to-zoom starts disabled so a normal mouse-wheel scroll over
@@ -708,25 +719,6 @@
     viewer.addEventListener('pointerdown', () => {
       viewer.removeAttribute('disable-zoom');
     }, { once: true });
-
-    // --- Wheel-style switcher -----------------------------------------
-    // IMPORTANT: this swaps the entire model src, so it only works once
-    // separate .glb exports exist for each wheel style (matching the
-    // data-src paths on the buttons in HTML). model-viewer has no stable
-    // public API for toggling individual mesh nodes' visibility, so a
-    // full-model swap is the reliable approach, the trade-off is a
-    // brief reload/flash on each switch, and the current paint color is
-    // automatically reapplied by the 'load' listener above once the new
-    // model finishes loading.
-    const wheelsEl = document.getElementById('wheels');
-    wheelsEl.addEventListener('click', (e) => {
-      const btn = e.target.closest('.wheel-card');
-      if (!btn || btn.classList.contains('selected')) return;
-      wheelsEl.querySelectorAll('.wheel-card').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      viewer.classList.remove('hotspots-ready');
-      viewer.src = btn.dataset.src;
-    });
 
     // --- Design-detail hotspots -------------------------------------
     const DETAILS = {
@@ -756,6 +748,7 @@
       if (activeHotspot) activeHotspot.classList.remove('active');
       activeHotspot = hotspotBtn;
       hotspotBtn.classList.add('active');
+      viewer.removeAttribute('auto-rotate');
 
       detailTitle.textContent = info.title;
       detailBody.textContent = info.body;
@@ -777,6 +770,7 @@
       detailCard.classList.remove('visible');
       if (activeHotspot) activeHotspot.classList.remove('active');
       activeHotspot = null;
+      viewer.setAttribute('auto-rotate', '');
     }
 
     viewer.querySelectorAll('.hotspot').forEach(btn => {
