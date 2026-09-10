@@ -73,6 +73,12 @@
     --poster-color: #000000;
     opacity: 0;
     animation: reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    /* Without this, model-viewer's own touch handling captures every
+       swipe (including vertical ones) for camera rotation, which is
+       why a vertical swipe over the model wouldn't scroll the page on
+       phones. pan-y hands vertical swipes back to native page scroll;
+       horizontal drags still rotate the camera. */
+    touch-action: pan-y;
   }
 
   @keyframes reveal {
@@ -329,6 +335,14 @@
   }
 
   /* ---- Credit / license ---- */
+  /* ---- Credit / license: same rounded-corner shape as the info
+     cards, but outline-only (no fill), so it reads as related but
+     clearly lower priority — fine print, not a main card. ---- */
+  .credit-frame {
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 20px;
+    padding: var(--card-padding);
+  }
   .credit {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     font-size: 11.5px;
@@ -562,7 +576,7 @@
 
       <div class="info-cards">
         <div class="info-card">
-          <p class="info-meta">Computer Graphics &middot; 2025</p>
+          <p class="info-meta">Computer Graphics &middot; 2026</p>
           <p class="info-description">A classic Mercedes-Benz 190E, rebuilt for the web: materials, lighting, and paint were reworked, then brought into an interactive glTF viewer where the color can be swapped live.</p>
         </div>
 
@@ -589,7 +603,9 @@
         </div>
       </div>
 
-      <p class="credit">Base model: &ldquo;1982 Mercedes W201&rdquo; by Dave Love (Tyler_Dave), licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>, provided the core chassis geometry. Additional modeling, exterior surfacing, interior, materials, lighting, paint, and the interactive glTF viewer (rotate, zoom, live color swap) are original work by Hang Yuan.</p>
+      <div class="credit-frame">
+        <p class="credit">Base model: &ldquo;1982 Mercedes W201&rdquo; by Dave Love (Tyler_Dave), licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>, provided the core chassis geometry. Additional modeling, exterior surfacing, interior, materials, lighting, paint, and the interactive glTF viewer (rotate, zoom, live color swap) are original work by Hang Yuan.</p>
+      </div>
 
     </div>
   </main>
