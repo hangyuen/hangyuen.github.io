@@ -16,14 +16,6 @@
     --dim: #6e6e73;
     --accent: #0071e3;
     --hairline: rgba(0,0,0,0.08);
-    /* 1368px ≈ the logical width of a 12.3" laptop/tablet screen (e.g. a
-       Surface Pro 12.3", 2736×1824 physical @ 2x). The whole page is
-       designed at that width; --page-scale then enlarges everything
-       uniformly on wider screens instead of just adding side margin, and
-       never shrinks below 1x on smaller screens (real responsiveness for
-       phones/tablets is handled separately by the max-width:900px/560px
-       rules further down). */
-    --page-scale: clamp(1, calc(100vw / 1368), 1.8);
     --page-gutter: clamp(40px, 9vw, 123px);
     /* fixed height for the text block under each frame, so a card with a
        long description and a card with none still line up along the same
@@ -40,25 +32,6 @@
     font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
-  }
-
-  /* Everything lives inside .page-scale, laid out as if the screen were
-     always exactly 1368px wide (≈12.3", a 12.3" screen's logical width,
-     e.g. Surface Pro). Below that width it behaves completely normally.
-     At or above it, the media query pins the layout to that 1368px canvas
-     and scales the whole thing up with the real screen, so a bigger
-     monitor enlarges everything in proportion instead of just adding
-     side margin. */
-  .page-scale{
-    width:100%;
-  }
-  @media (min-width:1368px){
-    .page-scale{
-      width:1368px;
-      margin:0 auto;
-      transform-origin:top center;
-      transform:scale(var(--page-scale));
-    }
   }
 
   a{ color:inherit; text-decoration:none; }
@@ -137,11 +110,11 @@
   .carousel-track::-webkit-scrollbar{ display:none; }
 
   .art-item{
-    /* ~2.5 items per view at the 1368px baseline: two full frames plus a
-       clear ~25%-visible sliver of the next one, enough to read as "more
-       to scroll" without looking like a cut-off mistake */
-    flex:0 0 calc((100% - 80px) / 2.5);
-    max-width:1000px;
+    /* grows with the viewport directly (not tied to any page-wide zoom),
+       so the artwork gets more physical presence on a big screen while
+       type sizes below stay exactly as authored. Capped at 860px so it
+       doesn't get absurd on a 5K/6K monitor. */
+    flex:0 0 clamp(300px, 36vw, 860px);
     scroll-snap-align:start;
   }
 
@@ -311,7 +284,6 @@
 </head>
 <body>
 
-<div class="page-scale">
 <div class="page-header">
   <a class="back-link" href="index.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -331,7 +303,6 @@
   </button>
 </div>
 <div class="carousel-dots" id="dots"></div>
-</div>
 
 <script>
   // Replace this with your real pieces: image path, title, medium, year.
@@ -400,17 +371,11 @@
     const item = track.querySelector('.art-item');
     if (!item) return 0;
     const gap = parseFloat(getComputedStyle(track).gap) || 0;
-    // offsetWidth is the element's local (pre-scale) layout width, which is
-    // what scrollBy expects — getBoundingClientRect would return the
-    // on-screen (post page-scale) size and overshoot once scale > 1.
     return item.offsetWidth + gap;
   }
 
   // vertically center the arrow buttons against the actual rendered
-  // image height. Uses offsetTop/offsetHeight (local layout units, same
-  // space as the arrows' own `top`) rather than getBoundingClientRect,
-  // since the latter reflects on-screen size after page-scale and would
-  // misplace the buttons once scale > 1.
+  // image height.
   function positionArrows(){
     const frame = track.querySelector('.art-frame');
     if (!frame) return;
