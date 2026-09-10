@@ -10,6 +10,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  :root{
+    --page-gutter: clamp(40px, 9vw, 123px);
+    /* Single shared column width for the title AND every line of text
+       below it, so nothing gets clipped and everything lines up under
+       the title instead of the old fixed 284px swatch-derived width. */
+    --content-width: clamp(300px, 86vw, 460px);
+    /* Width of the six-swatch row itself: 6 × 34px swatches + 5 × 16px
+       gaps = 284px. The title is pinned to this so it wraps at the
+       same width as the color picker below it. */
+    --swatch-row-width: 284px;
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -38,15 +50,17 @@
      the components they override, so they win the cascade.) */
 
   /* ============ HERO ============ */
-  /* Full first-viewport section holding the 3D model. Everything else
-     lives below it in normal, scrollable document flow, no longer
-     crammed into one fixed-height screen. */
+  /* Fixed full-viewport backdrop. The 3D model always fills the entire
+     frame, at every scroll position and every breakpoint. The text
+     below scrolls in normal document flow on top of it. */
   .hero {
-    position: relative;
+    position: fixed;
+    inset: 0;
     width: 100%;
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
+    z-index: 0;
     background: radial-gradient(ellipse at 50% 45%, #1c1c1e 0%, #000000 72%);
   }
 
@@ -115,21 +129,37 @@
   }
 
   .model-name {
+    display: flex;
+    flex-direction: column;
+    margin: 0 0 32px;
+    max-width: var(--swatch-row-width);
+  }
+  .model-year {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size: clamp(34px, 5vw, 56px);
+    font-size: clamp(15px, 2.1vw, 19px);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.48);
+    margin-bottom: 6px;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.8);
+  }
+  .model-brand {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size: clamp(24px, 4vw, 38px);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.1;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.85);
+  }
+  .model-code {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size: clamp(40px, 7.5vw, 72px);
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: rgba(255,255,255,0.92);
-    margin: 0 0 48px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .model-name .year {
-    font-weight: 500;
-    color: rgba(255,255,255,0.5);
-    margin-right: 10px;
+    color: rgba(255,255,255,0.96);
+    line-height: 1.05;
+    text-shadow: 0 4px 28px rgba(0,0,0,0.9);
   }
 
   /* Rotate/zoom hint: plain floating caption low in the hero, over the
@@ -176,46 +206,21 @@
     flex-shrink: 0;
   }
 
-  /* Scroll cue: a quiet bouncing chevron telling you there's a whole
-     page below the model, not just a fullscreen viewer. */
-  .scroll-cue {
-    position: absolute;
-    bottom: 26px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    color: rgba(255,255,255,0.32);
-    opacity: 0;
-    animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
-  }
-  .scroll-cue svg {
-    width: 20px;
-    height: 20px;
-    animation: bob 1.8s ease-in-out infinite;
-  }
-  .scroll-cue span {
-    font-size: 10.5px;
-    letter-spacing: 0.02em;
-  }
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(4px); }
-  }
-
-  /* ============ CONTENT (scrollable, below the hero) ============ */
+  /* ============ CONTENT (overlay, scrolls above the fixed model) ==== */
+  /* The model behind is fixed and always full-frame; this scrolls in
+     normal document flow on top of it, starting right under the back
+     link/scrim so the text sits near the top of the 3D frame rather
+     than after a full first screen of nothing but the car. */
   .content {
     position: relative;
     z-index: 1;
-    background: #000000;
-    padding: 122px var(--page-gutter, 24px) 64px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 132px var(--page-gutter, 24px) 64px;
   }
   .content-inner {
-    max-width: 640px;
-    margin: 0 auto;
+    max-width: var(--swatch-row-width);
+    margin: 0;
   }
 
   .section {
@@ -225,17 +230,9 @@
     margin-bottom: 0;
   }
 
-  /* Everything except the title lines up to the same width as the six
-     color swatches, instead of stretching edge-to-edge of the panel. */
-  .section-heading,
-  .info-description,
-  .info-meta,
-  .color-selected-name,
-  .color-selected-meta,
-  .wheel-note,
-  .credit {
-    max-width: 284px;
-  }
+  /* Everything shares the card's own width (which matches the title's
+     column, --content-width) instead of a narrower fixed swatch-derived
+     width, so the whole block reads as one aligned column. */
 
   .section-heading {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
@@ -244,12 +241,14 @@
     letter-spacing: -0.01em;
     color: rgba(255,255,255,0.94);
     margin: 0 0 14px;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.85);
   }
 
   .section-hint {
     font-size: 12.5px;
     color: rgba(255,255,255,0.4);
     margin: -8px 0 16px;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.85);
   }
 
   .info-description {
@@ -259,6 +258,7 @@
     letter-spacing: -0.005em;
     color: rgba(255,255,255,0.72);
     margin: 0;
+    text-shadow: 0 1px 12px rgba(0,0,0,0.85);
   }
 
   .info-meta {
@@ -266,6 +266,7 @@
     letter-spacing: -0.006em;
     color: rgba(255,255,255,0.5);
     margin: 0 0 8px;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.85);
   }
 
   /* ---- Color picker ---- */
@@ -275,6 +276,7 @@
     letter-spacing: -0.01em;
     color: rgba(255,255,255,0.95);
     margin-bottom: 2px;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.85);
   }
   .color-selected-name .en {
     font-weight: 400;
@@ -284,6 +286,7 @@
     font-size: 12.5px;
     color: rgba(255,255,255,0.42);
     margin-bottom: 18px;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.85);
   }
   .swatches-row {
     display: flex;
@@ -298,7 +301,7 @@
     padding: 0;
     cursor: pointer;
     position: relative;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.35), inset 0 0 0 0.5px rgba(255,255,255,0.2);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.35), inset 0 0 0 0.5px rgba(255,255,255,0.2), 0 2px 10px rgba(0,0,0,0.5);
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .swatch:hover {
@@ -314,6 +317,7 @@
     font-size: 12.5px;
     line-height: 1.55;
     color: rgba(255,255,255,0.4);
+    text-shadow: 0 1px 10px rgba(0,0,0,0.85);
   }
 
   /* ---- Credit / license ---- */
@@ -323,6 +327,7 @@
     line-height: 1.55;
     letter-spacing: -0.005em;
     color: rgba(255,255,255,0.38);
+    text-shadow: 0 1px 10px rgba(0,0,0,0.85);
   }
   .credit a {
     color: rgba(255,255,255,0.55);
@@ -425,46 +430,18 @@
     height: 14px;
   }
 
-  @media (min-width: 900px) {
-    .layout {
-      display: flex;
-      height: 100vh;
-      height: 100dvh;
-      overflow: hidden;
-    }
-    .hero {
-      order: 2;
-      flex: 1 1 auto;
-      height: 100%;
-    }
-    .content {
-      order: 1;
-      flex: 0 0 clamp(500px, calc(62vw + 40px), 760px);
-      height: 100%;
-      overflow-y: auto;
-      padding-top: 122px;
-    }
-    .scroll-cue {
-      display: none;
-    }
-    .content-inner {
-      max-width: none;
-    }
-  }
-
-  /* Below the desktop split-view, content is nearly full viewport width,
-     but "1982 Mercedes-Benz 190E" is long enough that digital-arts.html's
-     own clamp(34px, 5vw, 56px) would still overflow on phones and small
-     tablets. Scoped smaller size here avoids truncating it. */
-  @media (max-width: 899px) {
-    .model-name {
-      font-size: clamp(22px, 7.2vw, 34px);
-    }
-  }
+  /* The title now wraps instead of truncating, so it no longer needs a
+     smaller forced size on narrow screens to avoid overflow — clamp()
+     on .model-name already scales it, and wrapping handles the rest. */
 
   @media (max-width: 480px) {
+    :root{
+      /* Swatches grow to 40px touch targets with 13px gaps here:
+         6×40 + 5×13 = 305px. */
+      --swatch-row-width: 305px;
+    }
     .back-link { left: 16px; padding: 8px 0; }
-    .content { padding: 122px 16px 48px; }
+    .content { padding: 108px 16px 48px; }
     .section { margin-bottom: 48px; }
 
     /* Apple HIG calls for 44pt minimum touch targets; 34px swatches and
@@ -473,18 +450,6 @@
     .swatch { width: 40px; height: 40px; }
     .swatches-row { gap: 13px; }
     .hotspot { width: 26px; height: 26px; }
-
-    /* Match the six-swatch row's new (slightly wider) intrinsic width:
-       40*6 + 13*5 = 305px. */
-    .section-heading,
-    .info-description,
-    .info-meta,
-    .color-selected-name,
-    .color-selected-meta,
-    .wheel-note,
-    .credit {
-      max-width: 305px;
-    }
 
     /* iOS's own default body-text size is 17px; 15px reads small next
        to real Apple UI on a phone screen. */
@@ -495,7 +460,8 @@
     .wheel-note { font-size: 12.5px; }
     .hero-hint { font-size: 12px; gap: 8px; bottom: 64px; }
     .hint-item svg { width: 12px; height: 12px; }
-    .scroll-cue { bottom: 18px; }
+    .model-code { font-size: clamp(36px, 13vw, 52px); }
+    .model-brand { font-size: clamp(20px, 6.5vw, 26px); }
   }
 </style>
 </head>
@@ -519,11 +485,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
         Scroll to zoom
       </span>
-    </div>
-
-    <div class="scroll-cue">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-      <span>MORE</span>
     </div>
 
     <model-viewer
@@ -559,7 +520,11 @@
   <main class="content" id="contentPanel">
     <div class="content-inner">
 
-      <h1 class="model-name"><span class="year">1982</span>Mercedes-Benz 190E</h1>
+      <h1 class="model-name">
+        <span class="model-year">1982</span>
+        <span class="model-brand">Mercedes-Benz</span>
+        <span class="model-code">190E</span>
+      </h1>
 
       <div class="section">
         <p class="info-meta">Computer Graphics &middot; 2026</p>
@@ -602,16 +567,10 @@
   <script>
     const viewer = document.getElementById('car');
     const topScrim = document.querySelector('.top-scrim');
-    const contentPanel = document.getElementById('contentPanel');
-    const isDesktopLayout = () => window.matchMedia('(min-width: 900px)').matches;
     function updateScrim() {
-      const desktop = isDesktopLayout();
-      const y = desktop ? contentPanel.scrollTop : window.scrollY;
-      const threshold = desktop ? 24 : window.innerHeight * 0.7;
-      topScrim.classList.toggle('visible', y > threshold);
+      topScrim.classList.toggle('visible', window.scrollY > 24);
     }
     window.addEventListener('scroll', updateScrim, { passive: true });
-    contentPanel.addEventListener('scroll', updateScrim, { passive: true });
     window.addEventListener('resize', updateScrim);
     updateScrim();
     const swatchesEl = document.getElementById('swatches');
