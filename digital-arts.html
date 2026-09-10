@@ -25,6 +25,10 @@
        rules further down). */
     --page-scale: clamp(1, calc(100vw / 1368), 1.8);
     --page-gutter: clamp(40px, 9vw, 123px);
+    /* fixed height for the text block under each frame, so a card with a
+       long description and a card with none still line up along the same
+       baseline in the row */
+    --caption-height: 190px;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -115,7 +119,7 @@
     position:relative;
     max-width:2400px;
     margin:0 auto;
-    padding-bottom:88px;
+    padding-bottom:40px;
   }
 
   .carousel-track{
@@ -124,6 +128,7 @@
     overflow-x:auto;
     scroll-snap-type:x mandatory;
     scroll-behavior:smooth;
+    scroll-padding-inline:var(--page-gutter);
     -webkit-overflow-scrolling:touch;
     padding:0 var(--page-gutter);
     scrollbar-width:none;
@@ -132,10 +137,10 @@
   .carousel-track::-webkit-scrollbar{ display:none; }
 
   .art-item{
-    /* nudged up from ~2.4 items per view to ~2.2, giving each frame a bit
-       more presence while still comfortably fitting a 12.3" screen (the
-       1368px baseline) without crowding it */
-    flex:0 0 calc((100% - 40px) / 2.2);
+    /* ~2.5 items per view at the 1368px baseline: two full frames plus a
+       clear ~25%-visible sliver of the next one, enough to read as "more
+       to scroll" without looking like a cut-off mistake */
+    flex:0 0 calc((100% - 80px) / 2.5);
     max-width:1000px;
     scroll-snap-align:start;
   }
@@ -147,10 +152,57 @@
     overflow:hidden;
     border-radius:18px;
     background-color:#f0f0f0;
-    background-size:cover;
-    background-position:center;
     transition:transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
+  .art-frame img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .art-item:hover .art-frame{
+    transform:scale(1.012);
+  }
+
+  /* video facade — a static thumbnail with a play button; the real
+     iframe is only injected once the person clicks, so an embedded
+     player never loads (or autoplays a network request) before that */
+  .video-facade{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+    cursor:pointer;
+    background:#111;
+  }
+  .video-facade img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0.85;
+  }
+  .video-play{
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:60px; height:60px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.92);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 20px rgba(0,0,0,0.25);
+    transition:transform 0.2s ease, background 0.2s ease;
+  }
+  .video-facade:hover .video-play{
+    transform:translate(-50%,-50%) scale(1.08);
+    background:#fff;
+  }
+  .video-play svg{ width:20px; height:20px; color:#1d1d1f; margin-left:3px; }
   .art-video{
     position:absolute;
     inset:0;
@@ -158,12 +210,12 @@
     height:100%;
     border:0;
   }
-  .art-item:hover .art-frame{
-    transform:scale(1.012);
-  }
 
   .art-caption{
     padding-top:14px;
+    min-height:var(--caption-height);
+    display:flex;
+    flex-direction:column;
   }
   .art-title{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
@@ -185,6 +237,13 @@
     color:#4a4a4a;
     letter-spacing:-0.005em;
     margin-top:14px;
+    /* clamp to a fixed number of lines so a long description and a short
+       one both take up the same space in the row; the rest is reachable
+       by opening the piece on its own, not truncated silently forever */
+    display:-webkit-box;
+    -webkit-line-clamp:4;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
   }
   .art-exhibition{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
@@ -192,7 +251,8 @@
     font-style:italic;
     line-height:1.5;
     color:var(--dim);
-    margin-top:10px;
+    margin-top:auto;
+    padding-top:10px;
   }
 
   /* round nav arrows — glassy, inset ON TOP of the image content at each
@@ -229,12 +289,38 @@
     pointer-events:none;
   }
 
+  /* progress dots — the only position indicator on touch devices (arrows
+     are hidden below 900px), but shown everywhere since they're cheap
+     and useful on desktop too */
+  .carousel-dots{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    padding-top:28px;
+  }
+  .carousel-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:rgba(0,0,0,0.16);
+    border:0;
+    padding:0;
+    cursor:pointer;
+    transition:background 0.2s ease, transform 0.2s ease;
+  }
+  .carousel-dot:hover{ background:rgba(0,0,0,0.32); }
+  .carousel-dot.active{
+    background:var(--accent);
+    transform:scale(1.25);
+  }
+
   @media (max-width:900px){
     .art-item{ flex:0 0 78vw; max-width:none; }
     .carousel-arrow{ display:none; }
   }
   @media (max-width:560px){
     .art-item{ flex:0 0 88vw; }
+    :root{ --caption-height: 210px; }
   }
 </style>
 </head>
@@ -259,10 +345,15 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
   </button>
 </div>
+<div class="carousel-dots" id="dots"></div>
 </div>
 
 <script>
-  // Replace this with your real 6 pieces: image path, title, medium, year.
+  // Replace this with your real pieces: image path, title, medium, year.
+  // `description` is optional but if you add one for some pieces, keep it
+  // short (2-3 sentences) for every piece — the clamp keeps the card
+  // height fixed, but a piece with no description at all still leaves a
+  // visibly empty gap next to ones that have one.
   const artworks = [
     { image: 'assets/Open Field, Open Love.jpg', title: 'Open Field, Open Love', medium: 'Digital Painting', year: '2026', aspect: '16/9', dimensions: '32 x 18 inches',
       description: "A figure stands alone in a windswept field, arms thrown open toward a golden retriever running to meet them. The grass bends and blurs around both figures, caught mid-motion, as if the whole landscape is moving with them. Open Field, Open Love speaks to the quiet work of reaching outward after isolation: the vulnerability of opening your arms before you know if anyone will meet you there, and the relief when something does.",
@@ -282,20 +373,46 @@
   const track = document.getElementById('track');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
+  const dotsWrap = document.getElementById('dots');
 
-  track.innerHTML = artworks.map(art => `
+  track.innerHTML = artworks.map((art, i) => `
     <div class="art-item">
       ${art.video
-        ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}><iframe class="art-video" src="https://www.youtube.com/embed/${art.video}" title="${art.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`
-        : `<div class="art-frame" style="background-image:url('${art.image}');${art.aspect ? ` aspect-ratio:${art.aspect};` : ''}" role="img" aria-label="${art.title}"></div>`}
+        ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
+             <button type="button" class="video-facade" data-video="${art.video}" data-title="${art.title}" aria-label="Play ${art.title}">
+               <img src="https://img.youtube.com/vi/${art.video}/hqdefault.jpg" alt="" loading="lazy">
+               <span class="video-play">
+                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+               </span>
+             </button>
+           </div>`
+        : `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
+             <img src="${art.image}" alt="${art.title}" loading="${i < 2 ? 'eager' : 'lazy'}">
+           </div>`}
       <div class="art-caption">
         <div class="art-title">${art.title}</div>
-        <div class="art-meta">${[art.medium, art.dimensions, art.exhibition ? null : art.year].filter(Boolean).join(', ')}</div>
+        <div class="art-meta">${[art.medium, art.dimensions, art.year].filter(Boolean).join(', ')}</div>
         ${art.description ? `<p class="art-description">${art.description}</p>` : ''}
         ${art.exhibition ? `<p class="art-exhibition">${art.exhibition}</p>` : ''}
       </div>
     </div>
   `).join('');
+
+  // swap the video facade for a real iframe only on click, so nothing
+  // from YouTube loads until the person actually wants to watch it
+  track.querySelectorAll('.video-facade').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.video;
+      const title = btn.dataset.title;
+      const iframe = document.createElement('iframe');
+      iframe.className = 'art-video';
+      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+      iframe.title = title;
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      btn.replaceWith(iframe);
+    });
+  });
 
   function itemStep(){
     const item = track.querySelector('.art-item');
@@ -312,7 +429,6 @@
   // space as the arrows' own `top`) rather than getBoundingClientRect,
   // since the latter reflects on-screen size after page-scale and would
   // misplace the buttons once scale > 1.
-  const wrap = document.querySelector('.carousel-wrap');
   function positionArrows(){
     const frame = track.querySelector('.art-frame');
     if (!frame) return;
@@ -330,15 +446,41 @@
     track.scrollBy({ left: itemStep(), behavior: 'smooth' });
   });
 
+  // dots — one per artwork, click to jump, active state follows scroll
+  dotsWrap.innerHTML = artworks.map((_, i) =>
+    `<button type="button" class="carousel-dot" data-index="${i}" aria-label="Go to piece ${i + 1}"></button>`
+  ).join('');
+  const dots = Array.from(dotsWrap.children);
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const i = Number(dot.dataset.index);
+      track.scrollTo({ left: i * itemStep(), behavior: 'smooth' });
+    });
+  });
+
+  function updateDots(){
+    const step = itemStep();
+    if (!step) return;
+    const active = Math.round(track.scrollLeft / step);
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === active));
+  }
+
   // hide the prev/next arrow when there's nothing left to scroll to on that side
   function updateArrowState(){
     const maxScroll = track.scrollWidth - track.clientWidth - 1;
     prevBtn.disabled = track.scrollLeft <= 0;
     nextBtn.disabled = track.scrollLeft >= maxScroll;
   }
-  track.addEventListener('scroll', updateArrowState);
-  window.addEventListener('resize', updateArrowState);
+  track.addEventListener('scroll', () => {
+    updateArrowState();
+    updateDots();
+  });
+  window.addEventListener('resize', () => {
+    updateArrowState();
+    updateDots();
+  });
   updateArrowState();
+  updateDots();
 </script>
 
 </body>
