@@ -27,12 +27,12 @@
   a { text-decoration: none; }
 
   /* ============ FULL-BLEED HERO ============
-     The 3D model is the entire screen at every breakpoint — no split
+     The 3D model is the entire screen at every breakpoint, no split
      pane, no scrolling column beside it. Everything else (back link,
      title, color picker, credit) is a lightweight text overlay
      floating directly on top of it, Apple-product-page style, instead
      of living in boxed cards. Because nothing here scrolls, there's
-     no "does it fit on a 14-inch MacBook" question to tune for — the
+     no "does it fit on a 14-inch MacBook" question to tune for, the
      hero always exactly fills the viewport, so everything is visible
      by construction. */
   .hero {
@@ -51,8 +51,8 @@
     opacity: 0;
     animation: reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
     touch-action: pan-y;
-    /* Subtle warm, slightly desaturated color grade — the kind of cast
-       an older photograph or a well-worn print has — instead of the
+    /* Subtle warm, slightly desaturated color grade, the kind of cast
+       an older photograph or a well-worn print has, instead of the
        clinical neutral-white of a fresh digital render. Kept light so
        the car's actual paint color still reads correctly. */
     filter: sepia(0.12) saturate(0.88) contrast(0.96) brightness(0.97);
@@ -63,6 +63,24 @@
   }
   @media (prefers-reduced-motion: reduce) {
     model-viewer { animation-duration: 0.01ms; }
+  }
+
+  /* Film-grain overlay: a tiled SVG turbulence pattern sitting on top
+     of the whole frame, so the render reads as a photograph with real
+     grain instead of a perfectly smooth digital surface. Kept subtle
+     and static (real film grain flickers frame to frame, which is
+     possible but costs a repaint loop; this is the cheap, tasteful
+     version). pointer-events:none so it never blocks the model,
+     hotspots, or any of the UI underneath it. */
+  .grain-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 12;
+    pointer-events: none;
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 180px 180px;
   }
 
   /* Static, always-on gradients (no scroll-triggered JS needed, since
@@ -123,8 +141,8 @@
     max-width: 640px;
   }
   .page-title {
-    /* One uniform size and weight for the whole name — no separate
-       tiers for year/brand/model — matching how digital-arts.html's
+    /* One uniform size and weight for the whole name, no separate
+       tiers for year/brand/model, matching how digital-arts.html's
        .page-title is a single plain line. Identical clamp(), so the
        two pages' titles are pixel-for-pixel the same size always. */
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
@@ -146,7 +164,7 @@
     max-width: 460px;
   }
 
-  /* ============ BOTTOM: hint, color picker, footnote — all plain
+  /* ============ BOTTOM: hint, color picker, footnote, all plain
      text/controls directly on the model, no card backgrounds. ============ */
   .bottom-panel {
     position: absolute;
@@ -230,13 +248,14 @@
 
   /* ============ Design-detail hotspots on the model ============ */
   .hotspot {
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    border: 2px solid rgba(0,0,0,0.35);
+    border: 2.5px solid rgba(0,0,0,0.4);
     padding: 0;
     cursor: pointer;
     background: rgba(255,255,255,0.95);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     animation: hotspot-pulse 2.4s ease-out infinite;
     transition: transform 0.2s ease, opacity 0.3s ease;
     opacity: 0;
@@ -246,11 +265,11 @@
     opacity: 1;
     pointer-events: auto;
   }
-  .hotspot:hover { transform: scale(1.2); }
+  .hotspot:hover { transform: scale(1.15); }
   .hotspot.active { background: #0071e3; }
   @keyframes hotspot-pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.45); }
-    70%  { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
+    0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+    70%  { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
     100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
   }
 
@@ -278,12 +297,14 @@
   }
   .detail-card-body { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.68); }
   .detail-card-close {
-    position: absolute; top: 12px; right: 12px; width: 20px; height: 20px;
-    border: none; background: none; color: rgba(255,255,255,0.4); cursor: pointer;
+    position: absolute; top: 8px; right: 8px; width: 32px; height: 32px;
+    border: none; background: none; color: rgba(255,255,255,0.5); cursor: pointer;
     display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    transition: background 0.15s ease, color 0.15s ease;
   }
-  .detail-card-close:hover { color: rgba(255,255,255,0.8); }
-  .detail-card-close svg { width: 14px; height: 14px; }
+  .detail-card-close:hover { color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.1); }
+  .detail-card-close svg { width: 16px; height: 16px; }
 
   /* ============ Small phones ============ */
   @media (max-width: 480px) {
@@ -293,7 +314,7 @@
     .bottom-panel { bottom: 28px; gap: 14px; }
     .swatch { width: 38px; height: 38px; }
     .swatches-row { gap: 10px; }
-    .hotspot { width: 26px; height: 26px; }
+    .hotspot { width: 36px; height: 36px; }
     .scrim-top { height: 190px; }
     .scrim-bottom { height: 280px; }
   }
@@ -309,6 +330,7 @@
 <body>
 
   <section class="hero">
+    <div class="grain-overlay"></div>
     <div class="scrim-top"></div>
     <div class="scrim-bottom"></div>
 
@@ -324,9 +346,9 @@
 
     <!-- shadow-softness defaults to 1 (fully diffuse); pulled down to
          0.75 for a slightly more defined contact shadow under the
-         car — reads as a grounded studio shot rather than the model
+         car, reads as a grounded studio shot rather than the model
          looking like it's floating on a soft blur. exposure pulled
-         down from the neutral default of 1 to 0.92 — a touch dimmer
+         down from the neutral default of 1 to 0.92, a touch dimmer
          and less clinically bright, closer to how an older print or
          photograph reads than a crisp modern digital render. -->
     <model-viewer
@@ -385,7 +407,7 @@
         </div>
       </div>
 
-      <p class="footnote">Gulldeckel 15&Prime; wheels, standard on most production 190E models. Base model &ldquo;1982 Mercedes W201&rdquo; by Dave Love (Tyler_Dave), <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a> &mdash; chassis geometry only. Additional modeling, retopology, PBR material authoring (metallic/roughness workflow), HDRI-based studio lighting, and this real-time glTF/WebGL viewer with live material swapping by Hang Yuan.</p>
+      <p class="footnote">Gulldeckel 15&Prime; wheels, standard on most production 190E models. Base model &ldquo;1982 Mercedes W201&rdquo; by Dave Love (Tyler_Dave), <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>, chassis geometry only. Additional modeling, retopology, PBR material authoring (metallic/roughness workflow), HDRI-based studio lighting, and this real-time glTF/WebGL viewer with live material swapping by Hang Yuan.</p>
     </div>
   </section>
 
@@ -405,7 +427,7 @@
     const colorMetaEl = document.getElementById('colorMeta');
 
     // Weathered, 44-years-on paint: pulled back from a mirror-glossy
-    // showroom clearcoat toward something duller and softer-edged —
+    // showroom clearcoat toward something duller and softer-edged,
     // still enough gloss and metallic flake to read as a real repaint,
     // not chalky, but no longer looks like it rolled off the line
     // yesterday.
