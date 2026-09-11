@@ -61,7 +61,7 @@
   }
 
   html[data-theme="grey"]{
-    --stage-bg: #d2d2d7;
+    --stage-bg: #b8b8bd;
     --stage-bg-image: none;
     --icon-label-color: #1d1d1f;
     --icon-label-shadow: 0 1px 2px rgba(255,255,255,0.4);
@@ -419,7 +419,7 @@
     background:#ffffff;
   }
   .theme-swatch[data-theme-option="grey"]{
-    background:#c7c7cc;
+    background:#a3a3a9;
   }
   .theme-swatch-check{
     position:absolute;
@@ -1257,10 +1257,10 @@
   <button type="button" class="theme-swatch is-active" id="themeOff" data-theme-option="off" aria-label="Dark theme" aria-pressed="true">
     <span class="theme-swatch-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
   </button>
-  <button type="button" class="theme-swatch" id="themeWhite" data-theme-option="white" aria-label="White theme" aria-pressed="false">
+  <button type="button" class="theme-swatch" id="themeGrey" data-theme-option="grey" aria-label="Grey theme" aria-pressed="false">
     <span class="theme-swatch-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
   </button>
-  <button type="button" class="theme-swatch" id="themeGrey" data-theme-option="grey" aria-label="Grey theme" aria-pressed="false">
+  <button type="button" class="theme-swatch" id="themeWhite" data-theme-option="white" aria-label="White theme" aria-pressed="false">
     <span class="theme-swatch-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
   </button>
 </div>
@@ -1564,7 +1564,7 @@
     const steps = [
       { title: "Hey, I'm Hang!", desc: "Thanks for stopping by, let's take a quick look around.", avatar: true, intro: true },
       { title: 'Those floating icons? Poke them.', desc: 'Each one is a project waiting to show off. Click and it pops open.' },
-      { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.', aside: 'Oh, and the swatches up top let you pick your vibe: dark, white, or grey.' }
+      { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.', aside: 'Oh, and the swatches up top let you pick your vibe: black, grey, or white.' }
     ];
     const totalRealSteps = steps.length - 1;
     let step = 0;
