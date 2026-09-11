@@ -211,17 +211,6 @@
     background:linear-gradient(145deg, var(--icon-box-alt-grad-1), var(--icon-box-alt-grad-2));
   }
 
-  /* Give only the Computer Modeling cover a subtle 3D tilt */
-  .icon.p3 .icon-box{
-    perspective:600px;
-  }
-  .icon.p3 .icon-box img{
-    transform:rotateY(-10deg) rotateX(6deg) scale(1.08);
-    transition:transform 0.25s ease;
-  }
-  .icon.p3:hover .icon-box img{
-    transform:rotateY(-14deg) rotateX(9deg) scale(1.12);
-  }
   .icon:hover .icon-box{
     transform:translateY(-4px) scale(1.04);
   }
@@ -246,7 +235,7 @@
   }
 
   /* approximate positions, matching the scattered layout */
-  .icon.p1{ top:18%; left:66%; }   /* Mindo Branding */
+  .icon.p1{ top:18%; left:66%; }   /* A Thousand Li (VR) */
   .icon.p2{ top:26%; left:26%; }   /* Attention Type */
   .icon.p3{ top:35%; left:74%; }   /* Line of Contamination */
   .icon.p4{ top:41%; left:43%; }   /* Threading Inwards */
@@ -1301,8 +1290,8 @@
 
   <div class="icon p1" data-project="vr">
     <div class="icon-float">
-      <div class="icon-box"><img src="assets/vr.gif" alt="Virtual Reality"></div>
-      <div class="icon-label">Virtual Reality</div>
+      <div class="icon-box"><img src="assets/vr.gif" alt="A Thousand Li (VR)"></div>
+      <div class="icon-label">A Thousand Li (VR)</div>
     </div>
   </div>
   <div class="icon p2" data-project="ar">
@@ -1319,8 +1308,8 @@
   </div>
   <div class="icon p4" data-project="vfx">
     <div class="icon-float">
-      <div class="icon-box"><img src="assets/animation.gif" alt="Animation & Visual Effects"></div>
-      <div class="icon-label">Animation &amp; Visual Effects</div>
+      <div class="icon-box"><img src="assets/animation.gif" alt="Papel (Animation & VFX)"></div>
+      <div class="icon-label">Papel (Animation &amp; VFX)</div>
     </div>
   </div>
   <div class="icon p5" data-project="digital-art">
@@ -1551,8 +1540,11 @@
   // ONBOARDING TIP — a quick unnumbered intro card, then a 3-step walkthrough
   // (theme, icons, dock) under the theme switcher. Skippable at any point;
   // once dismissed (skip or finishing the last step) it won't show again.
+  const ONBOARD_STORAGE_KEY = 'onboard-tip-seen';
+  let onboardWasAlreadySeenOnLoad = false;
+  try { onboardWasAlreadySeenOnLoad = localStorage.getItem(ONBOARD_STORAGE_KEY) === '1'; } catch (e) { /* ignore */ }
+
   (function(){
-    const STORAGE_KEY = 'onboard-tip-seen';
     const tip = document.getElementById('onboardTip');
     const avatarEl = document.getElementById('onboardAvatar');
     const stepLabel = document.getElementById('onboardStepLabel');
@@ -1594,13 +1586,10 @@
 
     function dismiss(){
       tip.classList.remove('visible');
-      try { localStorage.setItem(STORAGE_KEY, '1'); } catch (e) { /* ignore */ }
+      try { localStorage.setItem(ONBOARD_STORAGE_KEY, '1'); } catch (e) { /* ignore */ }
     }
 
-    let alreadySeen = false;
-    try { alreadySeen = localStorage.getItem(STORAGE_KEY) === '1'; } catch (e) { /* ignore */ }
-
-    if (!alreadySeen) {
+    if (!onboardWasAlreadySeenOnLoad) {
       render();
       setTimeout(() => tip.classList.add('visible'), 500);
     }
@@ -1630,17 +1619,22 @@
   const icons = document.querySelectorAll('.icon');
 
   // DRAG HINT — nudge the Howl's Moving Castle icon once shortly after
-  // load, so visitors notice the icons can be picked up and dragged.
-  (function(){
-    const hintTarget = document.querySelector('.icon.p2');
-    if (!hintTarget) return;
-    setTimeout(() => {
-      hintTarget.classList.add('drag-hint');
-    }, 1400);
-    hintTarget.addEventListener('animationend', () => {
-      hintTarget.classList.remove('drag-hint');
-    });
-  })();
+  // load, so first-time visitors notice the icons can be picked up and
+  // dragged. Only plays if this is the visitor's first time on the site
+  // (i.e. they haven't already been through the onboarding tip) — once
+  // they've seen the tutorial, the icon opens instantly with no waiting.
+  if (!onboardWasAlreadySeenOnLoad) {
+    (function(){
+      const hintTarget = document.querySelector('.icon.p2');
+      if (!hintTarget) return;
+      setTimeout(() => {
+        hintTarget.classList.add('drag-hint');
+      }, 1400);
+      hintTarget.addEventListener('animationend', () => {
+        hintTarget.classList.remove('drag-hint');
+      });
+    })();
+  }
 
   icons.forEach(icon => {
     let dragging = false;
@@ -2199,7 +2193,7 @@
   // Several can be open at once. Re-opening an already-open project just brings it to front.
   const projectData = {
     'vr': {
-      title: 'Virtual Reality',
+      title: 'A Thousand Li (VR)',
       desc: 'Immersive experiences built for headsets and beyond.',
       client: 'Placeholder Client',
       year: '2026',
@@ -2234,7 +2228,7 @@
       image: 'assets/3d.png'
     },
     'vfx': {
-      title: 'Animation & Visual Effects',
+      title: 'Papel (Animation & VFX)',
       desc: 'Motion, animation, and visual effects work.',
       client: 'Placeholder Client',
       year: '2026',
