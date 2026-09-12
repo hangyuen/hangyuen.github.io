@@ -48,8 +48,23 @@
   }
 
   @keyframes arrowAttention{
-    0%, 100% { box-shadow:0 4px 24px rgba(0,0,0,0.12), 0 0 0 0 rgba(0,113,227,0); }
-    50% { box-shadow:0 4px 24px rgba(0,0,0,0.12), 0 0 0 8px rgba(0,113,227,0.16); }
+    0%, 100% {
+      box-shadow:
+        0 10px 30px rgba(0,0,0,0.14),
+        0 2px 6px rgba(0,0,0,0.08),
+        inset 0 1px 1px rgba(255,255,255,0.9),
+        inset 0 -1px 1px rgba(0,0,0,0.04),
+        0 0 0 0 rgba(0,113,227,0);
+    }
+    50% {
+      box-shadow:
+        0 10px 30px rgba(0,0,0,0.14),
+        0 2px 6px rgba(0,0,0,0.08),
+        inset 0 1px 1px rgba(255,255,255,0.9),
+        inset 0 -1px 1px rgba(0,0,0,0.04),
+        0 0 0 12px rgba(0,113,227,0.32),
+        0 0 22px 4px rgba(0,113,227,0.35);
+    }
   }
 
   /* PAGE HEADER — back link, title, short intro, all left-aligned with the
@@ -225,14 +240,18 @@
     position:absolute;
     top:50%;
     transform:translateY(-50%);
-    width:44px;
-    height:44px;
+    width:56px;
+    height:56px;
     border-radius:50%;
-    background:rgba(255,255,255,0.7);
-    backdrop-filter:blur(20px) saturate(180%);
-    -webkit-backdrop-filter:blur(20px) saturate(180%);
-    border:1px solid rgba(0,0,0,0.06);
-    box-shadow:0 4px 24px rgba(0,0,0,0.12);
+    background:linear-gradient(155deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
+    backdrop-filter:blur(24px) saturate(200%);
+    -webkit-backdrop-filter:blur(24px) saturate(200%);
+    border:1px solid rgba(255,255,255,0.6);
+    box-shadow:
+      0 10px 30px rgba(0,0,0,0.14),
+      0 2px 6px rgba(0,0,0,0.08),
+      inset 0 1px 1px rgba(255,255,255,0.9),
+      inset 0 -1px 1px rgba(0,0,0,0.04);
     display:flex;
     align-items:center;
     justify-content:center;
@@ -242,10 +261,14 @@
     animation:arrowAttention 2.2s ease-in-out 3;
   }
   .carousel-arrow:hover{
-    background:rgba(255,255,255,0.95);
-    border-color:rgba(0,113,227,0.4);
+    background:linear-gradient(155deg, rgba(255,255,255,0.96), rgba(255,255,255,0.75));
+    border-color:rgba(0,113,227,0.35);
     transform:translateY(-50%) scale(1.08);
-    box-shadow:0 6px 28px rgba(0,0,0,0.16), 0 0 0 5px rgba(0,113,227,0.14);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,0.18),
+      0 3px 8px rgba(0,0,0,0.1),
+      inset 0 1px 1px rgba(255,255,255,0.95),
+      0 0 0 5px rgba(0,113,227,0.14);
   }
   .carousel-arrow:hover svg{
     color:var(--accent);
@@ -255,7 +278,7 @@
   .carousel-arrow.next:hover svg{ transform:translateX(2px); }
   .carousel-arrow.prev{ left:calc(var(--page-gutter) + 20px); }
   .carousel-arrow.next{ right:calc(var(--page-gutter) + 20px); }
-  .carousel-arrow svg{ width:17px; height:17px; color:#1d1d1f; }
+  .carousel-arrow svg{ width:22px; height:22px; color:#1d1d1f; }
   .carousel-arrow[disabled]{
     opacity:0;
     pointer-events:none;
@@ -306,11 +329,15 @@
     width:56px;
     height:56px;
     border-radius:50%;
-    background:rgba(255,255,255,0.85);
-    backdrop-filter:blur(16px) saturate(180%);
-    -webkit-backdrop-filter:blur(16px) saturate(180%);
-    border:1px solid rgba(0,0,0,0.06);
-    box-shadow:0 4px 20px rgba(0,0,0,0.14);
+    background:linear-gradient(155deg, rgba(255,255,255,0.9), rgba(255,255,255,0.62));
+    backdrop-filter:blur(24px) saturate(200%);
+    -webkit-backdrop-filter:blur(24px) saturate(200%);
+    border:1px solid rgba(255,255,255,0.65);
+    box-shadow:
+      0 10px 28px rgba(0,0,0,0.16),
+      0 2px 6px rgba(0,0,0,0.08),
+      inset 0 1px 1px rgba(255,255,255,0.95),
+      inset 0 -1px 1px rgba(0,0,0,0.04);
     display:flex;
     align-items:center;
     justify-content:center;
@@ -318,7 +345,7 @@
     z-index:4;
     opacity:0;
     pointer-events:none;
-    transition:opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    transition:opacity 0.2s ease, transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   }
   .zoom-trigger svg{ width:22px; height:22px; color:#1d1d1f; transition:color 0.2s ease; }
   .art-frame:hover .zoom-trigger,
@@ -328,7 +355,12 @@
     transform:translate(-50%, -50%) scale(1);
   }
   .zoom-trigger:hover{
-    background:rgba(255,255,255,0.98);
+    background:linear-gradient(155deg, rgba(255,255,255,0.98), rgba(255,255,255,0.8));
+    box-shadow:
+      0 14px 32px rgba(0,0,0,0.2),
+      0 3px 8px rgba(0,0,0,0.1),
+      inset 0 1px 1px rgba(255,255,255,1),
+      0 0 0 5px rgba(0,113,227,0.14);
   }
   .zoom-trigger:hover svg{ color:var(--accent); }
   /* always show on touch devices, since there's no hover to reveal it */
@@ -380,16 +412,24 @@
     width:44px;
     height:44px;
     border-radius:50%;
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.18);
+    background:linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.22);
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.3),
+      inset 0 1px 1px rgba(255,255,255,0.25);
     color:#fff;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    transition:background 0.2s ease;
+    transition:background 0.2s ease, transform 0.2s ease;
   }
-  .lightbox-close:hover{ background:rgba(255,255,255,0.2); }
+  .lightbox-close:hover{
+    background:linear-gradient(155deg, rgba(255,255,255,0.26), rgba(255,255,255,0.1));
+    transform:scale(1.06);
+  }
   .lightbox-close svg{ width:18px; height:18px; }
   .lightbox-controls{
     position:absolute;
@@ -399,12 +439,15 @@
     display:flex;
     align-items:center;
     gap:2px;
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.16);
+    background:linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    border:1px solid rgba(255,255,255,0.22);
     border-radius:999px;
     padding:6px;
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
+    backdrop-filter:blur(24px) saturate(200%);
+    -webkit-backdrop-filter:blur(24px) saturate(200%);
+    box-shadow:
+      0 10px 30px rgba(0,0,0,0.3),
+      inset 0 1px 1px rgba(255,255,255,0.25);
   }
   .lightbox-btn{
     width:40px;
