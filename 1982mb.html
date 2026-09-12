@@ -164,6 +164,95 @@
     max-width: 460px;
   }
 
+  /* ============ TOP-RIGHT: transient loading toast for the 3D asset.
+     Only appears if the model genuinely takes a moment to fetch, and
+     tracks real download progress rather than a fake spinner, so it
+     reads as an honest status update instead of decoration. ============ */
+  .load-toast {
+    position: fixed;
+    top: 56px;
+    right: var(--page-gutter, 24px);
+    z-index: 20;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    width: min(300px, calc(100vw - 48px));
+    background: linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05));
+    backdrop-filter: blur(22px) saturate(190%);
+    -webkit-backdrop-filter: blur(22px) saturate(190%);
+    border: 0.5px solid rgba(255,255,255,0.18);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.22);
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .load-toast.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+  .load-toast-spinner {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    animation: load-toast-spin 0.85s linear infinite;
+  }
+  @keyframes load-toast-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .load-toast-spinner { animation: none; }
+  }
+
+  .load-toast-body { flex: 1; min-width: 0; }
+  .load-toast-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: rgba(255,255,255,0.95);
+    margin-bottom: 3px;
+  }
+  .load-toast-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.62);
+  }
+  .load-toast-track {
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.14);
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .load-toast-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #0071e3, #4fa4ff);
+    transition: width 0.2s ease;
+  }
+  .load-toast.error .load-toast-track { display: none; }
+  .load-toast-dismiss {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .load-toast-dismiss:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); }
+  .load-toast-dismiss svg { width: 13px; height: 13px; }
+
+  @media (max-width: 480px) {
+    .load-toast { top: 32px; padding: 12px 14px; }
+  }
+
   /* ============ BOTTOM: hint, color picker, footnote, all plain
      text/controls directly on the model, no card backgrounds. ============ */
   .bottom-panel {
@@ -344,6 +433,24 @@
       <p class="page-description">Chassis remodeled and UV-unwrapped for accurate reflections, with a physically-based metallic/roughness paint shader swappable live in the browser.</p>
     </div>
 
+    <!-- Loading toast: hidden by default, only revealed by JS if the
+         model's 'load' event hasn't already fired within ~400ms, so a
+         fast connection never sees it flash on screen. -->
+    <div class="load-toast" id="loadToast" role="status" aria-live="polite">
+      <svg class="load-toast-spinner" id="loadToastSpinner" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.25)" stroke-width="2.5"/>
+        <path d="M21 12a9 9 0 0 0-9-9" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="load-toast-body">
+        <div class="load-toast-title" id="loadToastTitle">Loading 3D model&hellip;</div>
+        <div class="load-toast-text" id="loadToastText">The car model is fairly large, so this can take a few seconds depending on your connection and browser.</div>
+        <div class="load-toast-track"><div class="load-toast-bar" id="loadToastBar"></div></div>
+      </div>
+      <button type="button" class="load-toast-dismiss" id="loadToastDismiss" aria-label="Dismiss">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
     <!-- shadow-softness defaults to 1 (fully diffuse); pulled down to
          0.75 for a slightly more defined contact shadow under the
          car, reads as a grounded studio shot rather than the model
@@ -490,11 +597,51 @@
 
     updateColorName(swatchesEl.querySelector('.swatch.selected'));
 
+    // --- Loading toast for the 3D asset -------------------------------
+    // Only surfaces if the model hasn't already loaded within a short
+    // grace period, and tracks real fetch progress rather than faking
+    // one, so it reads as an honest status rather than pure decoration.
+    const loadToast = document.getElementById('loadToast');
+    const loadToastBar = document.getElementById('loadToastBar');
+    const loadToastTitle = document.getElementById('loadToastTitle');
+    const loadToastText = document.getElementById('loadToastText');
+    const loadToastSpinner = document.getElementById('loadToastSpinner');
+    const loadToastDismiss = document.getElementById('loadToastDismiss');
+
+    let modelLoaded = false;
+    const loadToastTimer = setTimeout(() => {
+      if (!modelLoaded) loadToast.classList.add('visible');
+    }, 400);
+
+    function dismissLoadToast() {
+      loadToast.classList.remove('visible');
+    }
+    loadToastDismiss.addEventListener('click', dismissLoadToast);
+
+    viewer.addEventListener('progress', (event) => {
+      const pct = Math.round((event.detail?.totalProgress || 0) * 100);
+      loadToastBar.style.width = pct + '%';
+    });
+
     viewer.addEventListener('load', () => {
+      modelLoaded = true;
+      clearTimeout(loadToastTimer);
+      loadToastBar.style.width = '100%';
+      // give a beat so the completed bar is visible, then fade out
+      setTimeout(dismissLoadToast, 450);
+
       const initial = swatchesEl.querySelector('.swatch.selected');
       const rgba = initial.dataset.color.split(',').map(Number);
       applyColor(rgba);
       viewer.classList.add('hotspots-ready');
+    });
+
+    viewer.addEventListener('error', () => {
+      clearTimeout(loadToastTimer);
+      loadToastSpinner.style.display = 'none';
+      loadToastTitle.textContent = 'Model failed to load';
+      loadToastText.textContent = 'Try refreshing the page, or check your connection.';
+      loadToast.classList.add('error', 'visible');
     });
 
     // Pause auto-rotate while interacting so hotspots aren't a moving
