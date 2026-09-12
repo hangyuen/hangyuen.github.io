@@ -44,7 +44,12 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    *{ transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+    *{ transition-duration:0.01ms !important; scroll-behavior:auto !important; animation-duration:0.01ms !important; animation-iteration-count:1 !important; }
+  }
+
+  @keyframes arrowAttention{
+    0%, 100% { box-shadow:0 4px 24px rgba(0,0,0,0.12), 0 0 0 0 rgba(0,113,227,0); }
+    50% { box-shadow:0 4px 24px rgba(0,0,0,0.12), 0 0 0 8px rgba(0,113,227,0.16); }
   }
 
   /* PAGE HEADER — back link, title, short intro, all left-aligned with the
@@ -233,13 +238,21 @@
     justify-content:center;
     cursor:pointer;
     z-index:5;
-    transition:background 0.2s ease, opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    transition:background 0.2s ease, opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    animation:arrowAttention 2.2s ease-in-out 3;
   }
   .carousel-arrow:hover{
     background:rgba(255,255,255,0.95);
-    transform:translateY(-50%) scale(1.06);
-    box-shadow:0 6px 28px rgba(0,0,0,0.16);
+    border-color:rgba(0,113,227,0.4);
+    transform:translateY(-50%) scale(1.08);
+    box-shadow:0 6px 28px rgba(0,0,0,0.16), 0 0 0 5px rgba(0,113,227,0.14);
   }
+  .carousel-arrow:hover svg{
+    color:var(--accent);
+    transition:color 0.2s ease, transform 0.2s ease;
+  }
+  .carousel-arrow.prev:hover svg{ transform:translateX(-2px); }
+  .carousel-arrow.next:hover svg{ transform:translateX(2px); }
   .carousel-arrow.prev{ left:calc(var(--page-gutter) + 20px); }
   .carousel-arrow.next{ right:calc(var(--page-gutter) + 20px); }
   .carousel-arrow svg{ width:17px; height:17px; color:#1d1d1f; }
@@ -281,6 +294,143 @@
     .art-item{ flex:0 0 88vw; }
     :root{ --caption-height: 210px; }
   }
+
+  /* ZOOM TRIGGER — a soft round button centered over image artworks
+     (not videos) that reveals on hover/focus/touch, echoing the
+     magnifier-with-plus affordance from product image galleries */
+  .zoom-trigger{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%) scale(0.9);
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(16px) saturate(180%);
+    -webkit-backdrop-filter:blur(16px) saturate(180%);
+    border:1px solid rgba(0,0,0,0.06);
+    box-shadow:0 4px 20px rgba(0,0,0,0.14);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:zoom-in;
+    z-index:4;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  }
+  .zoom-trigger svg{ width:22px; height:22px; color:#1d1d1f; transition:color 0.2s ease; }
+  .art-frame:hover .zoom-trigger,
+  .art-frame:focus-within .zoom-trigger{
+    opacity:1;
+    pointer-events:auto;
+    transform:translate(-50%, -50%) scale(1);
+  }
+  .zoom-trigger:hover{
+    background:rgba(255,255,255,0.98);
+  }
+  .zoom-trigger:hover svg{ color:var(--accent); }
+  /* always show on touch devices, since there's no hover to reveal it */
+  @media (hover:none){
+    .zoom-trigger{ opacity:1; pointer-events:auto; transform:translate(-50%, -50%) scale(1); }
+  }
+
+  /* ZOOM LIGHTBOX — full artwork with +/- controls to scale in and out */
+  .lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(20,20,22,0.92);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+  }
+  .lightbox.open{ opacity:1; pointer-events:auto; }
+  .lightbox-stage{
+    position:relative;
+    width:90vw;
+    height:86vh;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    touch-action:none;
+  }
+  .lightbox-stage img{
+    max-width:90vw;
+    max-height:86vh;
+    width:auto;
+    height:auto;
+    user-select:none;
+    -webkit-user-drag:none;
+    transition:transform 0.15s ease;
+    will-change:transform;
+  }
+  .lightbox-stage.dragging img{ transition:none; cursor:grabbing; }
+  .lightbox-close{
+    position:absolute;
+    top:24px;
+    right:24px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.18);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:background 0.2s ease;
+  }
+  .lightbox-close:hover{ background:rgba(255,255,255,0.2); }
+  .lightbox-close svg{ width:18px; height:18px; }
+  .lightbox-controls{
+    position:absolute;
+    bottom:28px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    gap:2px;
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.16);
+    border-radius:999px;
+    padding:6px;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+  }
+  .lightbox-btn{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:transparent;
+    border:0;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:19px;
+    line-height:1;
+    transition:background 0.2s ease, opacity 0.2s ease;
+  }
+  .lightbox-btn:hover{ background:rgba(255,255,255,0.16); }
+  .lightbox-btn:disabled{ opacity:0.35; cursor:default; pointer-events:none; }
+  .lightbox-btn svg{ width:18px; height:18px; }
+  .lightbox-zoom-label{
+    min-width:46px;
+    text-align:center;
+    color:rgba(255,255,255,0.85);
+    font-size:13px;
+    font-variant-numeric:tabular-nums;
+  }
 </style>
 </head>
 <body>
@@ -304,6 +454,24 @@
   </button>
 </div>
 <div class="carousel-dots" id="dots"></div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Zoomed artwork">
+  <div class="lightbox-stage" id="lightboxStage">
+    <img id="lightboxImg" src="" alt="">
+  </div>
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="lightbox-controls">
+    <button type="button" class="lightbox-btn" id="zoomOutBtn" aria-label="Zoom out">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M8 11h6"/></svg>
+    </button>
+    <span class="lightbox-zoom-label" id="zoomLabel">100%</span>
+    <button type="button" class="lightbox-btn" id="zoomInBtn" aria-label="Zoom in">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
+    </button>
+  </div>
+</div>
 
 <script>
   // Replace this with your real pieces: image path, title, medium, year.
@@ -342,6 +510,9 @@
            </div>`
         : `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
              <img src="${art.image}" alt="${art.title}" loading="${i < 2 ? 'eager' : 'lazy'}">
+             <button type="button" class="zoom-trigger" data-image="${art.image}" data-title="${art.title}" aria-label="Zoom into ${art.title}">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
+             </button>
            </div>`}
       <div class="art-caption">
         <div class="art-title">${art.title}</div>
@@ -429,6 +600,100 @@
   });
   updateArrowState();
   updateDots();
+
+  // ---- zoom lightbox ----
+  const lightbox = document.getElementById('lightbox');
+  const lightboxStage = document.getElementById('lightboxStage');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomLabel = document.getElementById('zoomLabel');
+
+  const ZOOM_MIN = 1;
+  const ZOOM_MAX = 3;
+  const ZOOM_STEP = 0.5;
+  let zoom = 1;
+  let panX = 0, panY = 0;
+  let dragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+
+  function applyZoom(){
+    lightboxImg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+    zoomLabel.textContent = Math.round(zoom * 100) + '%';
+    zoomOutBtn.disabled = zoom <= ZOOM_MIN;
+    zoomInBtn.disabled = zoom >= ZOOM_MAX;
+    lightboxStage.style.cursor = zoom > 1 ? 'grab' : 'default';
+  }
+
+  function openLightbox(src, title){
+    lightboxImg.src = src;
+    lightboxImg.alt = title || '';
+    zoom = 1; panX = 0; panY = 0;
+    applyZoom();
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  track.querySelectorAll('.zoom-trigger').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openLightbox(btn.dataset.image, btn.dataset.title);
+    });
+  });
+
+  zoomInBtn.addEventListener('click', () => {
+    zoom = Math.min(ZOOM_MAX, zoom + ZOOM_STEP);
+    if (zoom === ZOOM_MIN){ panX = 0; panY = 0; }
+    applyZoom();
+  });
+  zoomOutBtn.addEventListener('click', () => {
+    zoom = Math.max(ZOOM_MIN, zoom - ZOOM_STEP);
+    if (zoom === ZOOM_MIN){ panX = 0; panY = 0; }
+    applyZoom();
+  });
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === '+' || e.key === '=') zoomInBtn.click();
+    if (e.key === '-') zoomOutBtn.click();
+  });
+
+  // drag to pan once zoomed in
+  lightboxStage.addEventListener('mousedown', (e) => {
+    if (zoom <= ZOOM_MIN) return;
+    dragging = true;
+    lightboxStage.classList.add('dragging');
+    dragStartX = e.clientX; dragStartY = e.clientY;
+    panStartX = panX; panStartY = panY;
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    panX = panStartX + (e.clientX - dragStartX);
+    panY = panStartY + (e.clientY - dragStartY);
+    lightboxImg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+  });
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+    lightboxStage.classList.remove('dragging');
+  });
+
+  // pinch/scroll to zoom on trackpads and mouse wheels
+  lightboxStage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP;
+    zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + delta * 0.5));
+    if (zoom === ZOOM_MIN){ panX = 0; panY = 0; }
+    applyZoom();
+  }, { passive:false });
 </script>
 
 </body>
