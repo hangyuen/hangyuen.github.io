@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<meta name="description" content="A generative mask shaped by your own movement and expression.">
+<meta name="description" content="A generative Lianpu mask, dissolved into particles, shaped by your own face.">
 <title>Lianpu</title>
 <style>
   :root{
@@ -29,7 +29,6 @@
   video{ position:fixed; width:2px; height:2px; opacity:0; pointer-events:none; }
   canvas{ position:fixed; inset:0; width:100%; height:100%; display:block; }
 
-  /* ---------- top status bar ---------- */
   #top{
     position:fixed; left:0; right:0; top:0;
     padding: calc(env(safe-area-inset-top, 0px) + 18px) 22px 0;
@@ -58,7 +57,6 @@
     50%{ box-shadow: 0 0 0 5px rgba(198,52,47,0); }
   }
 
-  /* ---------- intro ---------- */
   #intro{
     position:fixed; inset:0; z-index:10;
     display:grid; place-items:center;
@@ -93,7 +91,7 @@
   }
   p{
     margin:0 auto 26px; color:var(--text-dim);
-    font-size:15px; line-height:1.5; max-width:300px;
+    font-size:15px; line-height:1.5; max-width:310px;
   }
   button{
     appearance:none; border:none; cursor:pointer;
@@ -113,7 +111,6 @@
     min-height:16px; line-height:1.4;
   }
 
-  /* ---------- hint ---------- */
   #hint{
     position:fixed; left:50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 26px);
     transform:translateX(-50%);
@@ -150,7 +147,7 @@
   <div class="card">
     <div class="mark"></div>
     <h1>Your face,<br>rewritten.</h1>
-    <p>A generative mask shaped by your proportions, movement and expression. Your camera image never leaves your device.</p>
+    <p>A generative mask made of thousands of particles, shaped by your own proportions and reflected back like a mirror. Nothing leaves your device.</p>
     <button id="enter">Create my mask</button>
     <div id="error"></div>
   </div>
@@ -165,8 +162,13 @@ const intro = document.querySelector("#intro");
 const statusEl = document.querySelector("#status"), statusText = document.querySelector("#statusText");
 const hint = document.querySelector("#hint"), error = document.querySelector("#error");
 
+const sampleCanvas = document.createElement("canvas");
+sampleCanvas.width = 16; sampleCanvas.height = 16;
+const sctx = sampleCanvas.getContext("2d", { willReadFrequently: true });
+
 let W, H, DPR, landmarker, lastVideoTime = -1, started = false, mediaStream = null;
-let smooth = { cx:.5, cy:.5, w:.28, h:.42, mouth:0, tilt:0, near:.35 };
+let smooth = { cx:.5, cy:.5, w:.28, h:.42, mouth:0, tilt:0, near:.35, yaw:0 };
+let profileSamples = [], profileLocked = false, particleGroups = null, palette = null;
 
 function resize(){
   W = innerWidth; H = innerHeight; DPR = Math.min(devicePixelRatio || 1, 2);
@@ -184,17 +186,17 @@ function setStatus(text, live){
   statusEl.classList.toggle("live", !!live);
 }
 
+/* ---------- camera + model bootstrap ---------- */
+
 async function init(){
   if (!navigator.mediaDevices?.getUserMedia){
     error.textContent = "This browser doesn't support camera access. Try Safari, Chrome, or Edge.";
     return;
   }
-
   enter.disabled = true;
   enter.textContent = "Opening camera…";
   error.textContent = "";
 
-  // Stop any previous stream before requesting a new one (retry safety).
   if (mediaStream){
     mediaStream.getTracks().forEach(t => t.stop());
     mediaStream = null;
@@ -229,7 +231,7 @@ async function init(){
     intro.style.pointerEvents = "none";
     setTimeout(() => { intro.style.display = "none"; }, 650);
     hint.style.opacity = "1";
-    setStatus("Finding your face", true);
+    setStatus("Reading your face", true);
   }catch(e){
     console.error(e);
     enter.disabled = false;
@@ -240,188 +242,400 @@ async function init(){
 }
 enter.addEventListener("click", init);
 
-function detect(){
-  if (!started || !landmarker || video.readyState < 2 || video.currentTime === lastVideoTime) return;
-  lastVideoTime = video.currentTime;
+/* ---------- per-person profile: skin tone + proportions ---------- */
 
-  const r = landmarker.detectForVideo(video, performance.now());
-  if (!r.faceLandmarks?.length){
-    setStatus("Move into view", true);
-    return;
-  }
-
-  const lm = r.faceLandmarks[0];
-  let minX = 1, maxX = 0, minY = 1, maxY = 0;
-  for (const p of lm){
-    minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
-    minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
-  }
-  const cx = 1 - (minX + maxX) / 2, cy = (minY + maxY) / 2;
+function sampleSkinTone(minX, maxX, minY, maxY){
+  if (video.videoWidth < 2) return null;
+  const vw = video.videoWidth, vh = video.videoHeight;
   const fw = maxX - minX, fh = maxY - minY;
-
-  // stable MediaPipe indices: lips / eye corners
-  const mouthOpen = Math.abs(lm[13].y - lm[14].y) / (fh || 1);
-  const leftEye = lm[33], rightEye = lm[263];
-  const tilt = Math.atan2(rightEye.y - leftEye.y, (1 - rightEye.x) - (1 - leftEye.x));
-
-  smooth.cx = lerp(smooth.cx, cx, .22);
-  smooth.cy = lerp(smooth.cy, cy, .22);
-  smooth.w  = lerp(smooth.w,  fw, .18);
-  smooth.h  = lerp(smooth.h,  fh, .18);
-  smooth.mouth = lerp(smooth.mouth, clamp(mouthOpen * 7, 0, 1), .25);
-  smooth.tilt = lerp(smooth.tilt, tilt, .18);
-  smooth.near = lerp(smooth.near, clamp((fw - .12) / .34, 0, 1), .12);
-
-  setStatus("Mask active", true);
+  const cxN = (minX + maxX) / 2, cyN = minY + fh * 0.32;
+  const halfN = fw * 0.09;
+  const sx = Math.max(0, (cxN - halfN) * vw), sy = Math.max(0, (cyN - halfN) * vh);
+  const sw = Math.min(vw - sx, halfN * 2 * vw), sh = Math.min(vh - sy, halfN * 2 * vh);
+  if (sw <= 0 || sh <= 0) return null;
+  sctx.drawImage(video, sx, sy, sw, sh, 0, 0, 16, 16);
+  const d = sctx.getImageData(0, 0, 16, 16).data;
+  let r=0,g=0,b=0,n=0;
+  for (let i=0;i<d.length;i+=4){ r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
+  r=r/n/255; g=g/n/255; b=b/n/255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let h=0; const l=(max+min)/2;
+  if (max !== min){
+    const dd = max-min;
+    switch(max){
+      case r: h=(g-b)/dd + (g<b?6:0); break;
+      case g: h=(b-r)/dd + 2; break;
+      default: h=(r-g)/dd + 4;
+    }
+    h*=60;
+  }
+  return { hue:h, light:l*100 };
 }
 
-function path(points, close = true){
-  ctx.beginPath();
-  ctx.moveTo(points[0][0], points[0][1]);
-  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i][0], points[i][1]);
-  if (close) ctx.closePath();
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
-function bez(x1,y1,c1x,c1y,c2x,c2y,x2,y2){
-  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.bezierCurveTo(c1x,c1y,c2x,c2y,x2,y2);
+function hashSeed(p){
+  return (
+    (Math.floor(p.aspect*10000) ^ Math.floor(p.eyeGap*100000) ^
+     Math.floor(p.mouthW*100000) ^ Math.floor(p.hue*977) ^ Math.floor(p.light*613)) >>> 0
+  );
 }
+
+/* ---------- mask geometry, sampled into particles ---------- */
+
+function buildShapePaths(){
+  const ivory = new Path2D();
+  ivory.moveTo(0,-.48);
+  ivory.bezierCurveTo(.33,-.47,.43,-.20,.39,.06);
+  ivory.bezierCurveTo(.36,.29,.19,.48,0,.55);
+  ivory.bezierCurveTo(-.19,.48,-.36,.29,-.39,.06);
+  ivory.bezierCurveTo(-.43,-.20,-.33,-.47,0,-.48);
+  ivory.closePath();
+
+  const crown = new Path2D();
+  const cpts=[[0,-.48],[-.075,-.39],[-.055,-.19],[-.105,-.05],[-.055,.11],[0,.17],[.055,.11],[.105,-.05],[.055,-.19],[.075,-.39]];
+  crown.moveTo(cpts[0][0],cpts[0][1]);
+  for(let i=1;i<cpts.length;i++) crown.lineTo(cpts[i][0],cpts[i][1]);
+  crown.closePath();
+
+  const forehead = new Path2D();
+  const fpts=[[0,-.405],[-.042,-.31],[0,-.23],[.042,-.31]];
+  forehead.moveTo(fpts[0][0],fpts[0][1]);
+  for(let i=1;i<fpts.length;i++) forehead.lineTo(fpts[i][0],fpts[i][1]);
+  forehead.closePath();
+
+  const templeRed = new Path2D();
+  templeRed.moveTo(.06,-.37);
+  templeRed.bezierCurveTo(.17,-.43,.31,-.36,.34,-.22);
+  templeRed.bezierCurveTo(.27,-.27,.22,-.19,.16,-.12);
+  templeRed.bezierCurveTo(.18,-.25,.10,-.24,.06,-.37);
+  templeRed.closePath();
+
+  const templeBlack = new Path2D();
+  templeBlack.moveTo(.10,-.25);
+  templeBlack.bezierCurveTo(.19,-.21,.32,-.14,.34,-.02);
+  templeBlack.bezierCurveTo(.25,-.08,.18,.00,.10,.04);
+  templeBlack.bezierCurveTo(.15,-.07,.08,-.12,.10,-.25);
+  templeBlack.closePath();
+
+  const templeBlue = new Path2D();
+  templeBlue.moveTo(.18,-.34);
+  templeBlue.bezierCurveTo(.24,-.30,.31,-.25,.33,-.18);
+  templeBlue.bezierCurveTo(.27,-.20,.23,-.13,.19,-.09);
+  templeBlue.bezierCurveTo(.21,-.19,.16,-.25,.18,-.34);
+  templeBlue.closePath();
+
+  const moustache = new Path2D();
+  moustache.moveTo(.01,.16);
+  moustache.bezierCurveTo(.09,.12,.22,.14,.29,.23);
+  moustache.bezierCurveTo(.20,.20,.14,.27,.08,.31);
+  moustache.bezierCurveTo(.10,.23,.04,.22,.01,.16);
+  moustache.closePath();
+
+  const chin = new Path2D();
+  chin.moveTo(0,.37);
+  chin.bezierCurveTo(-.07,.41,-.08,.47,0,.51);
+  chin.bezierCurveTo(.08,.47,.07,.41,0,.37);
+  chin.closePath();
+
+  return {
+    ivory:{ path:ivory, bbox:{minX:-.43,maxX:.43,minY:-.48,maxY:.55} },
+    crown:{ path:crown, bbox:{minX:-.105,maxX:.105,minY:-.48,maxY:.17} },
+    forehead:{ path:forehead, bbox:{minX:-.042,maxX:.042,minY:-.405,maxY:-.23} },
+    templeRed:{ path:templeRed, bbox:{minX:.06,maxX:.34,minY:-.43,maxY:-.12} },
+    templeBlack:{ path:templeBlack, bbox:{minX:.08,maxX:.34,minY:-.25,maxY:.04} },
+    templeBlue:{ path:templeBlue, bbox:{minX:.16,maxX:.33,minY:-.34,maxY:-.09} },
+    moustache:{ path:moustache, bbox:{minX:.01,maxX:.29,minY:.12,maxY:.31} },
+    chin:{ path:chin, bbox:{minX:-.08,maxX:.08,minY:.37,maxY:.51} },
+  };
+}
+
+function samplePath(path, bbox, count, rng){
+  const pts = []; let tries = 0;
+  while (pts.length < count && tries < count * 50){
+    tries++;
+    const x = bbox.minX + rng() * (bbox.maxX - bbox.minX);
+    const y = bbox.minY + rng() * (bbox.maxY - bbox.minY);
+    if (ctx.isPointInPath(path, x, y)) pts.push([x,y]);
+  }
+  return pts;
+}
+function cubicPoint(p0,c1,c2,p1,t){
+  const mt=1-t;
+  return [
+    mt*mt*mt*p0[0] + 3*mt*mt*t*c1[0] + 3*mt*t*t*c2[0] + t*t*t*p1[0],
+    mt*mt*mt*p0[1] + 3*mt*mt*t*c1[1] + 3*mt*t*t*c2[1] + t*t*t*p1[1]
+  ];
+}
+function sampleLine(p0,c1,c2,p1,count,rng,jitter){
+  const pts = [];
+  for (let i=0;i<count;i++){
+    const t = rng();
+    const [x,y] = cubicPoint(p0,c1,c2,p1,t);
+    const [dx,dy] = cubicPoint(p0,c1,c2,p1, Math.min(1,t+0.01));
+    let tx=dx-x, ty=dy-y; const len=Math.hypot(tx,ty)||1; tx/=len; ty/=len;
+    const nx=-ty, ny=tx, j=(rng()-0.5)*jitter;
+    pts.push([x+nx*j, y+ny*j]);
+  }
+  return pts;
+}
+
+/* Curated palette families. Each face picks one, then jitters it — so people land
+   on genuinely different color stories, not just a hue-rotated version of the same one. */
+const THEMES = [
+  { name:"vermilion",  base:[38,24,89],  structure:[225,14,11], accent1:[354,60,44], accent2:[214,44,42], accentDeep:[354,64,37] },
+  { name:"crimsonGold",base:[45,30,90],  structure:[220,10,10], accent1:[8,70,46],   accent2:[45,80,50],  accentDeep:[8,75,36]   },
+  { name:"jadePlum",   base:[150,20,90], structure:[230,12,10], accent1:[160,45,38], accent2:[320,45,40], accentDeep:[160,50,28] },
+  { name:"indigoEmber",base:[210,20,92], structure:[225,15,10], accent1:[20,75,50],  accent2:[230,55,42], accentDeep:[20,78,38]  },
+  { name:"inkTurquoise",base:[190,15,92],structure:[220,12,9],  accent1:[185,55,42], accent2:[350,55,45], accentDeep:[185,60,32] },
+  { name:"sunsetEmber",base:[35,30,90],  structure:[15,10,12],  accent1:[28,80,52],  accent2:[330,50,42], accentDeep:[28,84,40]  },
+];
+
+function jitterHsl([h,s,l], rng, dh=14, ds=8, dl=6){
+  const jh = ((h + (rng()-0.5)*dh) % 360 + 360) % 360;
+  const js = clamp(s + (rng()-0.5)*ds, 8, 92);
+  const jl = clamp(l + (rng()-0.5)*dl, 6, 94);
+  return `hsl(${jh.toFixed(0)},${js.toFixed(0)}%,${jl.toFixed(0)}%)`;
+}
+function hslaFrom(hslStr, alpha){
+  const m = hslStr.match(/hsl\(([\d.]+),([\d.]+)%,([\d.]+)%\)/);
+  return `hsla(${m[1]},${m[2]}%,${m[3]}%,${alpha})`;
+}
+
+function buildParticles(profile){
+  const rng = mulberry32(hashSeed(profile));
+  const densityF = 0.85 + rng()*0.3;
+  const baseR = 0.0055 + rng()*0.0025;
+
+  const theme = THEMES[Math.floor(rng()*THEMES.length) % THEMES.length];
+  palette = {
+    base: jitterHsl(theme.base, rng),
+    structure: jitterHsl(theme.structure, rng, 10, 6, 5),
+    accent1: jitterHsl(theme.accent1, rng),
+    accent2: jitterHsl(theme.accent2, rng),
+    accentDeep: jitterHsl(theme.accentDeep, rng),
+  };
+
+  const groups = new Map();
+  function add(color, pts){
+    const arr = groups.get(color) || []; groups.set(color, arr);
+    for (const [x,y] of pts){
+      let r = baseR*(0.6+rng()*0.8);
+      if (rng() < 0.04) r *= 1.8 + rng()*1.4; // occasional chunky ink blob
+      arr.push({ x, y, r, phase: rng()*Math.PI*2, speed: 0.6+rng()*0.8, amp: 0.006+rng()*0.01 });
+
+      // spray-paint bleed: a droplet or two flying outward from the core point
+      if (rng() < 0.5){
+        const bleedCount = rng() < 0.25 ? 2 : 1;
+        for (let k=0;k<bleedCount;k++){
+          const ang = rng()*Math.PI*2;
+          const distF = Math.pow(rng(), 2.3); // biased close, occasional far fliers
+          const dist = distF * 0.05;
+          const bx = x + Math.cos(ang)*dist, by = y + Math.sin(ang)*dist;
+          const bR = r * (0.3 + (1-distF)*0.55) * (0.6+rng()*0.7);
+          const alpha = distF < 0.35 ? 0.6 : (distF < 0.65 ? 0.32 : 0.15);
+          const bArr = groups.get(hslaFrom(color, alpha)) || [];
+          groups.set(hslaFrom(color, alpha), bArr);
+          bArr.push({ x:bx, y:by, r:bR, phase: rng()*Math.PI*2, speed: 0.5+rng()*0.9, amp: 0.008+rng()*0.012 });
+        }
+      }
+    }
+  }
+
+  const s = buildShapePaths();
+  add(palette.base, samplePath(s.ivory.path, s.ivory.bbox, Math.round(650*densityF), rng));
+  add(palette.structure, samplePath(s.crown.path, s.crown.bbox, Math.round(260*densityF), rng));
+  add(palette.accent1,   samplePath(s.forehead.path, s.forehead.bbox, Math.round(90*densityF), rng));
+
+  const redPts = samplePath(s.templeRed.path, s.templeRed.bbox, Math.round(150*densityF), rng);
+  add(palette.accent1, redPts); add(palette.accent1, redPts.map(([x,y])=>[-x,y]));
+
+  const wingPts = samplePath(s.templeBlack.path, s.templeBlack.bbox, Math.round(150*densityF), rng);
+  add(palette.structure, wingPts); add(palette.structure, wingPts.map(([x,y])=>[-x,y]));
+
+  const bluePts = samplePath(s.templeBlue.path, s.templeBlue.bbox, Math.round(120*densityF), rng);
+  add(palette.accent2, bluePts); add(palette.accent2, bluePts.map(([x,y])=>[-x,y]));
+
+  const moustachePts = samplePath(s.moustache.path, s.moustache.bbox, Math.round(110*densityF), rng);
+  add(palette.structure, moustachePts); add(palette.structure, moustachePts.map(([x,y])=>[-x,y]));
+
+  add(palette.structure, samplePath(s.chin.path, s.chin.bbox, Math.round(70*densityF), rng));
+
+  const cheekBlack = sampleLine([.09,.08],[.18,.12],[.28,.12],[.33,.20], Math.round(45*densityF), rng, 0.02);
+  add(palette.structure, cheekBlack); add(palette.structure, cheekBlack.map(([x,y])=>[-x,y]));
+
+  const cheekRed = sampleLine([.11,.13],[.19,.19],[.24,.23],[.28,.30], Math.round(30*densityF), rng, 0.015);
+  add(palette.accentDeep, cheekRed); add(palette.accentDeep, cheekRed.map(([x,y])=>[-x,y]));
+
+  return groups;
+}
+
+/* ---------- tracking ---------- */
+
 function mirrorDraw(fn){
   ctx.save(); fn(1); ctx.restore();
   ctx.save(); ctx.scale(-1,1); fn(-1); ctx.restore();
 }
 
-function drawMask(){
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(0, 0, W, H);
+function detect(){
+  if (!started || !landmarker || video.readyState < 2 || video.currentTime === lastVideoTime) return;
+  lastVideoTime = video.currentTime;
 
-  const base = Math.min(W, H);
-  const scale = base * (.58 + smooth.near * .13);
-  const aspect = clamp((smooth.w / smooth.h) / .68, .82, 1.18);
+  const r = landmarker.detectForVideo(video, performance.now());
+  if (!r.faceLandmarks?.length){ setStatus("Move into view", true); return; }
+
+  const lm = r.faceLandmarks[0];
+  let minX=1,maxX=0,minY=1,maxY=0;
+  for (const p of lm){
+    minX=Math.min(minX,p.x); maxX=Math.max(maxX,p.x);
+    minY=Math.min(minY,p.y); maxY=Math.max(maxY,p.y);
+  }
+  const fw=maxX-minX, fh=maxY-minY;
+  const cx=1-(minX+maxX)/2, cy=(minY+maxY)/2;
+
+  const mouthOpen = Math.abs(lm[13].y-lm[14].y)/(fh||1);
+  const leftEye=lm[33], rightEye=lm[263];
+  const tilt = Math.atan2(rightEye.y-leftEye.y, (1-rightEye.x)-(1-leftEye.x));
+  const yawRaw = clamp(((rightEye.z||0)-(leftEye.z||0))*9, -1, 1);
+
+  smooth.cx=lerp(smooth.cx,cx,.22); smooth.cy=lerp(smooth.cy,cy,.22);
+  smooth.w=lerp(smooth.w,fw,.18); smooth.h=lerp(smooth.h,fh,.18);
+  smooth.mouth=lerp(smooth.mouth, clamp(mouthOpen*7,0,1), .25);
+  smooth.tilt=lerp(smooth.tilt,tilt,.18);
+  smooth.near=lerp(smooth.near, clamp((fw-.12)/.34,0,1), .12);
+  smooth.yaw=lerp(smooth.yaw, yawRaw, .12);
+
+  setStatus(profileLocked ? "Mask active" : "Reading your face", true);
+
+  if (!profileLocked){
+    const eyeGap = Math.hypot(rightEye.x-leftEye.x, rightEye.y-leftEye.y)/(fw||1);
+    const mL=lm[61], mR=lm[291];
+    const mouthW = Math.hypot(mR.x-mL.x, mR.y-mL.y)/(fw||1);
+    const skin = sampleSkinTone(minX,maxX,minY,maxY);
+    profileSamples.push({ aspect: fw/(fh||1), eyeGap, mouthW, hue: skin?skin.hue:30, light: skin?skin.light:60 });
+    if (profileSamples.length >= 16){
+      const avg = k => profileSamples.reduce((s,p)=>s+p[k],0)/profileSamples.length;
+      particleGroups = buildParticles({ aspect:avg("aspect"), eyeGap:avg("eyeGap"), mouthW:avg("mouthW"), hue:avg("hue"), light:avg("light") });
+      profileLocked = true;
+    }
+  }
+}
+
+/* ---------- render ---------- */
+
+function mouthFactor(y){ return clamp((y+0.1)/0.65, 0, 1); }
+
+function drawMask(t){
+  ctx.save();
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0,0,W,H);
+
+  if (video.readyState >= 2 && video.videoWidth > 1){
+    ctx.save();
+    ctx.filter = "grayscale(1) brightness(0.38) contrast(1.08)";
+    ctx.translate(W,0); ctx.scale(-1,1);
+    const vr = video.videoWidth/video.videoHeight, cr = W/H;
+    let dw,dh,dx,dy;
+    if (vr > cr){ dh=H; dw=H*vr; dx=(W-dw)/2; dy=0; } else { dw=W; dh=W/vr; dx=0; dy=(H-dh)/2; }
+    ctx.drawImage(video, dx, dy, dw, dh);
+    ctx.restore();
+  }
+  const vg = ctx.createRadialGradient(W/2,H*0.42,H*0.15, W/2,H*0.5,H*0.75);
+  vg.addColorStop(0,"rgba(0,0,0,0)"); vg.addColorStop(1,"rgba(0,0,0,0.72)");
+  ctx.fillStyle = vg; ctx.fillRect(0,0,W,H);
+  ctx.restore();
+
+  if (!profileLocked || !particleGroups) return;
+
+  const base = Math.min(W,H);
+  const scale = base*(.58 + smooth.near*.13);
+  const aspect = clamp((smooth.w/smooth.h)/.68, .82, 1.18);
   const mouth = smooth.mouth;
+  const now = t || performance.now();
 
   ctx.save();
-  ctx.translate(smooth.cx * W, smooth.cy * H + base * .03);
-  ctx.rotate(-smooth.tilt * .7);
-  ctx.scale(scale * aspect, scale);
+  ctx.translate(smooth.cx*W, smooth.cy*H + base*.03);
+  ctx.rotate(-smooth.tilt*.7);
+  ctx.scale(scale*aspect, scale);
 
-  // soft aura
   let g = ctx.createRadialGradient(0,0,.05,0,0,.62);
-  g.addColorStop(0, "rgba(150,20,20,.07)");
-  g.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(0,0,.62,0,Math.PI*2); ctx.fill();
+  g.addColorStop(0,"rgba(150,20,20,.07)"); g.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0,0,.62,0,Math.PI*2); ctx.fill();
 
-  // ivory face silhouette
-  ctx.fillStyle = "#eee9df";
-  ctx.strokeStyle = "#111";
-  ctx.lineWidth = .012;
-  ctx.beginPath();
-  ctx.moveTo(0,-.48);
-  ctx.bezierCurveTo(.33,-.47,.43,-.20,.39,.06);
-  ctx.bezierCurveTo(.36,.29,.19,.48,0,.55);
-  ctx.bezierCurveTo(-.19,.48,-.36,.29,-.39,.06);
-  ctx.bezierCurveTo(-.43,-.20,-.33,-.47,0,-.48);
-  ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.save();
+  ctx.translate(smooth.yaw*0.045, 0);
+  for (const [color, arr] of particleGroups){
+    ctx.beginPath();
+    for (const p of arr){
+      const drift = Math.sin(now*0.0011*p.speed + p.phase)*p.amp;
+      const driftY = Math.cos(now*0.0014*p.speed + p.phase*1.3)*p.amp*0.7;
+      const push = mouthFactor(p.y) * mouth * 0.10;
+      const nx = p.x + drift + p.x*push;
+      const ny = p.y + driftY + (p.y-0.15)*push*0.6;
+      const rr = p.r * (1 + smooth.near*0.18);
+      ctx.moveTo(nx+rr, ny);
+      ctx.arc(nx, ny, rr, 0, Math.PI*2);
+    }
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+  ctx.restore();
 
-  // central crown / nose structure
-  ctx.fillStyle = "#111217";
-  path([[0,-.48],[-.075,-.39],[-.055,-.19],[-.105,-.05],[-.055,.11],[0,.17],[.055,.11],[.105,-.05],[.055,-.19],[.075,-.39]]);
-  ctx.fill();
-
-  // forehead flame
-  ctx.fillStyle = "#b51f25";
-  path([[0,-.405],[-.042,-.31],[0,-.23],[.042,-.31]]);
-  ctx.fill();
-
-  // symmetric temple ornaments
   mirrorDraw(() => {
-    ctx.fillStyle = "#bd2026";
-    ctx.beginPath(); ctx.moveTo(.06,-.37);
-    ctx.bezierCurveTo(.17,-.43,.31,-.36,.34,-.22);
-    ctx.bezierCurveTo(.27,-.27,.22,-.19,.16,-.12);
-    ctx.bezierCurveTo(.18,-.25,.10,-.24,.06,-.37); ctx.fill();
-
-    ctx.fillStyle = "#17181d";
-    ctx.beginPath(); ctx.moveTo(.10,-.25);
-    ctx.bezierCurveTo(.19,-.21,.32,-.14,.34,-.02);
-    ctx.bezierCurveTo(.25,-.08,.18,.00,.10,.04);
-    ctx.bezierCurveTo(.15,-.07,.08,-.12,.10,-.25); ctx.fill();
-
-    // blue accent responds to proximity
-    ctx.fillStyle = `rgba(38,78,150,${.45 + smooth.near * .5})`;
-    ctx.beginPath(); ctx.moveTo(.18,-.34);
-    ctx.bezierCurveTo(.24,-.30,.31,-.25,.33,-.18);
-    ctx.bezierCurveTo(.27,-.20,.23,-.13,.19,-.09);
-    ctx.bezierCurveTo(.21,-.19,.16,-.25,.18,-.34); ctx.fill();
-
-    // eye
-    ctx.fillStyle = "#0b0b0d";
+    ctx.fillStyle = palette.structure;
     ctx.beginPath(); ctx.moveTo(.075,-.08);
     ctx.bezierCurveTo(.14,-.13,.25,-.13,.31,-.06);
     ctx.bezierCurveTo(.23,-.02,.14,.01,.075,-.04); ctx.fill();
-    ctx.fillStyle = "#f3eee5";
+    ctx.fillStyle = palette.base;
     ctx.beginPath(); ctx.ellipse(.19,-.065,.052,.025,-.08,0,Math.PI*2); ctx.fill();
     ctx.fillStyle = "#111";
     ctx.beginPath(); ctx.arc(.19,-.064,.014,0,Math.PI*2); ctx.fill();
-
-    // cheek sweep
-    ctx.strokeStyle = "#111217"; ctx.lineWidth = .027; ctx.lineCap = "round";
-    bez(.09,.08,.18,.12,.28,.12,.33,.20); ctx.stroke();
-    ctx.strokeStyle = "#b51f25"; ctx.lineWidth = .018;
-    bez(.11,.13,.19,.19,.24,.23,.28,.30); ctx.stroke();
-
-    // complexity lines when the face is close
-    if (smooth.near > .35){
-      ctx.strokeStyle = "#111217"; ctx.lineWidth = .011;
-      bez(.25,-.31,.34,-.27,.35,-.12,.35,-.06); ctx.stroke();
-      bez(.20,.31,.25,.36,.22,.41,.15,.45); ctx.stroke();
-    }
   });
 
-  // moustache
-  ctx.fillStyle = "#111217";
-  mirrorDraw(() => {
-    ctx.beginPath(); ctx.moveTo(.01,.16);
-    ctx.bezierCurveTo(.09,.12,.22,.14,.29,.23);
-    ctx.bezierCurveTo(.20,.20,.14,.27,.08,.31);
-    ctx.bezierCurveTo(.10,.23,.04,.22,.01,.16); ctx.fill();
-  });
-
-  // mouth reacts to mouth opening
-  const mh = .022 + mouth * .055;
-  ctx.fillStyle = "#7d171b";
+  const mh = .022 + mouth*.055;
+  ctx.fillStyle = palette.accentDeep;
   ctx.beginPath(); ctx.ellipse(0,.315,.09,mh,0,0,Math.PI*2); ctx.fill();
   if (mouth > .18){
     ctx.fillStyle = "#050506";
     ctx.beginPath(); ctx.ellipse(0,.315,.065,mh*.52,0,0,Math.PI*2); ctx.fill();
   }
-
-  // chin symbol
-  ctx.strokeStyle = "#111217"; ctx.lineWidth = .016;
   ctx.beginPath();
-  ctx.moveTo(0,.37);
-  ctx.bezierCurveTo(-.07,.41,-.08,.47,0,.51);
-  ctx.bezierCurveTo(.08,.47,.07,.41,0,.37);
-  ctx.stroke();
-
-  // proximity ornament: grows toward the forehead
-  if (smooth.near > .55){
-    const a = (smooth.near - .55) / .45;
-    ctx.strokeStyle = `rgba(238,233,223,${a * .8})`;
-    ctx.lineWidth = .008;
-    for (let i = 0; i < 3; i++){
-      const yy = -.51 - i * .035 * a;
-      ctx.beginPath();
-      ctx.arc(0, yy, .06 + i * .035, Math.PI * .12, Math.PI * .88);
-      ctx.stroke();
-    }
+  for (let i=0;i<36;i++){
+    const a=(i/36)*Math.PI*2;
+    const rx=.09+.02+mouth*.01, ry=mh+.018+mouth*.01;
+    const px=Math.cos(a)*rx, py=.315+Math.sin(a)*ry;
+    ctx.moveTo(px+.006,py); ctx.arc(px,py,.006,0,Math.PI*2);
   }
+  ctx.fillStyle = palette.accent1; ctx.fill();
+
+  if (smooth.near > .55){
+    const a = (smooth.near-.55)/.45;
+    ctx.beginPath();
+    for (let i=0;i<3;i++){
+      const yy=-.51-i*.035*a, rad=.06+i*.035, n=18;
+      for (let k=0;k<n;k++){
+        const ang = Math.PI*.12 + (k/(n-1))*(Math.PI*.76);
+        const px=Math.cos(ang)*rad, py=yy+Math.sin(ang)*rad;
+        ctx.moveTo(px+.004,py); ctx.arc(px,py,.004,0,Math.PI*2);
+      }
+    }
+    ctx.fillStyle = `rgba(238,233,223,${a*.85})`;
+    ctx.fill();
+  }
+
   ctx.restore();
 }
 
-function animate(){
+function animate(t){
   requestAnimationFrame(animate);
   detect();
-  drawMask();
+  drawMask(t);
 }
 requestAnimationFrame(animate);
 </script>
