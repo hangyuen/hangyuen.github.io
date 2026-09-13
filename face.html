@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="A generative mask shaped by your own movement and expression.">
+<title>Lianpu</title>
+<style>
+  :root{
+    color-scheme: dark;
+    --bg: #000000;
+    --panel: rgba(255,255,255,0.06);
+    --panel-border: rgba(255,255,255,0.10);
+    --text: #f5f5f7;
+    --text-dim: #98989d;
+    --accent-red: #c6342f;
+    --accent-blue: #3b62a8;
+    --radius: 22px;
+  }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{
+    margin:0; width:100%; height:100%; overflow:hidden;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  video{ position:fixed; width:2px; height:2px; opacity:0; pointer-events:none; }
+  canvas{ position:fixed; inset:0; width:100%; height:100%; display:block; }
+
+  /* ---------- top status bar ---------- */
+  #top{
+    position:fixed; left:0; right:0; top:0;
+    padding: calc(env(safe-area-inset-top, 0px) + 18px) 22px 0;
+    display:flex; justify-content:space-between; align-items:center;
+    z-index:5; pointer-events:none;
+  }
+  .brand{ font-size:15px; font-weight:590; letter-spacing:-.01em; color:var(--text); }
+  .status{
+    display:flex; align-items:center; gap:7px;
+    font-size:13px; font-weight:450; color:var(--text-dim);
+    padding:6px 12px 6px 10px; border-radius:100px;
+    background:var(--panel); border:1px solid var(--panel-border);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  }
+  .status .dot{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--text-dim);
+    transition: background .3s ease;
+  }
+  .status.live .dot{
+    background: var(--accent-red);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(198,52,47,.5); }
+    50%{ box-shadow: 0 0 0 5px rgba(198,52,47,0); }
+  }
+
+  /* ---------- intro ---------- */
+  #intro{
+    position:fixed; inset:0; z-index:10;
+    display:grid; place-items:center;
+    padding: 24px;
+    background:
+      radial-gradient(60% 50% at 50% 38%, rgba(198,52,47,.10), transparent 60%),
+      radial-gradient(70% 60% at 50% 70%, rgba(59,98,168,.08), transparent 65%),
+      #000;
+    transition: opacity .6s ease, visibility .6s ease;
+  }
+  .card{
+    width:min(90vw, 400px);
+    text-align:center;
+    padding: 40px 28px 32px;
+    border-radius: var(--radius);
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+  }
+  .mark{ width:56px; height:70px; margin:0 auto 26px; position:relative; }
+  .mark:before,.mark:after{
+    content:""; position:absolute; top:0; width:26px; height:68px;
+    border:1.6px solid var(--text); border-radius:60% 15% 55% 45%; opacity:.9;
+  }
+  .mark:before{ left:1px; transform:rotate(7deg); }
+  .mark:after{ right:1px; transform:scaleX(-1) rotate(7deg); }
+
+  h1{
+    margin:0 0 10px; color:var(--text);
+    font-weight:600; font-size:clamp(26px,6vw,34px);
+    letter-spacing:-.03em; line-height:1.12;
+  }
+  p{
+    margin:0 auto 26px; color:var(--text-dim);
+    font-size:15px; line-height:1.5; max-width:300px;
+  }
+  button{
+    appearance:none; border:none; cursor:pointer;
+    background:var(--text); color:#000;
+    border-radius:100px; padding:14px 26px;
+    font-weight:590; font-size:15px;
+    letter-spacing:-.01em;
+    transition: transform .15s ease, opacity .15s ease;
+    width:100%;
+  }
+  button:active{ transform:scale(.97); }
+  button:disabled{ opacity:.55; cursor:default; }
+  button:focus-visible{ outline:2px solid var(--accent-blue); outline-offset:3px; }
+
+  #error{
+    margin-top:14px; color:#ff9d94; font-size:13px;
+    min-height:16px; line-height:1.4;
+  }
+
+  /* ---------- hint ---------- */
+  #hint{
+    position:fixed; left:50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 26px);
+    transform:translateX(-50%);
+    z-index:5; color:var(--text-dim); font-size:13px;
+    text-align:center; pointer-events:none;
+    padding:8px 16px; border-radius:100px;
+    background:var(--panel); border:1px solid var(--panel-border);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    opacity:0; transition:opacity .9s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+
+  @media (max-width: 380px){
+    .brand{ font-size:14px; }
+    .status{ font-size:12px; padding:5px 10px 5px 9px; }
+  }
+</style>
+</head>
+<body>
+<video id="video" autoplay muted playsinline></video>
+<canvas id="c"></canvas>
+
+<div id="top">
+  <div class="brand">Lianpu</div>
+  <div class="status" id="status"><span class="dot"></span><span id="statusText">Camera idle</span></div>
+</div>
+
+<div id="hint">Move closer · open your mouth · turn your head</div>
+
+<div id="intro">
+  <div class="card">
+    <div class="mark"></div>
+    <h1>Your face,<br>rewritten.</h1>
+    <p>A generative mask shaped by your proportions, movement and expression. Your camera image never leaves your device.</p>
+    <button id="enter">Create my mask</button>
+    <div id="error"></div>
+  </div>
+</div>
+
+<script type="module">
+import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/+esm";
+
+const c = document.querySelector("#c"), ctx = c.getContext("2d");
+const video = document.querySelector("#video"), enter = document.querySelector("#enter");
+const intro = document.querySelector("#intro");
+const statusEl = document.querySelector("#status"), statusText = document.querySelector("#statusText");
+const hint = document.querySelector("#hint"), error = document.querySelector("#error");
+
+let W, H, DPR, landmarker, lastVideoTime = -1, started = false, mediaStream = null;
+let smooth = { cx:.5, cy:.5, w:.28, h:.42, mouth:0, tilt:0, near:.35 };
+
+function resize(){
+  W = innerWidth; H = innerHeight; DPR = Math.min(devicePixelRatio || 1, 2);
+  c.width = W * DPR; c.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+addEventListener("resize", resize);
+resize();
+
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lerp = (a,b,t) => a + (b - a) * t;
+
+function setStatus(text, live){
+  statusText.textContent = text;
+  statusEl.classList.toggle("live", !!live);
+}
+
+async function init(){
+  if (!navigator.mediaDevices?.getUserMedia){
+    error.textContent = "This browser doesn't support camera access. Try Safari, Chrome, or Edge.";
+    return;
+  }
+
+  enter.disabled = true;
+  enter.textContent = "Opening camera…";
+  error.textContent = "";
+
+  // Stop any previous stream before requesting a new one (retry safety).
+  if (mediaStream){
+    mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream = null;
+  }
+
+  try{
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+    video.srcObject = mediaStream;
+    await video.play();
+
+    setStatus("Loading face model");
+
+    if (!landmarker){
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm"
+      );
+      landmarker = await FaceLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+          delegate: "GPU"
+        },
+        runningMode: "VIDEO",
+        numFaces: 1
+      });
+    }
+
+    started = true;
+    intro.style.opacity = "0";
+    intro.style.pointerEvents = "none";
+    setTimeout(() => { intro.style.display = "none"; }, 650);
+    hint.style.opacity = "1";
+    setStatus("Finding your face", true);
+  }catch(e){
+    console.error(e);
+    enter.disabled = false;
+    enter.textContent = "Try again";
+    error.textContent = "Camera or face model couldn't start. Check camera permission and reload.";
+    setStatus("Camera unavailable");
+  }
+}
+enter.addEventListener("click", init);
+
+function detect(){
+  if (!started || !landmarker || video.readyState < 2 || video.currentTime === lastVideoTime) return;
+  lastVideoTime = video.currentTime;
+
+  const r = landmarker.detectForVideo(video, performance.now());
+  if (!r.faceLandmarks?.length){
+    setStatus("Move into view", true);
+    return;
+  }
+
+  const lm = r.faceLandmarks[0];
+  let minX = 1, maxX = 0, minY = 1, maxY = 0;
+  for (const p of lm){
+    minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+  }
+  const cx = 1 - (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  const fw = maxX - minX, fh = maxY - minY;
+
+  // stable MediaPipe indices: lips / eye corners
+  const mouthOpen = Math.abs(lm[13].y - lm[14].y) / (fh || 1);
+  const leftEye = lm[33], rightEye = lm[263];
+  const tilt = Math.atan2(rightEye.y - leftEye.y, (1 - rightEye.x) - (1 - leftEye.x));
+
+  smooth.cx = lerp(smooth.cx, cx, .22);
+  smooth.cy = lerp(smooth.cy, cy, .22);
+  smooth.w  = lerp(smooth.w,  fw, .18);
+  smooth.h  = lerp(smooth.h,  fh, .18);
+  smooth.mouth = lerp(smooth.mouth, clamp(mouthOpen * 7, 0, 1), .25);
+  smooth.tilt = lerp(smooth.tilt, tilt, .18);
+  smooth.near = lerp(smooth.near, clamp((fw - .12) / .34, 0, 1), .12);
+
+  setStatus("Mask active", true);
+}
+
+function path(points, close = true){
+  ctx.beginPath();
+  ctx.moveTo(points[0][0], points[0][1]);
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i][0], points[i][1]);
+  if (close) ctx.closePath();
+}
+function bez(x1,y1,c1x,c1y,c2x,c2y,x2,y2){
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.bezierCurveTo(c1x,c1y,c2x,c2y,x2,y2);
+}
+function mirrorDraw(fn){
+  ctx.save(); fn(1); ctx.restore();
+  ctx.save(); ctx.scale(-1,1); fn(-1); ctx.restore();
+}
+
+function drawMask(){
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, W, H);
+
+  const base = Math.min(W, H);
+  const scale = base * (.58 + smooth.near * .13);
+  const aspect = clamp((smooth.w / smooth.h) / .68, .82, 1.18);
+  const mouth = smooth.mouth;
+
+  ctx.save();
+  ctx.translate(smooth.cx * W, smooth.cy * H + base * .03);
+  ctx.rotate(-smooth.tilt * .7);
+  ctx.scale(scale * aspect, scale);
+
+  // soft aura
+  let g = ctx.createRadialGradient(0,0,.05,0,0,.62);
+  g.addColorStop(0, "rgba(150,20,20,.07)");
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(0,0,.62,0,Math.PI*2); ctx.fill();
+
+  // ivory face silhouette
+  ctx.fillStyle = "#eee9df";
+  ctx.strokeStyle = "#111";
+  ctx.lineWidth = .012;
+  ctx.beginPath();
+  ctx.moveTo(0,-.48);
+  ctx.bezierCurveTo(.33,-.47,.43,-.20,.39,.06);
+  ctx.bezierCurveTo(.36,.29,.19,.48,0,.55);
+  ctx.bezierCurveTo(-.19,.48,-.36,.29,-.39,.06);
+  ctx.bezierCurveTo(-.43,-.20,-.33,-.47,0,-.48);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // central crown / nose structure
+  ctx.fillStyle = "#111217";
+  path([[0,-.48],[-.075,-.39],[-.055,-.19],[-.105,-.05],[-.055,.11],[0,.17],[.055,.11],[.105,-.05],[.055,-.19],[.075,-.39]]);
+  ctx.fill();
+
+  // forehead flame
+  ctx.fillStyle = "#b51f25";
+  path([[0,-.405],[-.042,-.31],[0,-.23],[.042,-.31]]);
+  ctx.fill();
+
+  // symmetric temple ornaments
+  mirrorDraw(() => {
+    ctx.fillStyle = "#bd2026";
+    ctx.beginPath(); ctx.moveTo(.06,-.37);
+    ctx.bezierCurveTo(.17,-.43,.31,-.36,.34,-.22);
+    ctx.bezierCurveTo(.27,-.27,.22,-.19,.16,-.12);
+    ctx.bezierCurveTo(.18,-.25,.10,-.24,.06,-.37); ctx.fill();
+
+    ctx.fillStyle = "#17181d";
+    ctx.beginPath(); ctx.moveTo(.10,-.25);
+    ctx.bezierCurveTo(.19,-.21,.32,-.14,.34,-.02);
+    ctx.bezierCurveTo(.25,-.08,.18,.00,.10,.04);
+    ctx.bezierCurveTo(.15,-.07,.08,-.12,.10,-.25); ctx.fill();
+
+    // blue accent responds to proximity
+    ctx.fillStyle = `rgba(38,78,150,${.45 + smooth.near * .5})`;
+    ctx.beginPath(); ctx.moveTo(.18,-.34);
+    ctx.bezierCurveTo(.24,-.30,.31,-.25,.33,-.18);
+    ctx.bezierCurveTo(.27,-.20,.23,-.13,.19,-.09);
+    ctx.bezierCurveTo(.21,-.19,.16,-.25,.18,-.34); ctx.fill();
+
+    // eye
+    ctx.fillStyle = "#0b0b0d";
+    ctx.beginPath(); ctx.moveTo(.075,-.08);
+    ctx.bezierCurveTo(.14,-.13,.25,-.13,.31,-.06);
+    ctx.bezierCurveTo(.23,-.02,.14,.01,.075,-.04); ctx.fill();
+    ctx.fillStyle = "#f3eee5";
+    ctx.beginPath(); ctx.ellipse(.19,-.065,.052,.025,-.08,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#111";
+    ctx.beginPath(); ctx.arc(.19,-.064,.014,0,Math.PI*2); ctx.fill();
+
+    // cheek sweep
+    ctx.strokeStyle = "#111217"; ctx.lineWidth = .027; ctx.lineCap = "round";
+    bez(.09,.08,.18,.12,.28,.12,.33,.20); ctx.stroke();
+    ctx.strokeStyle = "#b51f25"; ctx.lineWidth = .018;
+    bez(.11,.13,.19,.19,.24,.23,.28,.30); ctx.stroke();
+
+    // complexity lines when the face is close
+    if (smooth.near > .35){
+      ctx.strokeStyle = "#111217"; ctx.lineWidth = .011;
+      bez(.25,-.31,.34,-.27,.35,-.12,.35,-.06); ctx.stroke();
+      bez(.20,.31,.25,.36,.22,.41,.15,.45); ctx.stroke();
+    }
+  });
+
+  // moustache
+  ctx.fillStyle = "#111217";
+  mirrorDraw(() => {
+    ctx.beginPath(); ctx.moveTo(.01,.16);
+    ctx.bezierCurveTo(.09,.12,.22,.14,.29,.23);
+    ctx.bezierCurveTo(.20,.20,.14,.27,.08,.31);
+    ctx.bezierCurveTo(.10,.23,.04,.22,.01,.16); ctx.fill();
+  });
+
+  // mouth reacts to mouth opening
+  const mh = .022 + mouth * .055;
+  ctx.fillStyle = "#7d171b";
+  ctx.beginPath(); ctx.ellipse(0,.315,.09,mh,0,0,Math.PI*2); ctx.fill();
+  if (mouth > .18){
+    ctx.fillStyle = "#050506";
+    ctx.beginPath(); ctx.ellipse(0,.315,.065,mh*.52,0,0,Math.PI*2); ctx.fill();
+  }
+
+  // chin symbol
+  ctx.strokeStyle = "#111217"; ctx.lineWidth = .016;
+  ctx.beginPath();
+  ctx.moveTo(0,.37);
+  ctx.bezierCurveTo(-.07,.41,-.08,.47,0,.51);
+  ctx.bezierCurveTo(.08,.47,.07,.41,0,.37);
+  ctx.stroke();
+
+  // proximity ornament: grows toward the forehead
+  if (smooth.near > .55){
+    const a = (smooth.near - .55) / .45;
+    ctx.strokeStyle = `rgba(238,233,223,${a * .8})`;
+    ctx.lineWidth = .008;
+    for (let i = 0; i < 3; i++){
+      const yy = -.51 - i * .035 * a;
+      ctx.beginPath();
+      ctx.arc(0, yy, .06 + i * .035, Math.PI * .12, Math.PI * .88);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  detect();
+  drawMask();
+}
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
