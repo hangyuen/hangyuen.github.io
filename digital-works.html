@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="format-detection" content="address=no, telephone=no, email=no, date=no">
-<title>Digital Arts · Hang Yuan's Web</title>
+<title>Digital Works · Hang Yuan's Web</title>
 <link rel="icon" type="image/png" href="assets/hy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -80,6 +80,11 @@
     gap:6px;
     font-size:16px;
     font-weight:500;
+    line-height:19px; /* locked so this box is always exactly 27px tall
+                          (line-height 19px + padding 4px top/bottom),
+                          matching 1982.html's back-link exactly so the
+                          gap to the title below reads identically on
+                          both pages regardless of font-metric drift */
     color:var(--dim);
     padding:4px 0;
     transition:color 0.15s ease, gap 0.15s ease;
@@ -483,7 +488,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     Back
   </a>
-  <h1 class="page-title">Digital Arts</h1>
+  <h1 class="page-title">Digital Works</h1>
   <p class="page-description">A collection of digital painting, illustration, motion graphics, social media, and architectural work. Swipe through to explore.</p>
 </div>
 
