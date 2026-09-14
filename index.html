@@ -2246,7 +2246,6 @@
       year: '2026',
       type: 'Animation & VFX',
       credits: 'Solo Project',
-      image: 'assets/animation.gif',
       video: 'IEuGfiyUUm8'
     },
     'digital-art': {
@@ -2376,15 +2375,21 @@
       paragraphs.slice(0, 2).forEach(p => { html += `<p>${p}</p>`; });
       if (data.video) {
         html += `
-          <div class="embed-frame" style="margin:24px 0;">
-            <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          <div style="margin:24px 0;">
+            <div class="embed-block-label">Watch the video</div>
+            <div class="embed-frame">
+              <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
           </div>`;
       }
       paragraphs.slice(2).forEach(p => { html += `<p>${p}</p>`; });
       if (data.sketchfab) {
         html += `
-          <div class="embed-frame" style="margin-top:24px;">
-            <iframe src="https://sketchfab.com/models/${data.sketchfab}/embed" title="${data.title} 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+          <div style="margin-top:24px;">
+            <div class="embed-block-label">Explore in 3D</div>
+            <div class="embed-frame">
+              <iframe src="https://sketchfab.com/models/${data.sketchfab}/embed" title="${data.title} 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+            </div>
           </div>`;
       }
       descEl.innerHTML = html;
@@ -2396,6 +2401,7 @@
       if (data.video) {
         embedsHtml += `
           <div>
+            <div class="embed-block-label">Watch the video</div>
             <div class="embed-frame">
               <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
@@ -2404,7 +2410,7 @@
       if (data.sketchfab) {
         embedsHtml += `
           <div>
-            <div class="embed-block-label">3D Model</div>
+            <div class="embed-block-label">Explore in 3D</div>
             <div class="embed-frame">
               <iframe src="https://sketchfab.com/models/${data.sketchfab}/embed" title="${data.title} 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
             </div>
