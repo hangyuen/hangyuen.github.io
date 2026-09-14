@@ -2246,7 +2246,8 @@
       year: '2026',
       type: 'Animation & VFX',
       credits: 'Solo Project',
-      image: 'assets/animation.gif'
+      image: 'assets/animation.gif',
+      video: 'IEuGfiyUUm8'
     },
     'digital-art': {
       title: 'Digital Works',
@@ -2395,7 +2396,6 @@
       if (data.video) {
         embedsHtml += `
           <div>
-            <div class="embed-block-label">AR Demo</div>
             <div class="embed-frame">
               <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
@@ -2412,12 +2412,15 @@
       }
       embedsEl.innerHTML = embedsHtml;
 
-      // put the video/3D-model up top, above the description, since seeing
-      // it first reads better for visually driven projects like this one
-      const contentEl = win.querySelector('.project-content');
-      contentEl.insertBefore(embedsEl, descEl);
-      embedsEl.style.marginTop = '0';
-      embedsEl.style.marginBottom = '28px';
+      // by default the embeds block stays in its natural template position,
+      // which is after the description text. Only projects that opt in via
+      // data.embedsFirst get the video/3D-model moved above the text.
+      if (data.embedsFirst) {
+        const contentEl = win.querySelector('.project-content');
+        contentEl.insertBefore(embedsEl, descEl);
+        embedsEl.style.marginTop = '0';
+        embedsEl.style.marginBottom = '28px';
+      }
     } else {
       embedsEl.style.display = 'none';
       embedsEl.innerHTML = '';
