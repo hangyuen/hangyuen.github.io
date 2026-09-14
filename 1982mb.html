@@ -116,6 +116,11 @@
     gap: 6px;
     font-size: 16px;
     font-weight: 500;
+    line-height: 19px; /* locked so this box is always exactly 27px tall
+                           (line-height 19px + padding 4px top/bottom),
+                           matching digital-arts.html's back-link exactly
+                           so the gap to the title below reads identically
+                           on both pages regardless of font-metric drift */
     color: rgba(255,255,255,0.6);
     padding: 4px 0;
     transition: color 0.15s ease, gap 0.15s ease;
@@ -131,10 +136,10 @@
 
   .title-block {
     position: absolute;
-    /* 40px below the back-link's own bottom edge (top:56px + 4px/4px
-       padding = bottom 82px), the exact same vertical rhythm
-       digital-arts.html uses between its back-link and page-title. */
-    top: 122px;
+    /* back-link box is 56px (top) + 27px (its own height) = 83px, plus
+       the same 40px rhythm digital-arts.html uses between its back-link
+       and page-title = 123px. */
+    top: 123px;
     left: var(--page-gutter, 24px);
     right: var(--page-gutter, 24px);
     z-index: 10;
