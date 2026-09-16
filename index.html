@@ -1221,6 +1221,26 @@
     border:0;
   }
 
+  /* PROJECT IMAGE GALLERY — used for projects that show a set of stills
+     (e.g. A Thousand Li VR) instead of, or alongside, video/3D embeds */
+  .project-gallery{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin:24px 0;
+  }
+  .project-gallery img{
+    width:100%;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    border-radius:10px;
+    background:#111;
+    display:block;
+  }
+  @media (max-width:560px){
+    .project-gallery{ grid-template-columns:1fr; }
+  }
+
   @media (max-width:640px){
     .icon-box{ width:72px; height:72px; border-radius:16px; }
     .icon-label{ font-size:12px; }
@@ -2194,12 +2214,19 @@
   const projectData = {
     'vr': {
       title: 'A Thousand Li (VR)',
-      desc: 'Immersive experiences built for headsets and beyond.',
-      client: 'Placeholder Client',
-      year: '2026',
-      type: 'Virtual Reality',
-      credits: 'Solo Project',
-      image: 'assets/vr.gif'
+      desc: [
+        "The relationship between humans and their environment has long shaped art and design, from the architectural ingenuity of Vitruvius and Imhotep to the philosophical depth of the Northern Song dynasty's (960&ndash;1127) \"Shan Shui\" landscape painting. Artists like Fan Kuan and Guo Xi placed tiny human figures within vast landscapes, using scale to express humility and a respectful relationship with nature.",
+        "My MFA &amp; MS thesis builds on that tradition, using immersive VR to reconstruct and analyze these historic landscape paintings, bridging traditional art education with digital media. The project explores how VR can make historical and environmental education more engaging and accessible, offering new ways to perceive and connect with these landscapes and the cultural heritage they represent.",
+        "Inside the experience, visitors can steer a boat through the painted landscape, drift past falling petals, catch fish along the water, and climb up toward a mountain temple, small, playful ways of exploring the scene rather than just viewing it. Along the way, optional info points dig into the specific art history of that era, and reframe it through a contemporary lens: how an 11th-century way of seeing nature and scale can still inform how we think about our place in the environment today."
+      ],
+      meta: [
+        { label: 'Type', value: 'Virtual Reality' },
+        { label: 'Built With', value: 'Unity' },
+        { label: 'Thesis', value: 'MFA &amp; MS, Iowa State University' }
+      ],
+      videos: ['3py4b7UjFq0', 'KMH2qO_f-rQ'],
+      images: ['assets/VR01.jpg', 'assets/VR02.jpg', 'assets/VR03.jpg', 'assets/VR04.jpg'],
+      interleaveVideo: true
     },
     'ar': {
       title: "Howl's Moving Castle (AR)",
@@ -2263,13 +2290,13 @@
       entries: [
         {
           title: 'Impression, Sunrise: What Monet Teaches Game Design Teams About Feeling Before Knowing',
-          meta: 'Yuan, H., & Yang, Z. · 2026',
+          meta: 'Yuan, H., &amp; Yang, Z. · 2026',
           venue: 'Companion of the Computer-Supported Cooperative Work and Social Computing (CSCW Companion \'26), October 10–14, 2026, Salt Lake City, UT, USA. ACM, New York, NY, USA.',
           link: 'https://doi.org/10.1145/3785651.3831536'
         },
         {
           title: 'Character.exe: Exploring Agency Through Narrative Choices',
-          meta: 'Yuan, H., & Gude, R. · 2026',
+          meta: 'Yuan, H., &amp; Gude, R. · 2026',
           venue: 'HCI International 2026 Posters (Communications in Computer and Information Science, Vol. 3048, pp. 394–403). Springer, Cham.',
           link: 'https://doi.org/10.1007/978-3-032-30816-0_39'
         },
@@ -2355,7 +2382,7 @@
       descEl.style.display = '';
       const paragraphs = Array.isArray(data.desc) ? data.desc : [data.desc];
       descEl.innerHTML = paragraphs.map(p => `<p></p>`).join('');
-      descEl.querySelectorAll('p').forEach((pEl, i) => { pEl.textContent = paragraphs[i]; });
+      descEl.querySelectorAll('p').forEach((pEl, i) => { pEl.innerHTML = paragraphs[i]; });
       listEl.style.display = 'none';
       if (data.image) {
         mediaEl.style.display = '';
@@ -2366,23 +2393,33 @@
       }
     }
 
-    if (data.interleaveVideo && (data.video || data.sketchfab)) {
-      // custom order: first two paragraphs, then the video, then the
-      // remaining paragraph(s), then the 3D model — all inside the
-      // normal .project-desc flow, original single-column frame
+    if (data.interleaveVideo && (data.video || data.videos || data.sketchfab)) {
+      // custom order: first paragraph, then video(s), then the remaining
+      // paragraph(s), then an image gallery (if provided) or a 3D model —
+      // all inside the normal .project-desc flow, original single-column frame
       const paragraphs = Array.isArray(data.desc) ? data.desc : [data.desc];
+      const videoIds = data.videos || (data.video ? [data.video] : []);
       let html = '';
-      paragraphs.slice(0, 2).forEach(p => { html += `<p>${p}</p>`; });
-      if (data.video) {
-        html += `
-          <div style="margin:24px 0;">
-            <div class="embed-block-label">Watch the video</div>
-            <div class="embed-frame">
-              <iframe src="https://www.youtube.com/embed/${data.video}" title="${data.title} video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-          </div>`;
+      paragraphs.slice(0, 1).forEach(p => { html += `<p>${p}</p>`; });
+      if (videoIds.length) {
+        html += `<div style="margin:24px 0;"><div class="embed-block-label">Watch the video${videoIds.length > 1 ? 's' : ''}</div>`;
+        videoIds.forEach((vid, i) => {
+          html += `
+            <div class="embed-frame"${i < videoIds.length - 1 ? ' style="margin-bottom:14px;"' : ''}>
+              <iframe src="https://www.youtube.com/embed/${vid}" title="${data.title} video${videoIds.length > 1 ? ' ' + (i + 1) : ''}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>`;
+        });
+        html += `</div>`;
       }
-      paragraphs.slice(2).forEach(p => { html += `<p>${p}</p>`; });
+      paragraphs.slice(1).forEach(p => { html += `<p>${p}</p>`; });
+      if (data.images && data.images.length) {
+        html += `<div class="embed-block-label" style="margin-top:24px;">Here are some photographs from the exhibition</div>`;
+        html += `<div class="project-gallery">`;
+        data.images.forEach(src => {
+          html += `<img src="${src}" alt="${data.title}">`;
+        });
+        html += `</div>`;
+      }
       if (data.sketchfab) {
         html += `
           <div style="margin-top:24px;">
