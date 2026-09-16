@@ -183,9 +183,9 @@
   .icon.p6 .icon-float{ animation-duration: 8.1s; animation-delay: -2.3s; }
 
   .icon-box{
-    width:108px;
-    height:108px;
-    border-radius:24px;
+    width:clamp(64px, 6vw, 108px);
+    height:clamp(64px, 6vw, 108px);
+    border-radius:clamp(14px, 1.4vw, 24px);
     background:linear-gradient(145deg, var(--icon-box-grad-1), var(--icon-box-grad-2));
     box-shadow:var(--icon-box-shadow);
     display:flex;
@@ -219,7 +219,7 @@
     box-shadow:0 0 0 3px rgba(142,142,147,0.85), 0 10px 24px rgba(0,0,0,0.12);
   }
   .icon-label{
-    font-size:14px;
+    font-size:clamp(11px, 1vw, 14px);
     font-weight:500;
     color:var(--icon-label-color);
     text-shadow:var(--icon-label-shadow);
@@ -1242,8 +1242,6 @@
   }
 
   @media (max-width:640px){
-    .icon-box{ width:72px; height:72px; border-radius:16px; }
-    .icon-label{ font-size:12px; }
     .dock{ gap:8px; padding:8px 10px; bottom:20px; }
     .dock-item{ width:42px; height:42px; }
     .about-overlay{ padding:20px; }
@@ -2400,7 +2398,7 @@
       const paragraphs = Array.isArray(data.desc) ? data.desc : [data.desc];
       const videoIds = data.videos || (data.video ? [data.video] : []);
       let html = '';
-      paragraphs.slice(0, 1).forEach(p => { html += `<p>${p}</p>`; });
+      paragraphs.slice(0, 2).forEach(p => { html += `<p>${p}</p>`; });
       if (videoIds.length) {
         html += `<div style="margin:24px 0;"><div class="embed-block-label">Watch the video${videoIds.length > 1 ? 's' : ''}</div>`;
         videoIds.forEach((vid, i) => {
@@ -2411,7 +2409,7 @@
         });
         html += `</div>`;
       }
-      paragraphs.slice(1).forEach(p => { html += `<p>${p}</p>`; });
+      paragraphs.slice(2).forEach(p => { html += `<p>${p}</p>`; });
       if (data.images && data.images.length) {
         html += `<div class="embed-block-label" style="margin-top:24px;">Photos from the exhibition</div>`;
         html += `<div class="project-gallery">`;
