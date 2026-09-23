@@ -554,11 +554,16 @@
   track.innerHTML = artworks.map((art, i) => `
   <div class="art-item">
     ${art.video
-      ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
-           <button type="button" class="video-facade" data-video="${art.video}" data-title="${art.title}" aria-label="Play ${art.title}">
-             <img src="https://img.youtube.com/vi/${art.video}/hqdefault.jpg" alt="" loading="lazy">
-           </button>
-         </div>`
+  ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
+       <iframe
+         class="art-video"
+         src="https://www.youtube.com/embed/${art.video}"
+         title="${art.title}"
+         frameborder="0"
+         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+         allowfullscreen>
+       </iframe>
+     </div>`
       : art.sketchfab
         ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
              <iframe class="art-video"
