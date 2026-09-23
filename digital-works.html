@@ -552,12 +552,22 @@
   const dotsWrap = document.getElementById('dots');
 
   track.innerHTML = artworks.map((art, i) => `
-    <div class="art-item">
-      ${art.video
+  <div class="art-item">
+    ${art.video
+      ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
+           <button type="button" class="video-facade" data-video="${art.video}" data-title="${art.title}" aria-label="Play ${art.title}">
+             <img src="https://img.youtube.com/vi/${art.video}/hqdefault.jpg" alt="" loading="lazy">
+           </button>
+         </div>`
+      : art.sketchfab
         ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
-             <button type="button" class="video-facade" data-video="${art.video}" data-title="${art.title}" aria-label="Play ${art.title}">
-               <img src="https://img.youtube.com/vi/${art.video}/hqdefault.jpg" alt="" loading="lazy">
-             </button>
+             <iframe class="art-video"
+               src="${art.sketchfab}"
+               title="${art.title}"
+               frameborder="0"
+               allow="autoplay; fullscreen; xr-spatial-tracking"
+               allowfullscreen>
+             </iframe>
            </div>`
         : `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
              <img src="${art.image}" alt="${art.title}" loading="${i < 2 ? 'eager' : 'lazy'}">
@@ -565,14 +575,14 @@
                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
              </button>
            </div>`}
-      <div class="art-caption">
-        <div class="art-title">${art.title}</div>
-        <div class="art-meta">${[art.medium, art.dimensions, art.year].filter(Boolean).join(', ')}</div>
-        ${art.description ? `<p class="art-description">${art.description}</p>` : ''}
-        ${art.exhibition ? `<p class="art-exhibition">${art.exhibition}</p>` : ''}
-      </div>
+    <div class="art-caption">
+      <div class="art-title">${art.title}</div>
+      <div class="art-meta">${[art.medium, art.dimensions, art.year].filter(Boolean).join(', ')}</div>
+      ${art.description ? `<p class="art-description">${art.description}</p>` : ''}
+      ${art.exhibition ? `<p class="art-exhibition">${art.exhibition}</p>` : ''}
     </div>
-  `).join('');
+  </div>
+`).join('');
 
   // swap the video facade for a real iframe only on click, so nothing
   // from YouTube loads until the person actually wants to watch it
