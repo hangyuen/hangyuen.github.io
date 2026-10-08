@@ -102,75 +102,100 @@
     margin-bottom:48px;
   }
 
-  /* INTRO POP-UP — same shape and behavior as the 3D loading pop-up on
-     1982mb.html (top-right, frosted glass, icon + title + text, close
-     button, blue bar), in a light version to suit this white page.
-     It slides in on every visit and the blue bar counts down the time
-     before it leaves; hovering pauses it so people can finish reading. */
+  /* INTRO POP-UP — restyled to match the homepage tutorial card and the
+     "Off to Instagram?" pop-up: dark rounded icon tile, 19px bold title,
+     14.5px grey body, blue rounded "Got it" button. Because this page's
+     background is white, the card is a slightly warm-grey solid panel with
+     a visible hairline border and a deeper shadow, so it still reads as a
+     floating card instead of blending into the page. It slides in on every
+     visit; the blue bar counts down the time before it leaves, and hovering
+     pauses it so people can finish reading. */
   .intro-toast{
     position:fixed;
     top:56px;
     right:var(--page-gutter);
     z-index:20;
-    display:flex;
-    align-items:flex-start;
-    gap:14px;
-    width:min(400px, calc(100vw - 32px));
-    padding:18px 18px 18px 20px;
+    width:330px;
+    padding:24px 26px 22px;
     border-radius:18px;
-    background:linear-gradient(155deg, rgba(255,255,255,0.92), rgba(255,255,255,0.74));
-    backdrop-filter:blur(24px) saturate(190%);
-    -webkit-backdrop-filter:blur(24px) saturate(190%);
-    border:0.5px solid rgba(0,0,0,0.08);
+    background:rgba(246,246,248,0.94);
+    backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    border:1px solid rgba(0,0,0,0.08);
     box-shadow:
-      0 18px 44px rgba(0,0,0,0.16),
-      0 2px 8px rgba(0,0,0,0.06),
-      inset 0 1px 1px rgba(255,255,255,0.9);
+      0 24px 56px rgba(0,0,0,0.18),
+      0 4px 14px rgba(0,0,0,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.9);
     opacity:0;
-    transform:translateY(-10px);
+    transform:translateY(-6px) scale(0.98);
     pointer-events:none;
-    transition:opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    transition:opacity 0.22s ease, transform 0.22s ease;
   }
-  .intro-toast.visible{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .intro-toast.visible{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+
+  /* same dark tile as .leaving-icon on the homepage */
   .intro-toast-icon{
-    flex-shrink:0;
-    width:36px;
-    height:36px;
-    border-radius:50%;
-    background:rgba(0,113,227,0.1);
-    color:var(--accent);
+    width:56px;
+    height:56px;
+    border-radius:14px;
+    margin-bottom:16px;
+    background:linear-gradient(145deg, #4a4a4d, #2c2c2e);
+    color:#ffffff;
     display:flex;
     align-items:center;
     justify-content:center;
+    box-shadow:0 8px 18px rgba(0,0,0,0.18);
   }
-  .intro-toast-icon svg{ width:20px; height:20px; }
-  .intro-toast-body{ flex:1; min-width:0; padding-top:1px; }
-  .intro-toast-title{
-    font-size:17px;
+  .intro-toast-icon svg{ width:26px; height:26px; }
+
+  .intro-toast-label{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', sans-serif;
+    font-size:12px;
     font-weight:600;
-    letter-spacing:-0.015em;
-    color:#1d1d1f;
-    margin-bottom:4px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:#0a84ff;
+    margin-bottom:8px;
+  }
+  .intro-toast-title{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    color:#111111;
+    margin-bottom:10px;
   }
   .intro-toast-text{
-    font-size:15px;
-    line-height:1.5;
-    letter-spacing:-0.005em;
-    color:#515154;
+    font-size:14.5px;
+    line-height:1.55;
+    color:#666;
+    margin-bottom:20px;
+  }
+  .intro-toast-text strong{
+    font-weight:600;
+    color:#1d1d1f;
+  }
+  /* keep the label/title clear of the close X now that there's no icon */
+  .intro-toast-label,
+  .intro-toast-title{ padding-right:32px; }
+
+  .intro-toast-footer{
+    display:flex;
+    align-items:center;
+    gap:16px;
   }
   .intro-toast-track{
-    width:100%;
-    height:3px;
+    flex:1;
+    height:4px;
     border-radius:2px;
-    background:rgba(0,0,0,0.08);
+    background:rgba(0,0,0,0.10);
     overflow:hidden;
-    margin-top:14px;
   }
   .intro-toast-bar{
     height:100%;
     width:100%;
     border-radius:2px;
-    background:linear-gradient(90deg, #0071e3, #4fa4ff);
+    background:#0a84ff;
     transform-origin:left center;
   }
   .intro-toast.visible .intro-toast-bar{
@@ -178,30 +203,47 @@
   }
   .intro-toast:hover .intro-toast-bar{ animation-play-state:paused; }
   @keyframes introCountdown{ from{ transform:scaleX(1); } to{ transform:scaleX(0); } }
+
+  .intro-toast-ok{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', sans-serif;
+    font-size:15px;
+    font-weight:600;
+    color:#ffffff;
+    background:#0a84ff;
+    border:none;
+    border-radius:12px;
+    padding:9px 18px;
+    cursor:pointer;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .intro-toast-ok:hover{ background:#2f95ff; transform:translateY(-1px); }
+  .intro-toast-ok:active{ transform:translateY(0) scale(0.97); }
+
+  /* small close X, top-right corner of the card */
   .intro-toast-close{
-    flex-shrink:0;
-    width:26px;
-    height:26px;
-    margin:-3px -4px 0 0;
+    position:absolute;
+    top:14px;
+    right:14px;
+    width:28px;
+    height:28px;
     border-radius:50%;
     border:0;
-    background:transparent;
-    color:rgba(0,0,0,0.4);
+    background:rgba(0,0,0,0.05);
+    color:rgba(0,0,0,0.45);
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
     transition:background 0.15s ease, color 0.15s ease;
   }
-  .intro-toast-close:hover{ background:rgba(0,0,0,0.06); color:rgba(0,0,0,0.8); }
+  .intro-toast-close:hover{ background:rgba(0,0,0,0.10); color:rgba(0,0,0,0.85); }
   .intro-toast-close svg{ width:14px; height:14px; }
-  /* laptops and up: larger pop-up text, scaling a little more on iMac */
-  @media (min-width:901px){
-    .intro-toast{ width:clamp(420px, 26vw, 500px); padding:22px 22px 20px 24px; gap:16px; }
-    .intro-toast-icon{ width:40px; height:40px; }
-    .intro-toast-icon svg{ width:22px; height:22px; }
-    .intro-toast-title{ font-size:clamp(19px, calc(15px + 0.3vw), 22px); }
-    .intro-toast-text{ font-size:clamp(16px, calc(12.5px + 0.3vw), 19px); }
+
+  /* big screens: a touch larger so it doesn't look tiny on an iMac */
+  @media (min-width:1800px){
+    .intro-toast{ width:380px; padding:28px 30px 26px; }
+    .intro-toast-title{ font-size:21px; }
+    .intro-toast-text{ font-size:16px; }
   }
   @media (max-width:480px){
     .intro-toast{
@@ -210,9 +252,12 @@
       left:16px;
       right:16px;
       width:auto;
+      padding:20px 20px 18px;
       transform:translateY(10px);
     }
     .intro-toast.visible{ transform:translateY(0); }
+    .intro-toast-icon{ width:48px; height:48px; margin-bottom:14px; }
+    .intro-toast-icon svg{ width:22px; height:22px; }
   }
   @media (prefers-reduced-motion: reduce){
     .intro-toast{ transform:none; }
@@ -682,17 +727,16 @@
 </div>
 
 <div class="intro-toast" id="introToast" role="status" aria-live="polite">
-  <div class="intro-toast-icon" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8l4 4-4 4M7 8l-4 4 4 4M3 12h18"/></svg>
-  </div>
-  <div class="intro-toast-body">
-    <div class="intro-toast-title">Selected Works</div>
-    <div class="intro-toast-text">Digital art, motion design, 3D modeling, and visual communication. Swipe through to explore.</div>
-    <div class="intro-toast-track"><div class="intro-toast-bar" id="introToastBar"></div></div>
-  </div>
   <button type="button" class="intro-toast-close" id="introToastClose" aria-label="Dismiss">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
+  <div class="intro-toast-label">What's here</div>
+  <div class="intro-toast-title">A few favorite pieces</div>
+  <div class="intro-toast-text">Paintings, motion graphics, 3D models and 3D prints, some shown in exhibitions. <strong>Swipe</strong> or use the arrows to browse, and tap an image to zoom in.</div>
+  <div class="intro-toast-footer">
+    <div class="intro-toast-track"><div class="intro-toast-bar" id="introToastBar"></div></div>
+    <button type="button" class="intro-toast-ok" id="introToastOk">Got it</button>
+  </div>
 </div>
 
 <div class="carousel-wrap">
@@ -919,6 +963,7 @@
   setTimeout(() => introToast.classList.add('visible'), 500);
   introToastBar.addEventListener('animationend', hideIntro);
   document.getElementById('introToastClose').addEventListener('click', hideIntro);
+  document.getElementById('introToastOk').addEventListener('click', hideIntro);
   // swiping or clicking an arrow means they've got it, so tidy it away
   track.addEventListener('scroll', () => { if (track.scrollLeft > 40) hideIntro(); }, { passive:true });
 
