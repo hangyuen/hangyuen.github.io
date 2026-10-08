@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="format-detection" content="address=no, telephone=no, email=no, date=no">
 <title>Digital Works · Hang Yuan's Web</title>
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="icon" type="image/png" href="assets/hy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -24,7 +24,8 @@
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
-  html, body{ height:100%; }
+  html{ height:100%; }
+  body{ min-height:100%; }
 
   body{
     background:var(--bg);
@@ -32,7 +33,7 @@
     font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
-    padding-bottom:clamp(24px, 4vh, 60px);
+    padding-bottom:56px; /* same as the 56px above the Back link */
   }
 
   a{ color:inherit; text-decoration:none; }
@@ -241,7 +242,6 @@
     color:#4a4a4a;
     letter-spacing:-0.005em;
     margin-top:12px;
-    max-width:72ch; /* keeps lines comfortable to read on very wide cards */
   }
   .art-exhibition{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
@@ -315,7 +315,7 @@
     display:flex;
     justify-content:center;
     gap:8px;
-    padding-top:12px;
+    padding-top:28px;
   }
   .carousel-dot{
     width:7px;
@@ -753,6 +753,32 @@
   });
   updateArrowState();
   updateDots();
+
+  // BIG SCREENS (iMac etc.): grow or shrink the cards until the page is
+  // exactly one screen tall, so the gap under the dots matches the 56px
+  // gap above the Back link. Laptops and phones keep the CSS sizing.
+  const items = Array.from(track.querySelectorAll('.art-item'));
+  function fitToScreen(){
+    items.forEach(it => it.style.removeProperty('--card-w'));
+    if (window.innerWidth <= 900 || window.innerHeight < 1000) return;
+    const gutter = parseFloat(getComputedStyle(document.querySelector('.page-header')).paddingLeft) || 0;
+    const maxW = Math.min(window.innerWidth * 0.64, window.innerWidth - gutter - 200, 1500);
+    let w = items[0].getBoundingClientRect().width;
+    for (let k = 0; k < 6; k++){
+      const bottom = dotsWrap.getBoundingClientRect().bottom + window.scrollY + 56;
+      const extra = window.innerHeight - bottom;
+      if (Math.abs(extra) < 1) break;
+      w = Math.max(320, Math.min(maxW, w + extra * 16 / 9));
+      items.forEach(it => it.style.setProperty('--card-w', w + 'px'));
+    }
+    positionArrows();
+    updateArrowState();
+    updateDots();
+  }
+  fitToScreen();
+  window.addEventListener('resize', fitToScreen);
+  window.addEventListener('load', fitToScreen);
+  if (document.fonts) document.fonts.ready.then(fitToScreen);
 
   // ---- zoom lightbox ----
   const lightbox = document.getElementById('lightbox');
