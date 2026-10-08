@@ -20,7 +20,7 @@
     /* fixed height for the text block under each frame, so a card with a
        long description and a card with none still line up along the same
        baseline in the row */
-    --caption-height: 190px;
+    --caption-height: 150px;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -129,9 +129,19 @@
   }
   .carousel-track::-webkit-scrollbar{ display:none; }
 
+  /* Card width follows BOTH the screen's width and its height, so the
+     whole card (artwork + full caption) always fits on screen at once:
+     - 13" laptops (~1280–1470 wide, ~700–830 tall): ~660–760px cards
+     - iMac / large monitors: grows up to 1120px
+     The height term reserves room for the caption and dots below the
+     frame, then converts the leftover height to a 16:9 width. */
   .art-item{
-    flex:0 0 clamp(300px, 36vw, 860px);
+    --card-w: clamp(320px, min(52vw, calc((100svh - 300px) * 16 / 9)), 1120px);
+    flex:0 0 var(--card-w);
+    width:var(--card-w);
     scroll-snap-align:start;
+    display:flex;
+    flex-direction:column;
   }
 
   .art-frame{
@@ -205,7 +215,8 @@
   }
 
   .art-caption{
-    padding-top:14px;
+    padding-top:16px;
+    flex:1;
     min-height:var(--caption-height);
     display:flex;
     flex-direction:column;
@@ -229,11 +240,8 @@
     line-height:1.65;
     color:#4a4a4a;
     letter-spacing:-0.005em;
-    margin-top:14px;
-    display:-webkit-box;
-    -webkit-line-clamp:4;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
+    margin-top:12px;
+    max-width:72ch; /* keeps lines comfortable to read on very wide cards */
   }
   .art-exhibition{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
@@ -325,13 +333,68 @@
     transform:scale(1.25);
   }
 
+  /* Tall screens (iMac, large monitors): there's enough height to fit
+     the header AND the whole card with no scrolling, so size for that. */
+  @media (min-height:1000px){
+    .art-item{
+      --card-w: clamp(320px, min(52vw, calc((100svh - 590px) * 16 / 9)), 1120px);
+    }
+  }
+
+  @media (min-width:1800px) and (min-height:1000px){
+    .art-title{ font-size:21px; }
+    .art-meta{ font-size:14px; }
+    .art-description{ font-size:15.5px; }
+    .art-exhibition{ font-size:14px; }
+  }
+
+  /* TABLETS & PHONES — one card at a time, swiped with a finger.
+     Width also respects screen height so a phone held sideways never
+     gets a frame taller than the screen. */
   @media (max-width:900px){
-    .art-item{ flex:0 0 78vw; max-width:none; }
+    :root{ --caption-height: 0px; }
+    .art-item{ --card-w: min(78vw, calc((100svh - 150px) * 16 / 9)); }
     .carousel-arrow{ display:none; }
+    /* each card only as tall as its own caption, and the exhibition
+       line follows the text instead of being pushed to the bottom */
+    .carousel-track{ align-items:flex-start; }
+    .art-exhibition{ margin-top:0; }
+    /* no hover-lift on touch screens */
+    .art-item:hover .art-frame{ transform:none; }
   }
   @media (max-width:560px){
-    .art-item{ flex:0 0 88vw; }
-    :root{ --caption-height: 210px; }
+    /* card lines up exactly with the title above it on both sides,
+       and the next card peeks in at the right edge as a swipe hint */
+    .carousel-track{ gap:14px; }
+    .art-item{ --card-w: calc(100vw - var(--page-gutter) * 2); }
+    .art-frame{ border-radius:14px; }
+    .art-title{ font-size:18px; }
+    .art-description{ font-size:15px; line-height:1.6; }
+  }
+  /* bigger tap area for the dots on touch screens, same dot look */
+  @media (hover:none){
+    .carousel-dots{ gap:0; padding-top:8px; }
+    .carousel-dot{
+      width:23px;
+      height:27px;
+      background:transparent;
+      position:relative;
+    }
+    .carousel-dot::before{
+      content:"";
+      position:absolute;
+      top:50%; left:50%;
+      width:7px; height:7px;
+      margin:-3.5px 0 0 -3.5px;
+      border-radius:50%;
+      background:rgba(0,0,0,0.16);
+      transition:background 0.2s ease, transform 0.2s ease;
+    }
+    .carousel-dot:hover{ background:transparent; }
+    .carousel-dot.active{ background:transparent; transform:none; }
+    .carousel-dot.active::before{ background:var(--accent); transform:scale(1.25); }
+    /* close button easier to hit on phones */
+    .lightbox-close{ top:16px; right:16px; }
   }
 
   /* ZOOM TRIGGER */
@@ -534,19 +597,19 @@
     { image: 'assets/Open Field, Open Love.jpg', title: 'Open Field, Open Love', medium: 'Painting', year: '2025', aspect: '16/9', dimensions: '32 x 18 inches',
       description: "Open Field, Open Love speaks to the quiet work of reaching outward after isolation: the vulnerability of opening your arms before you know if anyone will meet you there, and the relief when something does.",
       exhibition: "Exhibited in Loneliness, Isolation and Connection, Ludington Area Center for the Arts, Ludington, MI, 2025." },
-    { image: 'assets/Upstream.jpg', title: 'Upstream', medium: 'Painting', year: '2024', aspect: '16/9', dimensions: '32 x 18 inches',
-      description: "Upstream holds two kinds of resistance at once: the physical push of the current, and the mental stillness required to stay present within it. Blooming, here, isn't passive. It happens even as things move against you.",
-      exhibition: "Exhibited in Bloom, Mainframe Studios, Des Moines, IA, 2024." },
     { title: 'JoinJade', medium: 'Motion Graphics', year: '2021', aspect: '16/9', video: '4YP7FZZNVCo', dimensions: '1920 x 1080 px',
       description: "Produced for JoinJade, a global public health campaign founded in 2001 by the Asian Liver Center at Stanford University to fight the stigma, transmission, and mortality linked to hepatitis B and liver cancer. This motion graphics piece opened the 2021 World Hepatitis Day event (July 28) at Stanford.",
       exhibition: "Exhibited at the Asian Liver Center, Stanford University, Palo Alto, CA, 2021." },
+    { image: 'assets/Upstream.jpg', title: 'Upstream', medium: 'Painting', year: '2024', aspect: '16/9', dimensions: '32 x 18 inches',
+      description: "Upstream holds two kinds of resistance at once: the physical push of the current, and the mental stillness required to stay present within it. Blooming, here, isn't passive. It happens even as things move against you.",
+      exhibition: "Exhibited in Bloom, Mainframe Studios, Des Moines, IA, 2024." },
+    { image: 'assets/Light.png', title: 'Flow Lamp', medium: '3D Printing', year: '2024', aspect: '16/9', dimensions: '7.5 × 7.5 × 15 inches (W × D × H)',
+      description: "A sculptural <strong>3D-printed desk lamp</strong> inspired by the fluid motion of poured material, crafted from <strong>matte brown and ivory PLA</strong> using a <strong>Bambu Lab X1 Carbon</strong>." },
     { image: 'assets/Iowa State Capitol.jpg', title: 'Iowa State Capitol', medium: 'Architectural Painting', year: '2022', aspect: '16/9', dimensions: '24 x 16 inches',
       description: "An architectural illustration of the Iowa State Capitol, combining detailed linework with soft watercolor tones to highlight the building’s historic architecture and iconic golden dome.",
       exhibition: "Exhibited at the Iowa State University Memorial Union (MU), Ames, IA, 2022." },
     { title: 'Ant', medium: 'Computer Modeling', year: '2022', aspect: '16/9', sketchfab: 'https://sketchfab.com/models/e40c720c50ef4a25ad32abc53c4d619c/embed',
-      description: "A stylized 3D ant character created for a children’s game, combining simplified forms and playful proportions to create a friendly and engaging character for an interactive game environment." },
-    { image: 'assets/Light.png', title: 'Flow Lamp', medium: '3D Printing', year: '2024', aspect: '16/9', dimensions: '7.5 × 7.5 × 15 inches (W × D × H)',
-      description: "A sculptural <strong>3D-printed desk lamp</strong> inspired by the fluid motion of poured material, crafted from <strong>matte brown and ivory PLA</strong> using a <strong>Bambu Lab X1 Carbon</strong>." }
+      description: "A stylized 3D ant character created for a children’s game, combining simplified forms and playful proportions to create a friendly and engaging character for an interactive game environment." }
   ];
 
   const track = document.getElementById('track');
@@ -586,7 +649,7 @@
       </div>`;
     }
     return `<div class="art-frame"${frameStyle(art)}>
-      <img src="${art.image}" alt="${art.title}" loading="${i < 2 ? 'eager' : 'lazy'}">
+      <img src="${art.image}" alt="${art.title}" loading="${i < 3 ? 'eager' : 'lazy'}">
       <button type="button" class="zoom-trigger" data-image="${art.image}" data-title="${art.title}" aria-label="Zoom into ${art.title}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
       </button>
@@ -757,23 +820,77 @@
     if (e.key === '-') zoomOutBtn.click();
   });
 
-  // drag to pan once zoomed in
-  lightboxStage.addEventListener('mousedown', (e) => {
-    if (zoom <= ZOOM_MIN) return;
-    dragging = true;
-    lightboxStage.classList.add('dragging');
-    dragStartX = e.clientX; dragStartY = e.clientY;
+  // drag to pan (mouse or one finger), pinch to zoom (two fingers),
+  // double-tap / double-click to toggle 2x — works the same on phone,
+  // tablet and desktop
+  const pointers = new Map();
+  let pinchStartDist = 0, pinchStartZoom = 1, lastTap = 0;
+
+  function pinchDistance(){
+    const [a, b] = Array.from(pointers.values());
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  }
+  function startPan(p){
+    dragging = zoom > ZOOM_MIN;
+    dragStartX = p.x; dragStartY = p.y;
     panStartX = panX; panStartY = panY;
+    lightboxStage.classList.toggle('dragging', dragging);
+  }
+
+  lightboxStage.addEventListener('pointerdown', (e) => {
+    lightboxStage.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 2){
+      dragging = false;
+      pinchStartDist = pinchDistance();
+      pinchStartZoom = zoom;
+      lightboxStage.classList.add('dragging');
+    } else if (pointers.size === 1){
+      const now = Date.now();
+      if (now - lastTap < 300){
+        zoom = zoom > ZOOM_MIN ? ZOOM_MIN : 2;
+        panX = 0; panY = 0;
+        applyZoom();
+        lastTap = 0;
+        return;
+      }
+      lastTap = now;
+      startPan(pointers.get(e.pointerId));
+    }
   });
-  window.addEventListener('mousemove', (e) => {
-    if (!dragging) return;
-    panX = panStartX + (e.clientX - dragStartX);
-    panY = panStartY + (e.clientY - dragStartY);
-    lightboxImg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+  lightboxStage.addEventListener('pointermove', (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 2 && pinchStartDist){
+      zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, pinchStartZoom * pinchDistance() / pinchStartDist));
+      if (zoom === ZOOM_MIN){ panX = 0; panY = 0; }
+      lightboxImg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+      zoomLabel.textContent = Math.round(zoom * 100) + '%';
+      zoomOutBtn.disabled = zoom <= ZOOM_MIN;
+      zoomInBtn.disabled = zoom >= ZOOM_MAX;
+    } else if (dragging){
+      panX = panStartX + (e.clientX - dragStartX);
+      panY = panStartY + (e.clientY - dragStartY);
+      lightboxImg.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+    }
   });
-  window.addEventListener('mouseup', () => {
-    dragging = false;
-    lightboxStage.classList.remove('dragging');
+  function endPointer(e){
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) pinchStartDist = 0;
+    if (pointers.size === 1){
+      startPan(Array.from(pointers.values())[0]);   // keep panning with the remaining finger
+    } else if (pointers.size === 0){
+      dragging = false;
+      lightboxStage.classList.remove('dragging');
+      applyZoom();
+    }
+  }
+  lightboxStage.addEventListener('pointerup', endPointer);
+  lightboxStage.addEventListener('pointercancel', endPointer);
+
+  // tapping the dark area around the image closes it (phones have no Esc key)
+  lightboxStage.addEventListener('click', (e) => {
+    if (e.target === lightboxStage && zoom === ZOOM_MIN) closeLightbox();
   });
 
   // scroll/pinch to zoom
