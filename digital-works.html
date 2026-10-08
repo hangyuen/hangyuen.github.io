@@ -30,7 +30,7 @@
   body{
     background:var(--bg);
     color:var(--ink);
-    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
     padding-bottom:56px; /* same as the 56px above the Back link */
@@ -69,9 +69,9 @@
   }
 
   /* PAGE HEADER */
+  /* Header matches 1982mb.html: Back 56px from the top and one page
+     gutter from the left, title 40px below Back, intro 10px below title */
   .page-header{
-    max-width:2400px;
-    margin:0 auto;
     padding:56px var(--page-gutter) 0;
   }
   .back-link{
@@ -97,22 +97,22 @@
     font-size:clamp(34px, 5vw, 56px);
     font-weight:700;
     letter-spacing:-0.02em;
+    line-height:1.05;
     color:#111111;
-    margin-bottom:14px;
+    margin-bottom:10px;
   }
   .page-description{
-    font-size:17px;
-    line-height:1.55;
+    font-size:15px;
+    line-height:1.6;
     color:var(--dim);
-    letter-spacing:-0.011em;
-    margin-bottom:56px;
+    letter-spacing:-0.005em;
+    max-width:460px;
+    margin-bottom:48px;
   }
 
   /* CAROUSEL */
   .carousel-wrap{
     position:relative;
-    max-width:2400px;
-    margin:0 auto;
     padding-bottom:12px;
   }
 
@@ -361,6 +361,12 @@
     .art-exhibition{ margin-top:0; }
     /* no hover-lift on touch screens */
     .art-item:hover .art-frame{ transform:none; }
+  }
+  /* phones: same top spacing as 1982mb.html (Back at 32px, title at 98px) */
+  @media (max-width:480px){
+    .page-header{ padding-top:32px; }
+    body{ padding-bottom:32px; } /* keep bottom gap equal to the top gap */
+    .back-link{ margin-bottom:39px; }
   }
   @media (max-width:560px){
     /* card lines up exactly with the title above it on both sides,
