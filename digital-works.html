@@ -67,8 +67,7 @@
     }
   }
 
-  /* PAGE HEADER — back link, title, short intro, all left-aligned with the
-     carousel below */
+  /* PAGE HEADER */
   .page-header{
     max-width:2400px;
     margin:0 auto;
@@ -80,11 +79,7 @@
     gap:6px;
     font-size:16px;
     font-weight:500;
-    line-height:19px; /* locked so this box is always exactly 27px tall
-                          (line-height 19px + padding 4px top/bottom),
-                          matching 1982.html's back-link exactly so the
-                          gap to the title below reads identically on
-                          both pages regardless of font-metric drift */
+    line-height:19px;
     color:var(--dim);
     padding:4px 0;
     transition:color 0.15s ease, gap 0.15s ease;
@@ -112,8 +107,7 @@
     margin-bottom:56px;
   }
 
-  /* CAROUSEL — horizontal scroll, snap-to-item, round arrow buttons like
-     the reference. Captions sit under each image at all times, no hover. */
+  /* CAROUSEL */
   .carousel-wrap{
     position:relative;
     max-width:2400px;
@@ -136,10 +130,6 @@
   .carousel-track::-webkit-scrollbar{ display:none; }
 
   .art-item{
-    /* grows with the viewport directly (not tied to any page-wide zoom),
-       so the artwork gets more physical presence on a big screen while
-       type sizes below stay exactly as authored. Capped at 860px so it
-       doesn't get absurd on a 5K/6K monitor. */
     flex:0 0 clamp(300px, 36vw, 860px);
     scroll-snap-align:start;
   }
@@ -164,9 +154,7 @@
     transform:scale(1.012);
   }
 
-  /* video facade — a static thumbnail with a play button; the real
-     iframe is only injected once the person clicks, so an embedded
-     player never loads (or autoplays a network request) before that */
+  /* video facade */
   .video-facade{
     position:absolute;
     inset:0;
@@ -195,6 +183,27 @@
     border:0;
   }
 
+  /* LIVE WEBSITE PREVIEW — the site renders at desktop width (1440px),
+     then JS scales it down to fit the frame. Clicks go to the overlay
+     link, which opens the real site in a new tab. */
+  .site-frame{ background:#fff; }
+  .site-embed{
+    position:absolute;
+    top:0;
+    left:0;
+    width:1440px;
+    height:810px;
+    border:0;
+    transform-origin:0 0;
+    pointer-events:none;
+  }
+  .site-overlay{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    cursor:pointer;
+  }
+
   .art-caption{
     padding-top:14px;
     min-height:var(--caption-height);
@@ -221,9 +230,6 @@
     color:#4a4a4a;
     letter-spacing:-0.005em;
     margin-top:14px;
-    /* clamp to a fixed number of lines so a long description and a short
-       one both take up the same space in the row; the rest is reachable
-       by opening the piece on its own, not truncated silently forever */
     display:-webkit-box;
     -webkit-line-clamp:4;
     -webkit-box-orient:vertical;
@@ -238,9 +244,16 @@
     margin-top:auto;
     padding-top:10px;
   }
+  .art-link{
+    font-size:14px;
+    font-weight:500;
+    color:var(--accent);
+    padding-top:10px;
+    align-self:flex-start;
+  }
+  .art-link:hover{ text-decoration:underline; }
 
-  /* round nav arrows — glassy, inset ON TOP of the image content at each
-     end of the row, echoing the translucent controls on apple.com */
+  /* round nav arrows */
   .carousel-arrow{
     position:absolute;
     top:50%;
@@ -289,9 +302,7 @@
     pointer-events:none;
   }
 
-  /* progress dots — the only position indicator on touch devices (arrows
-     are hidden below 900px), but shown everywhere since they're cheap
-     and useful on desktop too */
+  /* progress dots */
   .carousel-dots{
     display:flex;
     justify-content:center;
@@ -323,9 +334,7 @@
     :root{ --caption-height: 210px; }
   }
 
-  /* ZOOM TRIGGER — a soft round button centered over image artworks
-     (not videos) that reveals on hover/focus/touch, echoing the
-     magnifier-with-plus affordance from product image galleries */
+  /* ZOOM TRIGGER */
   .zoom-trigger{
     position:absolute;
     top:50%;
@@ -368,12 +377,11 @@
       0 0 0 5px rgba(0,113,227,0.14);
   }
   .zoom-trigger:hover svg{ color:var(--accent); }
-  /* always show on touch devices, since there's no hover to reveal it */
   @media (hover:none){
     .zoom-trigger{ opacity:1; pointer-events:auto; transform:translate(-50%, -50%) scale(1); }
   }
 
-  /* ZOOM LIGHTBOX — full artwork with +/- controls to scale in and out */
+  /* ZOOM LIGHTBOX */
   .lightbox{
     position:fixed;
     inset:0;
@@ -522,11 +530,6 @@
 </div>
 
 <script>
-  // Replace this with your real pieces: image path, title, medium, year.
-  // `description` is optional but if you add one for some pieces, keep it
-  // short (2-3 sentences) for every piece — the clamp keeps the card
-  // height fixed, but a piece with no description at all still leaves a
-  // visibly empty gap next to ones that have one.
   const artworks = [
     { image: 'assets/Open Field, Open Love.jpg', title: 'Open Field, Open Love', medium: 'Painting', year: '2025', aspect: '16/9', dimensions: '32 x 18 inches',
       description: "Open Field, Open Love speaks to the quiet work of reaching outward after isolation: the vulnerability of opening your arms before you know if anyone will meet you there, and the relief when something does.",
@@ -539,12 +542,11 @@
       exhibition: "Exhibited at the Asian Liver Center, Stanford University, Palo Alto, CA, 2021." },
     { image: 'assets/Iowa State Capitol.jpg', title: 'Iowa State Capitol', medium: 'Architectural Painting', year: '2022', aspect: '16/9', dimensions: '24 x 16 inches',
       description: "An architectural illustration of the Iowa State Capitol, combining detailed linework with soft watercolor tones to highlight the building’s historic architecture and iconic golden dome.",
-      exhibition: "Exhibited at the Iowa State University Memorial Union (MU), Ames, IA, 2022."  },
-    { title: 'Ant', medium: 'Computer Modeling', year: '2022', aspect: '16/9', sketchfab: 'https://sketchfab.com/models/e40c720c50ef4a25ad32abc53c4d619c/embed', 
+      exhibition: "Exhibited at the Iowa State University Memorial Union (MU), Ames, IA, 2022." },
+    { title: 'Ant', medium: 'Computer Modeling', year: '2022', aspect: '16/9', sketchfab: 'https://sketchfab.com/models/e40c720c50ef4a25ad32abc53c4d619c/embed',
       description: "A stylized 3D ant character created for a children’s game, combining simplified forms and playful proportions to create a friendly and engaging character for an interactive game environment." },
-    { image: 'assets/Light.png', title: 'Flow Lamp', medium: '3D Printing', year: '2024', aspect: '16/9', dimensions: '7.5 × 7.5 × 15 inches (W × D × H)', 
-      description: "A sculptural <strong>3D-printed desk lamp</strong> inspired by the fluid motion of poured material, crafted from <strong>matte brown and ivory PLA</strong> using a <strong>Bambu Lab X1 Carbon</strong>.",},
-    { image: 'assets/Digital_Art.png', title: 'Untitled Piece 06', medium: 'Digital painting', year: '2025' }
+    { image: 'assets/Light.png', title: 'Flow Lamp', medium: '3D Printing', year: '2024', aspect: '16/9', dimensions: '7.5 × 7.5 × 15 inches (W × D × H)',
+      description: "A sculptural <strong>3D-printed desk lamp</strong> inspired by the fluid motion of poured material, crafted from <strong>matte brown and ivory PLA</strong> using a <strong>Bambu Lab X1 Carbon</strong>." }
   ];
 
   const track = document.getElementById('track');
@@ -552,54 +554,75 @@
   const nextBtn = document.getElementById('nextBtn');
   const dotsWrap = document.getElementById('dots');
 
-  track.innerHTML = artworks.map((art, i) => `
-  <div class="art-item">
-    ${art.video
-  ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
-       <iframe
-         class="art-video"
-         src="https://www.youtube.com/embed/${art.video}"
-         title="${art.title}"
-         frameborder="0"
-         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-         allowfullscreen>
-       </iframe>
-     </div>`
-      : art.sketchfab
-        ? `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
-             <iframe class="art-video"
-               src="${art.sketchfab}"
-               title="${art.title}"
-               frameborder="0"
-               allow="autoplay; fullscreen; xr-spatial-tracking"
-               allowfullscreen>
-             </iframe>
-           </div>`
-        : `<div class="art-frame"${art.aspect ? ` style="aspect-ratio:${art.aspect};"` : ''}>
-             <img src="${art.image}" alt="${art.title}" loading="${i < 2 ? 'eager' : 'lazy'}">
-             <button type="button" class="zoom-trigger" data-image="${art.image}" data-title="${art.title}" aria-label="Zoom into ${art.title}">
-               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
-             </button>
-           </div>`}
-    <div class="art-caption">
-      <div class="art-title">${art.title}</div>
-      <div class="art-meta">${[art.medium, art.dimensions, art.year].filter(Boolean).join(', ')}</div>
-      ${art.description ? `<p class="art-description">${art.description}</p>` : ''}
-      ${art.exhibition ? `<p class="art-exhibition">${art.exhibition}</p>` : ''}
-    </div>
-  </div>
-`).join('');
+  function frameStyle(art){
+    return art.aspect ? ` style="aspect-ratio:${art.aspect};"` : '';
+  }
 
-  // swap the video facade for a real iframe only on click, so nothing
-  // from YouTube loads until the person actually wants to watch it
+  function renderFrame(art, i){
+    if (art.video){
+      return `<div class="art-frame"${frameStyle(art)}>
+        <iframe class="art-video"
+          src="https://www.youtube.com/embed/${art.video}"
+          title="${art.title}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>`;
+    }
+    if (art.website){
+      return `<div class="art-frame site-frame"${frameStyle(art)}>
+        <iframe class="site-embed" src="${art.website}" title="${art.title}" loading="lazy" tabindex="-1"></iframe>
+        <a class="site-overlay" href="${art.website}" target="_blank" rel="noopener" aria-label="Open ${art.title} in a new tab"></a>
+      </div>`;
+    }
+    if (art.sketchfab){
+      return `<div class="art-frame"${frameStyle(art)}>
+        <iframe class="art-video"
+          src="${art.sketchfab}"
+          title="${art.title}"
+          frameborder="0"
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          allowfullscreen></iframe>
+      </div>`;
+    }
+    return `<div class="art-frame"${frameStyle(art)}>
+      <img src="${art.image}" alt="${art.title}" loading="${i < 2 ? 'eager' : 'lazy'}">
+      <button type="button" class="zoom-trigger" data-image="${art.image}" data-title="${art.title}" aria-label="Zoom into ${art.title}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
+      </button>
+    </div>`;
+  }
+
+  track.innerHTML = artworks.map((art, i) => `
+    <div class="art-item">
+      ${renderFrame(art, i)}
+      <div class="art-caption">
+        <div class="art-title">${art.title}</div>
+        <div class="art-meta">${[art.medium, art.dimensions, art.year].filter(Boolean).join(', ')}</div>
+        ${art.description ? `<p class="art-description">${art.description}</p>` : ''}
+        ${art.exhibition ? `<p class="art-exhibition">${art.exhibition}</p>` : ''}
+        ${art.link ? `<a class="art-link" href="${art.link}" target="_blank" rel="noopener">Visit live site →</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  // shrink the live-site preview so the full desktop layout fits the frame
+  function scaleSites(){
+    document.querySelectorAll('.site-frame').forEach(f => {
+      const s = f.offsetWidth / 1440;
+      f.querySelector('.site-embed').style.transform = `scale(${s})`;
+    });
+  }
+  scaleSites();
+  window.addEventListener('resize', scaleSites);
+
+  // swap a video facade for a real iframe only on click
   track.querySelectorAll('.video-facade').forEach(btn => {
     btn.addEventListener('click', () => {
-      const id = btn.dataset.video;
-      const title = btn.dataset.title;
       const iframe = document.createElement('iframe');
       iframe.className = 'art-video';
-      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-      iframe.title = title;
+      iframe.src = `https://www.youtube.com/embed/${btn.dataset.video}?autoplay=1`;
+      iframe.title = btn.dataset.title;
       iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
       iframe.allowFullscreen = true;
       btn.replaceWith(iframe);
@@ -613,8 +636,7 @@
     return item.offsetWidth + gap;
   }
 
-  // vertically center the arrow buttons against the actual rendered
-  // image height.
+  // vertically center the arrow buttons against the rendered image height
   function positionArrows(){
     const frame = track.querySelector('.art-frame');
     if (!frame) return;
@@ -632,7 +654,7 @@
     track.scrollBy({ left: itemStep(), behavior: 'smooth' });
   });
 
-  // dots — one per artwork, click to jump, active state follows scroll
+  // dots
   dotsWrap.innerHTML = artworks.map((_, i) =>
     `<button type="button" class="carousel-dot" data-index="${i}" aria-label="Go to piece ${i + 1}"></button>`
   ).join('');
@@ -647,11 +669,12 @@
   function updateDots(){
     const step = itemStep();
     if (!step) return;
-    const active = Math.round(track.scrollLeft / step);
+    const maxScroll = track.scrollWidth - track.clientWidth - 1;
+    // at the far end, light up the last dot even if it can't snap to the start
+    const active = track.scrollLeft >= maxScroll ? artworks.length - 1 : Math.round(track.scrollLeft / step);
     dots.forEach((dot, i) => dot.classList.toggle('active', i === active));
   }
 
-  // hide the prev/next arrow when there's nothing left to scroll to on that side
   function updateArrowState(){
     const maxScroll = track.scrollWidth - track.clientWidth - 1;
     prevBtn.disabled = track.scrollLeft <= 0;
@@ -753,7 +776,7 @@
     lightboxStage.classList.remove('dragging');
   });
 
-  // pinch/scroll to zoom on trackpads and mouse wheels
+  // scroll/pinch to zoom
   lightboxStage.addEventListener('wheel', (e) => {
     e.preventDefault();
     const delta = e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP;
