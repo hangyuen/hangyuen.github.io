@@ -133,20 +133,6 @@
   }
   .intro-toast.visible{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
 
-  /* same dark tile as .leaving-icon on the homepage */
-  .intro-toast-icon{
-    width:56px;
-    height:56px;
-    border-radius:14px;
-    margin-bottom:16px;
-    background:linear-gradient(145deg, #4a4a4d, #2c2c2e);
-    color:#ffffff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 8px 18px rgba(0,0,0,0.18);
-  }
-  .intro-toast-icon svg{ width:26px; height:26px; }
 
   .intro-toast-label{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', sans-serif;
@@ -168,14 +154,14 @@
   .intro-toast-text{
     font-size:14.5px;
     line-height:1.55;
-    color:#666;
+    color:#48484a;
     margin-bottom:20px;
   }
   .intro-toast-text strong{
     font-weight:600;
     color:#1d1d1f;
   }
-  /* keep the label/title clear of the close X now that there's no icon */
+  /* keep the label/title clear of the close X */
   .intro-toast-label,
   .intro-toast-title{ padding-right:32px; }
 
@@ -256,8 +242,6 @@
       transform:translateY(10px);
     }
     .intro-toast.visible{ transform:translateY(0); }
-    .intro-toast-icon{ width:48px; height:48px; margin-bottom:14px; }
-    .intro-toast-icon svg{ width:22px; height:22px; }
   }
   @media (prefers-reduced-motion: reduce){
     .intro-toast{ transform:none; }
