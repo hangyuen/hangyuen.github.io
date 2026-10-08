@@ -20,7 +20,7 @@
     margin: 0;
     padding: 0;
     overflow: hidden; /* nothing on this page ever scrolls */
-    background: #000000;
+    background: #050505;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
@@ -41,13 +41,22 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
-    background: radial-gradient(ellipse at 50% 45%, #1c1c1e 0%, #000000 72%);
+    /* Studio backdrop, Apple dark-product style: a charcoal top
+       (#2c2c2e, Apple's dark-mode gray) easing down through #1d1d1f
+       (the same ink color Digital Works uses for its text) into black
+       at the floor, plus a soft key light behind the car and a faint
+       pool of light where it sits, so the car looks lit in a room
+       instead of floating in a void. */
+    background:
+      radial-gradient(ellipse 55% 42% at 50% 50%, rgba(255,255,255,0.075) 0%, rgba(255,255,255,0.025) 45%, rgba(255,255,255,0) 72%),
+      radial-gradient(ellipse 60% 14% at 50% 74%, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%),
+      linear-gradient(to bottom, #2c2c2e 0%, #1d1d1f 36%, #121213 68%, #050505 100%);
   }
 
   model-viewer {
     width: 100%;
     height: 100%;
-    --poster-color: #000000;
+    --poster-color: transparent;
     opacity: 0;
     animation: reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
     touch-action: pan-y;
@@ -97,12 +106,12 @@
   .scrim-top {
     top: 0;
     height: 260px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0) 100%);
   }
   .scrim-bottom {
     bottom: 0;
     height: 320px;
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0) 100%);
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0) 100%);
   }
 
   /* ============ TOP: Back + title, same pairing as digital-arts.html ============ */
@@ -156,17 +165,17 @@
     letter-spacing: -0.02em;
     line-height: 1.05;
     color: rgba(255,255,255,0.96);
-    text-shadow: 0 4px 28px rgba(0,0,0,0.9);
+    text-shadow: 0 2px 20px rgba(0,0,0,0.35); /* softer: the dark halo showed on the lighter top */
     margin: 0 0 10px;
   }
   .page-description {
-    font-size: 15px;
+    font-size: clamp(15px, calc(13px + 0.3vw), 19px);
     line-height: 1.6;
     letter-spacing: -0.005em;
     color: rgba(255,255,255,0.6);
     text-shadow: 0 1px 12px rgba(0,0,0,0.85);
     margin: 0;
-    max-width: 460px;
+    max-width: 560px;
   }
 
   /* ============ TOP-RIGHT: transient loading toast for the 3D asset.
@@ -180,10 +189,10 @@
     z-index: 20;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 14px;
-    width: min(300px, calc(100vw - 48px));
+    gap: 14px;
+    padding: 18px 18px 18px 20px;
+    border-radius: 18px; /* same shape and sizes as the Digital Works pop-up */
+    width: min(400px, calc(100vw - 32px));
     background: linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05));
     backdrop-filter: blur(22px) saturate(190%);
     -webkit-backdrop-filter: blur(22px) saturate(190%);
@@ -196,11 +205,19 @@
   }
   .load-toast.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-  .load-toast-spinner {
-    width: 18px;
-    height: 18px;
+  .load-toast-icon {
     flex-shrink: 0;
-    margin-top: 1px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .load-toast-spinner {
+    width: 20px;
+    height: 20px;
     animation: load-toast-spin 0.85s linear infinite;
   }
   @keyframes load-toast-spin { to { transform: rotate(360deg); } }
@@ -208,18 +225,19 @@
     .load-toast-spinner { animation: none; }
   }
 
-  .load-toast-body { flex: 1; min-width: 0; }
+  .load-toast-body { flex: 1; min-width: 0; padding-top: 1px; }
   .load-toast-title {
-    font-size: 13px;
+    font-size: 17px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     color: rgba(255,255,255,0.95);
-    margin-bottom: 3px;
+    margin-bottom: 4px;
   }
   .load-toast-text {
-    font-size: 12px;
+    font-size: 15px;
     line-height: 1.5;
-    color: rgba(255,255,255,0.62);
+    letter-spacing: -0.005em;
+    color: rgba(255,255,255,0.66);
   }
   .load-toast-track {
     width: 100%;
@@ -227,7 +245,7 @@
     border-radius: 2px;
     background: rgba(255,255,255,0.14);
     overflow: hidden;
-    margin-top: 10px;
+    margin-top: 14px;
   }
   .load-toast-bar {
     height: 100%;
@@ -239,8 +257,9 @@
   .load-toast.error .load-toast-track { display: none; }
   .load-toast-dismiss {
     flex-shrink: 0;
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
+    margin: -3px -4px 0 0;
     border-radius: 50%;
     border: none;
     background: transparent;
@@ -252,10 +271,20 @@
     transition: background 0.15s ease, color 0.15s ease;
   }
   .load-toast-dismiss:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); }
-  .load-toast-dismiss svg { width: 13px; height: 13px; }
+  .load-toast-dismiss svg { width: 14px; height: 14px; }
+  .load-toast.error .load-toast-icon { display: none; }
+
+  /* laptops and up: same larger sizes as the Digital Works pop-up */
+  @media (min-width: 901px) {
+    .load-toast { width: clamp(420px, 26vw, 500px); padding: 22px 22px 20px 24px; gap: 16px; }
+    .load-toast-icon { width: 40px; height: 40px; }
+    .load-toast-spinner { width: 22px; height: 22px; }
+    .load-toast-title { font-size: clamp(19px, calc(15px + 0.3vw), 22px); }
+    .load-toast-text { font-size: clamp(16px, calc(12.5px + 0.3vw), 19px); }
+  }
 
   @media (max-width: 480px) {
-    .load-toast { top: 32px; padding: 12px 14px; }
+    .load-toast { top: 32px; left: 16px; right: 16px; width: auto; }
   }
 
   /* ============ BOTTOM: hint, color picker, footnote, all plain
@@ -322,7 +351,7 @@
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .swatch:hover { transform: scale(1.08); }
-  .swatch.selected { box-shadow: 0 0 0 2px #000000, 0 0 0 4px #0071e3; }
+  .swatch.selected { box-shadow: 0 0 0 2px #0a0a0b, 0 0 0 4px #0071e3; }
 
   .footnote {
     font-size: 11px;
@@ -442,10 +471,12 @@
          model's 'load' event hasn't already fired within ~400ms, so a
          fast connection never sees it flash on screen. -->
     <div class="load-toast" id="loadToast" role="status" aria-live="polite">
-      <svg class="load-toast-spinner" id="loadToastSpinner" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.25)" stroke-width="2.5"/>
-        <path d="M21 12a9 9 0 0 0-9-9" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
-      </svg>
+      <div class="load-toast-icon" aria-hidden="true">
+        <svg class="load-toast-spinner" id="loadToastSpinner" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.25)" stroke-width="2.5"/>
+          <path d="M21 12a9 9 0 0 0-9-9" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="load-toast-body">
         <div class="load-toast-title" id="loadToastTitle">Loading 3D model&hellip;</div>
         <div class="load-toast-text" id="loadToastText">The car model is fairly large, so this can take a few seconds depending on your connection and browser.</div>
