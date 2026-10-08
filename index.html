@@ -454,8 +454,8 @@
     right:22px;
     z-index:105;
     width:330px;
-    background:rgba(255,255,255,0.72);
-    border:1px solid rgba(255,255,255,0.6);
+    background:rgba(255,255,255,0.95);
+    border:1px solid rgba(0,0,0,0.06);
     border-radius:18px;
     padding:24px 26px 22px;
     box-shadow:0 20px 50px rgba(0,0,0,0.18), 0 4px 14px rgba(0,0,0,0.08);
@@ -502,17 +502,24 @@
   .onboard-desc{
     font-size:14.5px;
     line-height:1.55;
-    color:#666;
+    color:#48484a;
     margin-bottom:20px;
   }
+  /* theme-choice note: its own tinted box so it doesn't fade into the card */
   .onboard-aside{
-    font-size:13px;
+    font-size:14px;
     line-height:1.5;
-    color:#8a8a8e;
-    font-style:italic;
-    margin-top:-10px;
+    color:#3a3a3c;
+    background:#f2f2f4;
+    border-radius:12px;
+    padding:10px 12px;
+    margin-top:-6px;
     margin-bottom:20px;
     display:none;
+  }
+  .onboard-aside strong{
+    font-weight:600;
+    color:#111111;
   }
   .onboard-aside.visible{ display:block; }
   .onboard-footer{
@@ -1564,7 +1571,7 @@
     const steps = [
       { title: "Hey, I'm Hang!", desc: "Thanks for stopping by, let's take a quick look around.", avatar: true, intro: true },
       { title: 'Those floating icons? Poke them.', desc: 'Each one is a project waiting to show off. Click and it pops open.' },
-      { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.', aside: 'Oh, and the swatches up top let you pick your vibe: black, grey, or white.' }
+      { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.', aside: 'Oh, and the swatches up top let you pick your vibe: <strong>black</strong>, <strong>grey</strong>, or <strong>white</strong>.' }
     ];
     const totalRealSteps = steps.length - 1;
     let step = 0;
@@ -1575,7 +1582,7 @@
       titleEl.textContent = s.title;
       descEl.textContent = s.desc;
       if (asideEl) {
-        asideEl.textContent = s.aside || '';
+        asideEl.innerHTML = s.aside || '';
         asideEl.classList.toggle('visible', !!s.aside);
       }
       if (avatarEl) avatarEl.classList.toggle('visible', !!s.avatar);
