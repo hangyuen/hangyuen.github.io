@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="format-detection" content="address=no, telephone=no, email=no, date=no">
 <title>Digital Works · Hang Yuan's Web</title>
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="icon" type="image/png" href="assets/hy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -266,6 +266,24 @@
     -ms-overflow-style:none;
   }
   .carousel-track::-webkit-scrollbar{ display:none; }
+
+  /* MOUSE DRAG — with a mouse you can click and drag the row sideways,
+     just like swiping with a finger. Fingers still use the browser's
+     own native swipe. */
+  @media (hover:hover) and (pointer:fine){
+    .carousel-track{ cursor:grab; }
+  }
+  .carousel-track.is-dragging{
+    cursor:grabbing;
+    scroll-snap-type:none;
+    scroll-behavior:auto;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  /* while dragging, the mouse slides over videos and 3D models instead of
+     getting stuck inside them */
+  .carousel-track.is-dragging iframe{ pointer-events:none; }
+  .carousel-track img{ -webkit-user-drag:none; user-select:none; }
 
   /* Card width follows BOTH the screen's width and its height, so the
      whole card (artwork + full caption) always fits on screen at once:
@@ -877,6 +895,101 @@
     track.scrollBy({ left: itemStep(), behavior: 'smooth' });
   });
 
+  // ---- mouse drag to swipe ----
+  // Touch screens already swipe natively. This adds the same thing for a
+  // mouse (and pen): press anywhere on the row, drag left or right, let go,
+  // and it settles on the nearest piece. A quick flick moves one piece even
+  // if the drag was short.
+  (function(){
+    let down = false, startX = 0, startScroll = 0, startIndex = 0;
+    let moved = 0, lastX = 0, lastT = 0, velocity = 0, pointerId = null;
+    const DRAG_THRESHOLD = 6;   // px before it counts as a drag, not a click
+
+    function snapAfter(targetLeft){
+      track.scrollTo({ left: targetLeft, behavior: 'smooth' });
+      // put snapping back once the glide has finished
+      let done = false;
+      const restore = () => {
+        if (done) return;
+        done = true;
+        track.classList.remove('is-dragging');
+      };
+      track.addEventListener('scrollend', restore, { once: true });
+      setTimeout(restore, 600);
+    }
+
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch' || e.button !== 0) return;
+      down = true;
+      pointerId = e.pointerId;
+      startX = lastX = e.clientX;
+      lastT = performance.now();
+      startScroll = track.scrollLeft;
+      const step = itemStep() || 1;
+      startIndex = Math.round(startScroll / step);
+      moved = 0;
+      velocity = 0;
+    });
+
+    track.addEventListener('pointermove', (e) => {
+      if (!down || e.pointerId !== pointerId) return;
+      const dx = e.clientX - startX;
+      if (moved < DRAG_THRESHOLD && Math.abs(dx) >= DRAG_THRESHOLD){
+        // it's a real drag now: take over the pointer and switch off snapping
+        track.setPointerCapture(pointerId);
+        track.classList.add('is-dragging');
+        hideIntro();
+      }
+      moved = Math.max(moved, Math.abs(dx));
+      if (moved < DRAG_THRESHOLD) return;
+      track.scrollLeft = startScroll - dx;
+      const now = performance.now();
+      const dt = now - lastT;
+      if (dt > 0) velocity = (e.clientX - lastX) / dt;   // px per ms
+      lastX = e.clientX;
+      lastT = now;
+      e.preventDefault();
+    });
+
+    function endDrag(e){
+      if (!down || (e && e.pointerId !== pointerId)) return;
+      down = false;
+      if (track.hasPointerCapture && track.hasPointerCapture(pointerId)) track.releasePointerCapture(pointerId);
+      if (moved < DRAG_THRESHOLD) return;   // just a click, leave it alone
+
+      const step = itemStep() || 1;
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      const dragged = startScroll - track.scrollLeft;   // + means moved back
+      // ignore the speed if the mouse paused before letting go
+      if (performance.now() - lastT > 120) velocity = 0;
+      let index = Math.round(track.scrollLeft / step);
+      if (Math.abs(velocity) > 0.4){
+        // a quick flick moves one piece in that direction
+        index = velocity < 0 ? startIndex + 1 : startIndex - 1;
+      } else if (index === startIndex && Math.abs(dragged) > step * 0.18){
+        // a short, slow drag still counts as "next" / "previous"
+        index = dragged < 0 ? startIndex + 1 : startIndex - 1;
+      }
+      index = Math.max(0, Math.min(artworks.length - 1, index));
+      snapAfter(Math.min(maxScroll, index * step));
+    }
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
+    track.addEventListener('lostpointercapture', endDrag);
+
+    // after a drag, swallow the click so it doesn't open the zoom view
+    track.addEventListener('click', (e) => {
+      if (moved >= DRAG_THRESHOLD){
+        e.preventDefault();
+        e.stopPropagation();
+        moved = 0;
+      }
+    }, true);
+
+    // stop the browser's own "drag this image" ghost
+    track.addEventListener('dragstart', (e) => e.preventDefault());
+  })();
+
   // dots
   dotsWrap.innerHTML = artworks.map((_, i) =>
     `<button type="button" class="carousel-dot" data-index="${i}" aria-label="Go to piece ${i + 1}"></button>`
@@ -914,21 +1027,29 @@
   updateArrowState();
   updateDots();
 
-  // BIG SCREENS (iMac etc.): grow or shrink the cards until the page is
-  // exactly one screen tall, so the gap under the dots matches the 56px
-  // gap above the Back link. Laptops and phones keep the CSS sizing.
+  // DESKTOP SCREENS (laptops, iMac, 4K monitors like the Dell P2723QE at
+  // any scaling setting): grow or shrink the cards until the page is
+  // exactly one screen tall, so nothing scrolls and the gap under the dots
+  // matches the 56px gap above the Back link. Phones and tablets keep the
+  // CSS sizing and scroll normally.
   const items = Array.from(track.querySelectorAll('.art-item'));
   function fitToScreen(){
     items.forEach(it => it.style.removeProperty('--card-w'));
-    if (window.innerWidth <= 900 || window.innerHeight < 1000) return;
+    if (window.innerWidth <= 900) return;
     const gutter = parseFloat(getComputedStyle(document.querySelector('.page-header')).paddingLeft) || 0;
-    const maxW = Math.min(window.innerWidth * 0.64, window.innerWidth - gutter - 200, 1500);
+    // leave room on the right so the next card still peeks in
+    const maxW = Math.min(window.innerWidth * 0.7, window.innerWidth - gutter - 200);
+    // never shrink the art below ~40% of the screen width; on a very short
+    // laptop screen a little scrolling beats a postage-stamp painting
+    const minW = Math.max(560, window.innerWidth * 0.4);
     let w = items[0].getBoundingClientRect().width;
-    for (let k = 0; k < 6; k++){
+    for (let k = 0; k < 12; k++){
       const bottom = dotsWrap.getBoundingClientRect().bottom + window.scrollY + 56;
       const extra = window.innerHeight - bottom;
-      if (Math.abs(extra) < 1) break;
-      w = Math.max(320, Math.min(maxW, w + extra * 16 / 9));
+      if (extra >= 0 && extra < 2) break;
+      const next = Math.max(minW, Math.min(maxW, w + extra * 16 / 9));
+      if (Math.abs(next - w) < 0.5) break; // hit the min/max size
+      w = next;
       items.forEach(it => it.style.setProperty('--card-w', w + 'px'));
     }
     positionArrows();
