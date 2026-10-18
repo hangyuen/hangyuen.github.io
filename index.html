@@ -53,11 +53,11 @@
     --theme-switch-bg: rgba(255,255,255,0.55);
     --theme-switch-border: rgba(0,0,0,0.08);
     --avatar-frame-bg: rgba(255,255,255,0.22);
-    --icon-box-grad-1: #fdfaf3;
-    --icon-box-grad-2: #f3ecdf;
-    --icon-box-alt-grad-1: #faf5ec;
-    --icon-box-alt-grad-2: #efe7d8;
-    --icon-box-shadow: 0 8px 20px rgba(120,100,70,0.12);
+    --icon-box-grad-1: #efeff2;
+    --icon-box-grad-2: #dedee3;
+    --icon-box-alt-grad-1: #eaeaee;
+    --icon-box-alt-grad-2: #d8d8de;
+    --icon-box-shadow: 0 8px 20px rgba(0,0,0,0.10);
   }
 
   html[data-theme="grey"]{
@@ -362,7 +362,8 @@
     height:100%;
     object-fit:cover;
     border-radius:16px;
-    filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22));
+    box-shadow:0 3px 8px rgba(0,0,0,0.18);
+    display:block;
   }
   .dock-item svg{ width:26px; height:26px; }
   .dock-item.brand{
@@ -375,7 +376,8 @@
     height:100%;
     object-fit:cover;
     border-radius:16px;
-    filter:drop-shadow(0 3px 6px rgba(0,0,0,0.22));
+    box-shadow:0 3px 8px rgba(0,0,0,0.18);
+    display:block;
   }
   /* subtle glossy highlight across the top half of each icon, like a real app
      icon — a real element rather than ::after, since ::after is already used
