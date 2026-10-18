@@ -44,20 +44,20 @@
     --stage-bg-image: none;
     --icon-label-color: #1d1d1f;
     --icon-label-shadow: 0 1px 2px rgba(255,255,255,0.5);
-    --dock-grad-1: rgba(46,46,50,0.48);
-    --dock-grad-2: rgba(46,46,50,0.34);
-    --dock-border: rgba(255,255,255,0.24);
-    --dock-shadow: 0 12px 28px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.09), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.2);
-    --dock-divider: rgba(255,255,255,0.16);
-    --dock-active-veil: rgba(0,0,0,0.4);
+    --dock-grad-1: rgba(255,255,255,0.72);
+    --dock-grad-2: rgba(255,255,255,0.55);
+    --dock-border: rgba(255,255,255,0.9);
+    --dock-shadow: 0 12px 30px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+    --dock-divider: rgba(0,0,0,0.08);
+    --dock-active-veil: rgba(0,0,0,0.12);
     --theme-switch-bg: rgba(255,255,255,0.55);
     --theme-switch-border: rgba(0,0,0,0.08);
     --avatar-frame-bg: rgba(255,255,255,0.22);
-    --icon-box-grad-1: #ffffff;
-    --icon-box-grad-2: #e7e7ea;
-    --icon-box-alt-grad-1: #f2f2f4;
-    --icon-box-alt-grad-2: #dedee2;
-    --icon-box-shadow: 0 10px 22px rgba(0,0,0,0.14);
+    --icon-box-grad-1: #fdfaf3;
+    --icon-box-grad-2: #f3ecdf;
+    --icon-box-alt-grad-1: #faf5ec;
+    --icon-box-alt-grad-2: #efe7d8;
+    --icon-box-shadow: 0 8px 20px rgba(120,100,70,0.12);
   }
 
   html[data-theme="grey"]{
@@ -74,10 +74,10 @@
     --theme-switch-bg: rgba(255,255,255,0.5);
     --theme-switch-border: rgba(0,0,0,0.08);
     --avatar-frame-bg: rgba(0,0,0,0.16);
-    --icon-box-grad-1: #f2f2f4;
-    --icon-box-grad-2: #dcdce1;
-    --icon-box-alt-grad-1: #e7e7ec;
-    --icon-box-alt-grad-2: #cfcfd5;
+    --icon-box-grad-1: #eef3f8;
+    --icon-box-grad-2: #d9e3ee;
+    --icon-box-alt-grad-1: #e6edf5;
+    --icon-box-alt-grad-2: #cfdbe8;
     --icon-box-shadow: 0 10px 22px rgba(0,0,0,0.16);
   }
 
@@ -222,12 +222,12 @@
   /* Desktop: a loose, "tossed on a desk" scatter. Everything stays inside a
      central zone (nothing hugs the edges or overlaps), Publications sits
      near the middle as the anchor, and each icon has a slight tilt. */
-  .icon.p2{ top:31%; left:25%; --tilt:-3deg; }  /* Howl's Moving Castle (AR) */
+  .icon.p2{ top:32%; left:27%; --tilt:-3deg; }  /* Howl's Moving Castle (AR) */
   .icon.p1{ top:20%; left:42%; --tilt:2deg; }   /* A Thousand Li (VR) */
   .icon.p3{ top:25%; left:63%; --tilt:-2deg; }  /* 1982 Benz (Computer Graphics) */
   .icon.p8{ top:40%; left:78%; --tilt:3deg; }   /* Game Design */
-  .icon.p4{ top:58%; left:29%; --tilt:2deg; }   /* Papel (Animation & VFX) */
-  .icon.p6{ top:45%; left:49%; --tilt:-1deg; }  /* Publications (anchor) */
+  .icon.p4{ top:57%; left:36%; --tilt:2deg; }   /* Papel (Animation & VFX) */
+  .icon.p6{ top:45%; left:54%; --tilt:-1deg; }  /* Publications (anchor) */
   .icon.p5{ top:61%; left:67%; --tilt:-3deg; }  /* Digital Works */
   .icon.p7{ top:69%; left:47%; --tilt:2deg; }   /* UX Design */
   .icon-box{ rotate:var(--tilt, 0deg); }
