@@ -15,17 +15,23 @@
     --ink: #1d1d1f;
     --body: #4a4a4a;
     --dim: #6e6e73;
-    --accent: #0071e3;
-    --bar: #0071e3;
-    --bar-track: #ececf0;
+    --blue: #0071e3;            /* site-wide link blue (Back hover) */
+    /* Iowa State colors, used as this project's accent */
+    --cardinal: #c8102e;
+    --cardinal-deep: #9b0c23;
+    --cardinal-soft: #fcebed;
+    --gold: #f1be48;
+    --gold-soft: #fdf5e1;
+    --track: #ececf0;
     --hairline: rgba(0,0,0,0.08);
     --soft: #f5f5f7;
     --page-gutter: clamp(40px, 9vw, 123px);
-    /* reading width for everything below the title */
     --content-w: 860px;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  section[id]{ scroll-margin-top:84px; }
 
   body{
     background:var(--bg);
@@ -36,81 +42,76 @@
     padding-bottom:56px;
   }
   a{ color:inherit; text-decoration:none; }
-  html{ scroll-behavior:smooth; }
-  section[id]{ scroll-margin-top:84px; }
-  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
+  :focus-visible{ outline:2px solid var(--blue); outline-offset:3px; border-radius:4px; }
 
-  /* PAGE HEADER — identical to Digital Works / 1982 Benz */
+  .display{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; }
+
+  /* ===== HEADER — identical to Digital Works / 1982 Benz ===== */
   .page-header{ padding:56px var(--page-gutter) 0; margin-bottom:28px; }
   .back-link{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    font-size:16px;
-    font-weight:500;
-    line-height:19px;
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:16px; font-weight:500; line-height:19px;
     color:var(--dim);
     padding:4px 0;
     transition:color 0.15s ease, gap 0.15s ease;
     margin-bottom:40px;
   }
-  .back-link:hover{ color:var(--accent); gap:9px; }
+  .back-link:hover{ color:var(--blue); gap:9px; }
   .back-link svg{ width:16px; height:16px; }
-
   .page-title{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     font-size:clamp(34px, 5vw, 56px);
-    font-weight:700;
-    letter-spacing:-0.02em;
-    line-height:1.05;
+    font-weight:700; letter-spacing:-0.02em; line-height:1.05;
     color:#111111;
     margin-bottom:20px;
   }
 
-  .page-lede{
-    font-size:clamp(18px, 1.6vw, 21px);
-    line-height:1.5;
-    letter-spacing:-0.01em;
-    color:var(--body);
-    max-width:var(--content-w);
-    margin-bottom:36px;
+  /* ===== MINI BAR — Back + title stay on screen while scrolling ===== */
+  .mini-bar{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    height:56px;
+    padding:0 var(--page-gutter);
+    display:flex; align-items:center; gap:18px;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    border-bottom:1px solid var(--hairline);
+    transform:translateY(-100%); opacity:0; pointer-events:none;
+    transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+  }
+  .mini-bar.show{ transform:none; opacity:1; pointer-events:auto; }
+  .mini-bar .back-link{ margin-bottom:0; }
+  .mini-sep{ width:1px; height:18px; background:rgba(0,0,0,0.14); }
+  .mini-title{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:17px; font-weight:700; letter-spacing:-0.015em; color:#111;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  /* a thin ISU-gold line along the bottom of the bar */
+  .mini-bar::after{
+    content:''; position:absolute; left:0; bottom:-1px; height:2px;
+    width:var(--read, 0%);
+    background:linear-gradient(90deg, var(--cardinal), var(--gold));
+    transition:width 0.1s linear;
   }
 
-  /* everything under the header sits in one narrower reading column,
-     left-aligned with the title */
-  /* two columns on wide screens: reading column + sticky sidebar */
+  /* ===== LAYOUT — left: intro + menu, right: centered content ===== */
   .layout{
-    /* margin is divided by the zoom so the content still lines up
-       exactly under the title on big monitors */
     padding:0 calc(var(--page-gutter) / var(--z, 1));
     display:grid;
-    /* text column grows up to 1040px, sidebar sits right beside it,
-       so there is no empty gap between them */
-    /* left: intro + "On this page" (lined up under the title);
-       right: the case study, centered in the remaining space */
-    grid-template-columns:clamp(280px, 24vw, 360px) minmax(0, 1fr);
+    grid-template-columns:clamp(280px, 24vw, 340px) minmax(0, 1fr);
     column-gap:clamp(48px, 6vw, 112px);
     align-items:stretch;
   }
-  .main{
-    min-width:0;
-    width:100%;
-    max-width:900px;
-    margin:0 auto;
-  }
+  .main{ min-width:0; width:100%; max-width:900px; margin:0 auto; }
 
   .side{ min-width:0; }
-  .side .page-lede{
-    font-size:18px;
-    line-height:1.55;
-    margin:0 0 40px;
-    max-width:none;
+  .page-lede{
+    font-size:18px; line-height:1.55; letter-spacing:-0.01em;
+    color:var(--body);
+    margin-bottom:40px;
   }
-  /* menu + at-a-glance follow you down the page */
-  .side-sticky{
-    position:sticky;
-    top:88px;
-  }
+  .side-sticky{ position:sticky; top:88px; }
   .toc-title, .glance-title{
     font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
     color:var(--dim); margin-bottom:12px;
@@ -118,386 +119,378 @@
   .toc{ list-style:none; border-left:1px solid var(--hairline); }
   .toc a{
     display:block;
-    font-size:14px; line-height:1.35;
-    color:var(--dim);
-    padding:7px 0 7px 16px;
-    margin-left:-1px;
+    font-size:14px; line-height:1.35; color:var(--dim);
+    padding:7px 0 7px 16px; margin-left:-1px;
     border-left:2px solid transparent;
     transition:color 0.15s ease, border-color 0.15s ease;
   }
   .toc a:hover{ color:#111; }
-  .toc a.active{ color:#111; font-weight:600; border-left-color:var(--accent); }
+  .toc a.active{ color:#111; font-weight:600; border-left-color:var(--cardinal); }
 
   .glance{
     margin-top:32px;
-    background:var(--soft);
-    border-radius:16px;
-    padding:18px 18px 16px;
+    border-radius:18px;
+    padding:20px 20px 18px;
+    background:linear-gradient(160deg, var(--cardinal) 0%, var(--cardinal-deep) 100%);
+    color:#fff;
   }
-  .glance-row + .glance-row{ margin-top:14px; padding-top:14px; border-top:1px solid var(--hairline); }
+  .glance .glance-title{ color:rgba(255,255,255,0.7); }
+  .glance-row + .glance-row{ margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.18); }
   .glance-num{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:24px; font-weight:700; letter-spacing:-0.02em; color:#111; line-height:1.1;
+    font-size:26px; font-weight:700; letter-spacing:-0.02em; line-height:1.1;
+    color:#fff;
   }
-  .glance-num small{ font-size:15px; color:var(--dim); font-weight:600; }
-  .glance-text{ font-size:13px; line-height:1.45; color:var(--body); margin-top:4px; }
-  .glance-text b{ color:#111; font-weight:600; }
+  .glance-num small{ font-size:15px; color:var(--gold); font-weight:700; }
+  .glance-text{ font-size:13px; line-height:1.45; color:rgba(255,255,255,0.82); margin-top:4px; }
+  .glance-text b{ color:#fff; font-weight:600; }
 
-  .side-link{
-    display:inline-flex; align-items:center; gap:6px;
-    margin-top:20px;
-    font-size:14px; font-weight:600; color:var(--accent);
-    transition:gap 0.15s ease;
-  }
-  .side-link:hover{ gap:9px; }
-  .side-link svg{ width:14px; height:14px; }
-
-  /* the meta row moves into the sidebar on wide screens */
-  .glance-meta{ display:none; }
-
-  @media (max-width:1100px){
-    .layout{ display:block; }
-    .side-sticky{ display:none; }
-    .side .page-lede{ font-size:clamp(17px, 2.2vw, 19px); margin-bottom:36px; }
-    .main{ max-width:var(--content-w); margin:0; }
-  }
-
-  /* fill-in markers: anything Hang still needs to confirm */
-  .fill{
-    background:#fff4e5;
-    color:#b25000;
-    border-radius:5px;
-    padding:0 5px;
-    font-weight:600;
-    white-space:nowrap;
-  }
-
-  /* META ROW */
+  /* ===== META ROW ===== */
   .meta{
     display:grid;
     grid-template-columns:repeat(4, auto);
-    justify-content:start;
-    column-gap:56px;
-    row-gap:20px;
-    padding:24px 0;
+    justify-content:space-between;
+    column-gap:32px; row-gap:18px;
+    padding:22px 0;
     border-top:1px solid var(--hairline);
     border-bottom:1px solid var(--hairline);
   }
   .meta-label{ font-size:13px; color:var(--dim); margin-bottom:5px; }
   .meta-value{ font-size:15px; font-weight:600; letter-spacing:-0.01em; color:#111; }
 
-  /* SECTIONS */
-  .section{ padding-top:72px; }
+  /* ===== SECTIONS ===== */
+  .section{ padding-top:88px; }
   .eyebrow{
-    font-size:13px; font-weight:600;
-    letter-spacing:0.06em; text-transform:uppercase;
-    color:var(--dim);
+    display:flex; align-items:center; gap:10px;
+    font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--cardinal);
     margin-bottom:12px;
   }
+  /* short ISU-gold rule, a nod to the Graduate College site */
+  .eyebrow::before{ content:''; width:22px; height:3px; border-radius:2px; background:var(--gold); }
   .section-heading{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:clamp(24px, 2.4vw, 30px);
-    font-weight:700;
-    letter-spacing:-0.02em;
-    line-height:1.22;
+    font-size:clamp(26px, 2.6vw, 34px);
+    font-weight:700; letter-spacing:-0.022em; line-height:1.18;
     color:#111;
-    margin-bottom:16px;
+    margin-bottom:14px;
   }
-  .section p{
-    font-size:17px;
-    line-height:1.65;
-    letter-spacing:-0.005em;
+  .section-heading .hl{ color:var(--cardinal); }
+  .lead{
+    font-size:18px; line-height:1.6; letter-spacing:-0.008em;
     color:var(--body);
+    max-width:720px;
   }
-  .section p + p{ margin-top:14px; }
-  /* wide visuals, narrow text: paragraphs and headings keep a
-     comfortable line length while tables, charts and images use the
-     full column */
-  /* text fills the column; the column itself is capped, so lines stay readable */
-  .page-lede{ max-width:1040px; }
-  .section p strong{ color:#111; font-weight:600; }
-
-  /* research question callout */
-  .question{
-    margin-top:24px;
-    padding:22px 26px;
-    border-left:3px solid var(--accent);
-    background:var(--soft);
-    border-radius:0 14px 14px 0;
-    font-size:19px !important;
-    line-height:1.5 !important;
-    font-weight:600;
-    letter-spacing:-0.015em;
-    color:#111 !important;
-  }
-
-  /* STAT TILES */
-  .stats{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:14px;
-    margin-top:24px;
-  }
-  .stat{
-    background:var(--soft);
-    border-radius:16px;
-    padding:20px 22px 18px;
-  }
-  .stat-num{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:34px; font-weight:700; letter-spacing:-0.03em; line-height:1;
-    color:#111;
-    font-variant-numeric:tabular-nums;
-    margin-bottom:10px;
-  }
-  .stat-num small{ font-size:18px; font-weight:600; color:var(--dim); margin-left:2px; }
-  .stat-label{ font-size:14px; line-height:1.45; color:var(--body); }
-  .section p.source,
-  .source{
-    font-size:12.5px; line-height:1.5; color:var(--dim);
-    margin-top:12px;
-  }
+  .lead strong{ color:#111; font-weight:600; }
+  .source{ font-size:12.5px; line-height:1.5; color:var(--dim); margin-top:14px; }
   .source a{ text-decoration:underline; text-underline-offset:2px; }
-  .source a:hover{ color:var(--accent); }
+  .source a:hover{ color:var(--blue); }
 
-  /* METHODS — compact numbered list */
-  .methods{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:14px;
-    margin-top:24px;
-  }
-  .method{
-    background:var(--soft);
-    border-radius:16px;
-    padding:20px 22px;
-  }
-  .method-num{ font-size:12.5px; font-weight:600; color:var(--accent); margin-bottom:8px; font-variant-numeric:tabular-nums; }
-  .method-name{ font-size:17px; font-weight:700; letter-spacing:-0.015em; color:#111; margin-bottom:6px; }
-  .method-desc{ font-size:14.5px; line-height:1.55; color:#555; }
-
-  /* PROCESS STRIP — how raw notes became insights */
-  .process{
-    display:flex;
-    align-items:stretch;
-    gap:0;
-    margin-top:26px;
-    border:1px solid var(--hairline);
-    border-radius:16px;
-    overflow:hidden;
-  }
-  .step{
-    flex:1;
-    padding:18px 18px 16px;
+  /* research question */
+  .question{
+    margin-top:28px;
+    padding:28px 32px;
+    border-radius:18px;
+    background:var(--gold-soft);
     position:relative;
   }
-  .step + .step{ border-left:1px solid var(--hairline); }
-  .step-k{ font-size:12px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; color:var(--dim); margin-bottom:6px; }
-  .step-v{ font-size:15px; font-weight:600; color:#111; line-height:1.35; }
-
-  /* CHART — single-series horizontal bars, one hue */
-  .chart{
-    margin-top:26px;
-    padding:24px 26px 20px;
-    border:1px solid var(--hairline);
-    border-radius:16px;
-  }
-  .chart-title{ font-size:16px; font-weight:700; letter-spacing:-0.01em; color:#111; }
-  .chart-sub{ font-size:13.5px; color:var(--dim); margin-top:4px; margin-bottom:20px; }
-  .bars{ list-style:none; }
-  .bar-row{
-    display:grid;
-    grid-template-columns:minmax(0, 1fr) 56px;
-    column-gap:14px;
-    align-items:end;
-    padding:9px 0;
-    position:relative;
-  }
-  .bar-label{ grid-column:1 / -1; font-size:14.5px; color:#333; margin-bottom:7px; line-height:1.35; }
-  .bar-track{
-    height:10px;
-    background:var(--bar-track);
-    border-radius:4px;
-    overflow:hidden;
-  }
-  .bar-fill{
-    height:100%;
-    width:0;
-    background:var(--bar);
-    border-radius:4px;
-    transition:width 1s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .chart.in .bar-fill{ width:var(--v); }
-  .bar-val{
-    font-size:14px; font-weight:600; color:#111;
-    text-align:right;
-    font-variant-numeric:tabular-nums;
-    line-height:10px;
-  }
-  /* hover: dim the others, show a tooltip */
-  @media (hover:hover){
-    .bars:hover .bar-row .bar-fill{ opacity:0.35; }
-    .bars .bar-row:hover .bar-fill{ opacity:1; }
-  }
-  .bar-tip{
-    position:absolute;
-    right:70px; top:-6px;
-    background:#1d1d1f; color:#fff;
-    font-size:12.5px; line-height:1.4;
-    padding:7px 10px; border-radius:8px;
-    max-width:280px;
-    opacity:0; transform:translateY(4px);
-    pointer-events:none;
-    transition:opacity 0.15s ease, transform 0.15s ease;
-    z-index:2;
-  }
-  .bar-row:hover .bar-tip{ opacity:1; transform:none; }
-
-  /* NEEDS TABLE */
-  .table-wrap{
-    margin-top:26px;
-    border:1px solid var(--hairline);
-    border-radius:16px;
-    overflow:hidden;
-  }
-  table{ width:100%; border-collapse:collapse; font-size:14.5px; }
-  thead th{
-    text-align:left;
-    font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;
-    color:var(--dim);
-    background:var(--soft);
-    padding:12px 16px;
-  }
-  tbody td{
-    padding:14px 16px;
-    border-top:1px solid var(--hairline);
-    vertical-align:top;
-    line-height:1.5;
-    color:var(--body);
-  }
-  tbody td:first-child{ font-weight:600; color:#111; width:30%; }
-  tbody tr{ transition:background 0.15s ease; }
-  tbody tr:hover{ background:#fafafb; }
-  .rank{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:22px; height:22px; border-radius:50%;
-    background:var(--accent); color:#fff;
-    font-size:12px; font-weight:700;
-    margin-right:8px; vertical-align:1px;
-  }
-  .rank.r2{ background:#4d9bec; }
-  .rank.r3{ background:#8dbdf2; }
-  .rank.r4{ background:#c4dcf7; color:#0b4a8f; }
-
-  /* INSIGHTS */
-  .insights{ list-style:none; margin-top:10px; }
-  .insight{
-    display:grid;
-    grid-template-columns:52px 1fr;
-    gap:10px;
-    padding:24px 0;
-    border-bottom:1px solid var(--hairline);
-  }
-  .insight:last-child{ border-bottom:none; }
-  .insight-num{
+  .question-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8a6a10; margin-bottom:8px; }
+  .question-q{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:28px; font-weight:700; letter-spacing:-0.03em; line-height:1;
-    color:#d2d2d7;
+    font-size:clamp(20px, 2vw, 24px); font-weight:700; letter-spacing:-0.018em; line-height:1.3; color:#111;
   }
-  .insight-title{ font-size:18px; font-weight:700; letter-spacing:-0.02em; color:#111; margin-bottom:6px; line-height:1.35; }
-  .insight-text{ font-size:15.5px; line-height:1.6; color:var(--body); }
-  .evidence{
-    display:inline-block;
-    margin-top:10px;
-    font-size:13px; color:var(--dim);
-  }
-  .evidence b{ font-weight:600; color:#333; }
 
-  /* FIGURES — small, 2 or 3 up, click to zoom */
-  .figs{
+  /* ===== CARD shell used by every visualization ===== */
+  .viz{
+    margin-top:28px;
+    border:1px solid var(--hairline);
+    border-radius:20px;
+    padding:26px 28px 22px;
+    background:#fff;
+  }
+  .viz-title{ font-size:16px; font-weight:700; letter-spacing:-0.01em; color:#111; }
+  .viz-sub{ font-size:13.5px; color:var(--dim); margin-top:3px; }
+
+  /* ===== WAFFLE — 1 square = 1% of grad & professional students ===== */
+  .who-grid{
     display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:16px;
+    grid-template-columns:auto 1fr;
+    gap:36px;
+    align-items:center;
     margin-top:22px;
   }
-  .figs.three{ grid-template-columns:repeat(3, 1fr); }
-  .fig{ margin:0; }
-  .shot{
-    display:block;
-    width:100%;
-    aspect-ratio:16/10;
-    border-radius:12px;
-    overflow:hidden;
-    background:var(--soft);
-    border:1px solid var(--hairline);
-    padding:0;
-    cursor:zoom-in;
-    position:relative;
-    transition:border-radius 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .shot img{ width:100%; height:100%; object-fit:cover; object-position:top left; display:block; }
-  @media (hover:hover){ .shot:hover{ border-radius:0; transform:scale(1.015); } }
-  .fig figcaption{ font-size:13px; line-height:1.5; color:var(--dim); margin-top:9px; }
-  .fig figcaption b{ color:#333; font-weight:600; }
-
-  /* DESIGN DIRECTIONS */
-  .directions{
+  .waffle{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:14px;
-    margin-top:24px;
+    grid-template-columns:repeat(10, 18px);
+    grid-auto-rows:18px;
+    gap:4px;
   }
-  .direction{
-    border:1px solid var(--hairline);
-    border-radius:16px;
-    padding:20px 20px 18px;
+  .waffle i{
+    border-radius:4px;
+    background:var(--track);
+    transform:scale(0.4); opacity:0;
+    transition:transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, background 0.2s ease;
   }
-  .direction-tag{ font-size:12px; font-weight:600; color:var(--accent); margin-bottom:8px; }
-  .direction-name{ font-size:16.5px; font-weight:700; letter-spacing:-0.015em; color:#111; margin-bottom:6px; line-height:1.3; }
-  .direction-desc{ font-size:14px; line-height:1.55; color:#555; }
+  .waffle i.on{ background:var(--cardinal); }
+  .viz.in .waffle i{ transform:none; opacity:1; }
+  .who-big{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:64px; font-weight:700; letter-spacing:-0.04em; line-height:1;
+    color:var(--cardinal);
+  }
+  .who-big small{ font-size:30px; letter-spacing:-0.02em; }
+  .who-cap{ font-size:15px; color:var(--body); margin-top:8px; line-height:1.45; }
+  .legend{ display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:20px; }
+  .legend span{ display:inline-flex; align-items:center; gap:8px; font-size:13.5px; color:var(--body); }
+  .legend span b{ color:#111; font-weight:600; font-variant-numeric:tabular-nums; }
+  .sw{ width:12px; height:12px; border-radius:3px; background:var(--track); }
+  .sw.c{ background:var(--cardinal); }
+  .mini-stats{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:22px; }
+  .mini-stat{ background:var(--soft); border-radius:14px; padding:14px 16px; }
+  .mini-stat b{
+    display:block;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:24px; font-weight:700; letter-spacing:-0.02em; color:#111; font-variant-numeric:tabular-nums;
+  }
+  .mini-stat span{ font-size:13px; color:var(--body); line-height:1.4; }
 
-  /* OUTCOME */
-  .outcome{
+  /* ===== METHODS ===== */
+  .methods{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-top:26px; }
+  .method{
     background:var(--soft);
     border-radius:18px;
-    padding:30px 32px;
+    padding:20px 18px 18px;
+    transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
   }
-  .shipped{ list-style:none; margin-top:20px; display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
-  .shipped li{
-    background:#fff;
-    border-radius:14px;
-    padding:16px 18px 16px 44px;
+  @media (hover:hover){ .method:hover{ transform:translateY(-3px); background:var(--cardinal-soft); } }
+  .method-ic{
+    width:38px; height:38px; border-radius:11px;
+    background:#fff; color:var(--cardinal);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:14px;
+    box-shadow:0 1px 2px rgba(0,0,0,0.06);
+  }
+  .method-ic svg{ width:20px; height:20px; }
+  .method-name{ font-size:16px; font-weight:700; letter-spacing:-0.015em; color:#111; margin-bottom:5px; line-height:1.25; }
+  .method-desc{ font-size:13.5px; line-height:1.5; color:#555; }
+
+  .process{ display:flex; align-items:center; gap:8px; margin-top:16px; flex-wrap:wrap; }
+  .chip{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:13.5px; font-weight:600; color:#111;
+    background:#fff; border:1px solid var(--hairline);
+    border-radius:999px; padding:8px 14px 8px 8px;
+  }
+  .chip i{
+    font-style:normal; width:22px; height:22px; border-radius:50%;
+    background:var(--cardinal); color:#fff;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:11.5px; font-weight:700;
+  }
+  .arrow{ color:#c7c7cc; font-size:16px; }
+
+  /* ===== MATRIX — where each need's answer lived ===== */
+  .matrix-scroll{ overflow-x:auto; margin:20px -6px 0; padding:0 6px; }
+  .matrix{
+    min-width:640px;
+    display:grid;
+    grid-template-columns:minmax(240px, 2.3fr) repeat(6, minmax(54px, 1fr)) 64px;
+    align-items:center;
+  }
+  .mx-h{
+    font-size:11.5px; font-weight:600; color:var(--dim);
+    text-align:center; line-height:1.25;
+    padding:0 2px 12px;
+    border-bottom:1px solid var(--hairline);
+    align-self:end;
+  }
+  .mx-h.l{ text-align:left; }
+  .mx-h.r{ text-align:right; }
+  .mx-row{ display:contents; }
+  .mx-row > div{
+    padding:14px 2px;
+    border-bottom:1px solid var(--hairline);
+    height:100%;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.15s ease;
+  }
+  .mx-row:last-child > div{ border-bottom:none; }
+  .mx-row:hover > div{ background:#fafafb; }
+  .mx-need{ justify-content:flex-start !important; gap:10px; position:relative; }
+  .rank{
+    flex:none;
+    width:24px; height:24px; border-radius:50%;
+    background:var(--cardinal); color:#fff;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700;
+  }
+  .rank.r2{ background:#d9475e; }
+  .rank.r3{ background:#e8808f; }
+  .rank.r4{ background:#f2b3bc; color:var(--cardinal-deep); }
+  .need-name{ font-size:14.5px; font-weight:600; color:#111; line-height:1.3; }
+  .need-q{ display:block; font-size:12.5px; font-weight:400; color:var(--dim); margin-top:2px; font-style:italic; }
+  .dot{ width:16px; height:16px; border-radius:50%; background:var(--cardinal); transform:scale(0); transition:transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .viz.in .dot{ transform:scale(1); }
+  .nodot{ width:5px; height:5px; border-radius:50%; background:#d8d8de; }
+  .places{ justify-content:flex-end !important; gap:6px; }
+  .places b{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:22px; font-weight:700; color:#111; letter-spacing:-0.02em; font-variant-numeric:tabular-nums;
+  }
+  .places span{ font-size:12px; color:var(--dim); }
+
+  /* ===== COLUMN CHART — international Ph.D. students by major ===== */
+  .cols-wrap{ display:grid; grid-template-columns:1fr auto; gap:28px; align-items:end; margin-top:22px; }
+  .cols{
+    display:grid; grid-template-columns:repeat(5, 1fr);
+    gap:clamp(10px, 2vw, 22px);
+    height:220px;
+    align-items:end;
+    border-bottom:1px solid #d2d2d7;
     position:relative;
-    font-size:14.5px; line-height:1.5; color:#555;
+  }
+  .cols::before, .cols::after{
+    content:''; position:absolute; left:0; right:0; height:1px; background:var(--hairline);
+  }
+  .cols::before{ bottom:50%; }
+  .cols::after{ bottom:100%; }
+  .col{ position:relative; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; cursor:default; }
+  .col-bar{
+    width:100%; max-width:68px;
+    height:0;
+    border-radius:6px 6px 0 0;
+    background:linear-gradient(180deg, var(--cardinal) 0%, var(--cardinal-deep) 100%);
+    transition:height 1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+  }
+  .col:nth-child(n+2) .col-bar{ background:linear-gradient(180deg, #d9475e 0%, #b81a33 100%); }
+  .viz.in .col-bar{ height:var(--h); }
+  .col-val{
+    font-size:15px; font-weight:700; color:#111; margin-bottom:6px; font-variant-numeric:tabular-nums;
+    opacity:0; transition:opacity 0.4s ease 0.6s;
+  }
+  .viz.in .col-val{ opacity:1; }
+  @media (hover:hover){
+    .cols:hover .col-bar{ opacity:0.35; }
+    .cols .col:hover .col-bar{ opacity:1; }
+  }
+  .col-labels{ display:grid; grid-template-columns:repeat(5, 1fr); gap:clamp(10px, 2vw, 22px); margin-top:10px; }
+  .col-labels span{ font-size:12.5px; line-height:1.3; color:var(--body); text-align:center; }
+  .total{
+    background:var(--cardinal-soft);
+    border-radius:16px;
+    padding:18px 20px;
+    width:200px;
+  }
+  .total b{
+    display:block;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:44px; font-weight:700; letter-spacing:-0.03em; line-height:1; color:var(--cardinal);
+  }
+  .total span{ display:block; font-size:13.5px; line-height:1.45; color:#5a2a33; margin-top:8px; }
+
+  /* tooltip for chart hovers */
+  .tip{
+    position:absolute; bottom:calc(100% + 8px); left:50%;
+    transform:translate(-50%, 4px);
+    background:#1d1d1f; color:#fff;
+    font-size:12.5px; line-height:1.35; white-space:nowrap;
+    padding:6px 10px; border-radius:8px;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.15s ease, transform 0.15s ease;
+    z-index:3;
+  }
+  .col:hover .tip{ opacity:1; transform:translate(-50%, 0); }
+
+  /* ===== INSIGHTS ===== */
+  .insights{ list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:26px; }
+  .insight{
+    border-radius:18px;
+    padding:22px 22px 20px;
+    background:var(--soft);
+    position:relative;
+    overflow:hidden;
+  }
+  .insight-num{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:44px; font-weight:700; letter-spacing:-0.04em; line-height:1;
+    color:var(--cardinal);
+    opacity:0.18;
+    position:absolute; top:16px; right:20px;
+  }
+  .insight-title{ font-size:17.5px; font-weight:700; letter-spacing:-0.018em; color:#111; margin-bottom:8px; line-height:1.3; padding-right:56px; }
+  .insight-text{ font-size:14.5px; line-height:1.55; color:var(--body); }
+  .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .tag{ font-size:11.5px; font-weight:600; color:var(--cardinal-deep); background:#fff; border-radius:999px; padding:4px 10px; }
+
+  /* ===== DESIGN DIRECTIONS ===== */
+  .directions{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:26px; }
+  .direction{
+    border:1px solid var(--hairline);
+    border-radius:18px;
+    padding:20px 20px 18px;
+    border-top:3px solid var(--gold);
+  }
+  .direction-tag{ font-size:12px; font-weight:600; color:var(--cardinal); margin-bottom:8px; }
+  .direction-name{ font-size:16.5px; font-weight:700; letter-spacing:-0.015em; color:#111; margin-bottom:6px; line-height:1.3; }
+  .direction-desc{ font-size:14px; line-height:1.5; color:#555; }
+
+  /* ===== OUTCOME ===== */
+  .shipped{ list-style:none; display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:26px; }
+  .shipped li{
+    background:var(--soft);
+    border-radius:16px;
+    padding:18px 18px 18px 52px;
+    position:relative;
+    font-size:14px; line-height:1.5; color:#555;
   }
   .shipped li::before{
     content:'';
-    position:absolute; left:16px; top:18px;
-    width:18px; height:18px; border-radius:50%;
-    background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='5 12.5 10 17 19 7'/%3E%3C/svg%3E") center/12px no-repeat;
+    position:absolute; left:18px; top:19px;
+    width:22px; height:22px; border-radius:50%;
+    background:var(--cardinal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='5 12.5 10 17 19 7'/%3E%3C/svg%3E") center/13px no-repeat;
   }
-  .shipped + p{ margin-top:24px !important; }
   .shipped b{ display:block; font-size:15.5px; font-weight:700; color:#111; letter-spacing:-0.01em; margin-bottom:3px; }
-  .shipped span{ display:block; }
-  @media (max-width:560px){ .shipped{ grid-template-columns:1fr; } }
-
+  .lesson{
+    margin-top:22px;
+    border-radius:18px;
+    padding:26px 28px;
+    background:linear-gradient(160deg, var(--cardinal) 0%, var(--cardinal-deep) 100%);
+    color:#fff;
+  }
+  .lesson-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .lesson-q{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:clamp(19px, 1.9vw, 23px); font-weight:600; letter-spacing:-0.015em; line-height:1.4;
+  }
   .visit{
     display:inline-flex; align-items:center; gap:8px;
-    margin-top:24px;
-    font-size:15px; font-weight:600;
-    color:#fff; background:var(--accent);
-    border-radius:980px; padding:12px 24px;
-    transition:transform 0.15s ease, background 0.15s ease, gap 0.15s ease;
+    margin-top:20px;
+    font-size:14.5px; font-weight:600;
+    color:var(--cardinal-deep); background:#fff;
+    border-radius:980px; padding:11px 20px;
+    transition:transform 0.15s ease, gap 0.15s ease;
   }
-  .visit:hover{ background:#0077ed; transform:translateY(-2px); gap:11px; }
+  .visit:hover{ transform:translateY(-2px); gap:11px; }
   .visit svg{ width:15px; height:15px; }
 
-  .sources-list{ list-style:none; margin-top:10px; }
-  .sources-list li{ font-size:13px; line-height:1.55; color:var(--dim); padding:4px 0; }
-  .sources-list a{ text-decoration:underline; text-underline-offset:2px; }
-  .sources-list a:hover{ color:var(--accent); }
+  /* ===== SITE TODAY — screenshots ===== */
+  .figs{ display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-top:26px; }
+  .fig{ margin:0; }
+  .shot{
+    display:block; width:100%;
+    aspect-ratio:16/10;
+    border-radius:14px; overflow:hidden;
+    background:var(--soft);
+    border:1px solid var(--hairline);
+    padding:0; cursor:zoom-in;
+    transition:border-radius 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+  }
+  .shot img{ width:100%; height:100%; object-fit:cover; object-position:top left; display:block; }
+  @media (hover:hover){ .shot:hover{ border-radius:0; transform:scale(1.015); box-shadow:0 18px 40px rgba(0,0,0,0.12); } }
+  .fig figcaption{ font-size:13.5px; line-height:1.5; color:var(--dim); margin-top:10px; }
+  .fig figcaption b{ color:#111; font-weight:600; }
 
-  /* LIGHTBOX — same look as Digital Works */
+  /* ===== LIGHTBOX ===== */
   .lightbox{
     position:fixed; inset:0; z-index:100;
     background:rgba(20,20,22,0.92);
@@ -520,20 +513,15 @@
   .lightbox-close:hover{ transform:scale(1.06); }
   .lightbox-close svg{ width:18px; height:18px; }
 
-  /* scroll-in fade */
+  /* ===== scroll-in fade ===== */
   .reveal{ opacity:0; transform:translateY(18px); transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
   .reveal.in{ opacity:1; transform:none; }
-
   @media (prefers-reduced-motion: reduce){
     *{ transition-duration:0.01ms !important; animation-duration:0.01ms !important; }
     .reveal{ opacity:1; transform:none; }
   }
 
-  /* BIG MONITORS — scale the whole reading area up with the screen,
-     the same idea as Digital Works growing its cards, so a 27" or 4K
-     display looks like a laptop, just larger, instead of leaving an
-     empty strip on the right. Back + title stay identical to the other
-     project pages. */
+  /* ===== BIG MONITORS — scale up, keep aligned under the title ===== */
   @media (min-width:1760px){ :root{ --z:1.1; } .layout{ zoom:var(--z); } }
   @media (min-width:1920px){ :root{ --z:1.2; } .layout{ zoom:var(--z); } }
   @media (min-width:2100px){ :root{ --z:1.3; } .layout{ zoom:var(--z); } }
@@ -541,74 +529,58 @@
   @media (min-width:2560px){ :root{ --z:1.6; } .layout{ zoom:var(--z); } }
   @media (min-width:3000px){ :root{ --z:1.85; } .layout{ zoom:var(--z); } }
 
-  /* MINI BAR — once the big title scrolls away, a slim frosted bar
-     slides in so "Back" and the page name are always on screen */
-  .mini-bar{
-    position:fixed;
-    top:0; left:0; right:0;
-    z-index:50;
-    height:56px;
-    padding:0 var(--page-gutter);
-    display:flex;
-    align-items:center;
-    gap:18px;
-    background:rgba(255,255,255,0.92);
-    backdrop-filter:blur(20px) saturate(180%);
-    -webkit-backdrop-filter:blur(20px) saturate(180%);
-    border-bottom:1px solid var(--hairline);
-    transform:translateY(-100%);
-    opacity:0;
-    pointer-events:none;
-    transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+  /* ===== SMALL LAPTOPS / TABLETS ===== */
+  @media (max-width:1100px){
+    .layout{ display:block; }
+    .side-sticky{ display:none; }
+    .page-lede{ font-size:clamp(17px, 2.2vw, 19px); margin-bottom:36px; max-width:var(--content-w); }
+    .main{ max-width:var(--content-w); margin:0; }
+    .methods{ grid-template-columns:repeat(2, 1fr); }
   }
-  .mini-bar.show{ transform:none; opacity:1; pointer-events:auto; }
-  .mini-bar .back-link{ margin-bottom:0; }
-  .mini-sep{ width:1px; height:18px; background:rgba(0,0,0,0.14); }
-  .mini-title{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:17px; font-weight:700; letter-spacing:-0.015em; color:#111;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  @media (max-width:560px){
-    .mini-bar{ height:50px; gap:14px; }
-    .mini-title{ font-size:16px; }
-  }
-
-  /* TABLETS */
   @media (max-width:900px){
     .directions{ grid-template-columns:1fr; }
-    .figs.three{ grid-template-columns:repeat(2, 1fr); }
-    .meta{ grid-template-columns:repeat(2, auto); }
+    .meta{ grid-template-columns:repeat(2, auto); justify-content:start; column-gap:40px; }
+    .cols-wrap{ grid-template-columns:1fr; }
+    .total{ width:auto; }
   }
-  /* PHONES — same top spacing as Digital Works */
+  /* ===== PHONES ===== */
   @media (max-width:560px){
     .page-header{ padding-top:32px; }
     body{ padding-bottom:32px; }
     .back-link{ margin-bottom:39px; }
-    .section{ padding-top:56px; }
-    .section p{ font-size:16px; }
-    .stats, .methods, .figs, .figs.three{ grid-template-columns:1fr; }
-    .meta{ column-gap:32px; }
-    .process{ flex-direction:column; }
-    .step + .step{ border-left:none; border-top:1px solid var(--hairline); }
-    .insight{ grid-template-columns:40px 1fr; }
-    .insight-num{ font-size:24px; }
-    .outcome{ padding:24px 22px; }
-    .chart{ padding:20px 18px 16px; }
-    .bar-tip{ display:none; }
-    /* table becomes stacked cards */
-    thead{ display:none; }
-    table, tbody, tr, td{ display:block; width:100% !important; }
-    tbody tr{ border-top:1px solid var(--hairline); padding:12px 16px; }
-    tbody tr:first-child{ border-top:none; }
-    tbody td{ border:none; padding:3px 0; }
-    tbody td::before{
-      content:attr(data-k);
-      display:block;
-      font-size:11px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;
-      color:var(--dim); margin-top:6px;
+    .mini-bar{ height:50px; gap:14px; }
+    .mini-title{ font-size:16px; }
+    .section{ padding-top:64px; }
+    .lead{ font-size:16.5px; }
+    .viz{ padding:20px 18px 18px; }
+    .who-grid{ grid-template-columns:1fr; gap:20px; }
+    .waffle{ grid-template-columns:repeat(10, 1fr); grid-auto-rows:auto; }
+    .waffle i{ aspect-ratio:1; }
+    .who-big{ font-size:52px; }
+    .methods, .insights, .shipped, .figs{ grid-template-columns:1fr; }
+    .question{ padding:22px 22px; }
+    .cols{ height:170px; }
+    .col-labels span{ font-size:11px; }
+    .lesson{ padding:22px 20px; }
+
+    /* matrix becomes one card per need, with the places as tags */
+    .matrix-scroll{ overflow:visible; margin:16px 0 0; padding:0; }
+    .matrix{ display:block; min-width:0; }
+    .mx-h{ display:none; }
+    .mx-row{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:14px 0; border-bottom:1px solid var(--hairline); }
+    .mx-row:last-child{ border-bottom:none; }
+    .mx-row > div{ border:none; padding:0; height:auto; background:none !important; }
+    .mx-row .mx-need{ width:100%; margin-bottom:6px; }
+    .mx-row > div:has(.nodot){ display:none; }
+    .mx-row > div[data-p]:has(.dot){
+      gap:6px;
+      font-size:12px; font-weight:600; color:var(--cardinal-deep);
+      background:var(--cardinal-soft) !important;
+      border-radius:999px; padding:5px 10px 5px 7px;
     }
-    tbody td:first-child::before{ display:none; }
+    .mx-row > div[data-p]::after{ content:attr(data-p); }
+    .mx-row .dot{ width:8px; height:8px; }
+    .places{ display:none !important; }
   }
 </style>
 </head>
@@ -632,37 +604,37 @@
 </div>
 
 <div class="layout">
+
 <aside class="side" aria-label="On this page">
   <p class="page-lede">As a Graduate Administrative Assistant, I designed and developed pages for the Iowa State University Graduate College website. Before changing anything, I set out to learn what graduate students were actually trying to find, and why so many of them still ended up emailing the office instead.</p>
   <div class="side-sticky">
-  <div class="toc-title">On this page</div>
-  <ul class="toc" id="toc">
-    <li><a href="#context">Context</a></li>
-    <li><a href="#who">Who uses it</a></li>
-    <li><a href="#methods">How I researched it</a></li>
-    <li><a href="#needs">What students look for</a></li>
-    <li><a href="#insights">Key insights</a></li>
-    <li><a href="#design">Research to design</a></li>
-    <li><a href="#outcome">Outcome</a></li>
-    <li><a href="#today">The site today</a></li>
-  </ul>
+    <div class="toc-title">On this page</div>
+    <ul class="toc" id="toc">
+      <li><a href="#context">Context</a></li>
+      <li><a href="#who">Who uses it</a></li>
+      <li><a href="#methods">How I researched it</a></li>
+      <li><a href="#needs">What students look for</a></li>
+      <li><a href="#insights">Key insights</a></li>
+      <li><a href="#design">Research to design</a></li>
+      <li><a href="#outcome">Outcome</a></li>
+      <li><a href="#today">The site today</a></li>
+    </ul>
 
-  <div class="glance">
-    <div class="glance-title">At a glance</div>
-    <div class="glance-row">
-      <div class="glance-num">#1</div>
-      <div class="glance-text">Top need: <b>scholarships &amp; research funding</b></div>
+    <div class="glance">
+      <div class="glance-title">At a glance</div>
+      <div class="glance-row">
+        <div class="glance-num">#1</div>
+        <div class="glance-text">Top need: <b>scholarships &amp; research funding</b></div>
+      </div>
+      <div class="glance-row">
+        <div class="glance-num">1 in 3</div>
+        <div class="glance-text">ISU graduate students is <b>international</b></div>
+      </div>
+      <div class="glance-row">
+        <div class="glance-num">4 <small>→</small> 3</div>
+        <div class="glance-text"><b>Insights</b> turned into <b>design directions</b></div>
+      </div>
     </div>
-    <div class="glance-row">
-      <div class="glance-num">1 in 3</div>
-      <div class="glance-text">ISU graduate students is <b>international</b></div>
-    </div>
-    <div class="glance-row">
-      <div class="glance-num">4 <small>→</small> 3</div>
-      <div class="glance-text"><b>Insights</b> turned into <b>design directions</b></div>
-    </div>
-  </div>
-
   </div>
 </aside>
 
@@ -675,227 +647,240 @@
     <div><div class="meta-label">Timeline</div><div class="meta-value">2023 – 2024</div></div>
   </div>
 
-  <!-- 1. CONTEXT -->
+  <!-- CONTEXT -->
   <section id="context" class="section reveal">
     <div class="eyebrow">Context</div>
-    <h2 class="section-heading">A website organized around the office, not around the student.</h2>
-    <p>The Graduate College site is structured by audience (<strong>Future Students</strong>, <strong>Current Students</strong>, <strong>Faculty</strong>) and, inside each, by the office's own categories: programs, funding, forms. That works when you already know where something lives. Many graduate students don't, especially international students, who are new to both the university and the U.S. system.</p>
-    <p class="question">What are graduate students really looking for on the Graduate College website, and what stops them from finding it on their own?</p>
+    <h2 class="section-heading">A website organized around the office, <span class="hl">not around the student.</span></h2>
+    <p class="lead">Pages were sorted by audience and by the office's own categories. That works if you already know where to look. Most new graduate students don't.</p>
+    <div class="question">
+      <div class="question-k">Research question</div>
+      <div class="question-q">What are graduate students really looking for, and what stops them from finding it on their own?</div>
+    </div>
   </section>
 
-  <!-- 2. WHO -->
+  <!-- WHO -->
   <section id="who" class="section reveal">
     <div class="eyebrow">Who uses it</div>
-    <h2 class="section-heading">About one in three ISU graduate students is an international student.</h2>
-    <p>Before talking to anyone, I looked at who the site serves. International students make up a large share of ISU's graduate population, and their questions come with rules attached: visa status, work-hour limits, and paperwork that domestic students never see.</p>
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-num">4,466</div>
-        <div class="stat-label">Graduate and professional students at ISU, Fall 2026</div>
+    <h2 class="section-heading">About <span class="hl">one in three</span> ISU graduate students is international.</h2>
+    <p class="lead">Their questions come with rules attached: visa status, work-hour limits, and extra paperwork.</p>
+
+    <div class="viz" id="vizWho">
+      <div class="viz-title">ISU graduate &amp; professional students, Fall 2026</div>
+      <div class="viz-sub">Each square is 1% of 4,466 students</div>
+      <div class="who-grid">
+        <div class="waffle" id="waffle" role="img" aria-label="35 of 100 squares are international students"></div>
+        <div>
+          <div class="who-big">35<small>%</small></div>
+          <div class="who-cap">are international students,<br>1,566 people</div>
+          <div class="legend">
+            <span><i class="sw c"></i>International <b>1,566</b></span>
+            <span><i class="sw"></i>Domestic <b>2,900</b></span>
+          </div>
+        </div>
       </div>
-      <div class="stat">
-        <div class="stat-num">35<small>%</small></div>
-        <div class="stat-label">of them are international (1,566 students)</div>
+      <div class="mini-stats">
+        <div class="mini-stat"><b>4,466</b><span>graduate &amp; professional students</span></div>
+        <div class="mini-stat"><b>20 hrs</b><span>weekly on-campus work cap for F-1 students</span></div>
       </div>
-      <div class="stat">
-        <div class="stat-num">20<small>hrs</small></div>
-        <div class="stat-label">Weekly cap on on-campus work for F-1 students during the semester</div>
-      </div>
+      <p class="source">Sources: <a href="https://www.registrar.iastate.edu/resources/enrollment-statistics" target="_blank" rel="noopener">ISU Registrar</a> (3,817 graduate + 649 professional); <a href="https://isso.dso.iastate.edu/media/10/file/Student%20Fact%20Sheet" target="_blank" rel="noopener">ISSO fact sheet</a>; <a href="https://isso.dso.iastate.edu/students/f-1-students/on-campus-employment" target="_blank" rel="noopener">ISSO employment rules</a>.</p>
     </div>
-    <p class="source">Sources: <a href="https://www.registrar.iastate.edu/resources/enrollment-statistics" target="_blank" rel="noopener">ISU Registrar enrollment statistics</a> (3,817 graduate + 649 professional, Fall 2026); <a href="https://isso.dso.iastate.edu/media/10/file/Student%20Fact%20Sheet" target="_blank" rel="noopener">ISSO fact sheet</a> and <a href="https://isso.dso.iastate.edu/students/f-1-students/on-campus-employment" target="_blank" rel="noopener">on-campus employment rules</a>.</p>
   </section>
 
-  <!-- 3. METHODS -->
+  <!-- METHODS -->
   <section id="methods" class="section reveal">
     <div class="eyebrow">How I researched it</div>
-    <h2 class="section-heading">I listened where the questions were already happening.</h2>
-    <p>Working inside the Graduate College gave me direct access to the questions students were asking. I combined that with a structured look at the site itself and outside data, so findings didn't depend on a single source.</p>
+    <h2 class="section-heading">I listened <span class="hl">where the questions were already happening.</span></h2>
+
     <div class="methods">
       <div class="method">
-        <div class="method-num">01</div>
+        <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></div>
         <div class="method-name">Student conversations</div>
-        <div class="method-desc">Short, open-ended conversations with graduate students: "What were you looking for? Where did you look first? What did you do when you couldn't find it?"</div>
+        <div class="method-desc">"What were you looking for? Where did you look first?"</div>
       </div>
       <div class="method">
-        <div class="method-num">02</div>
+        <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
         <div class="method-name">Question log</div>
-        <div class="method-desc">Tracked and tagged the questions students brought to the office by email and in person, to see which topics came up most.</div>
+        <div class="method-desc">Tagged the questions students emailed or asked in person.</div>
       </div>
       <div class="method">
-        <div class="method-num">03</div>
-        <div class="method-name">Content &amp; navigation audit</div>
-        <div class="method-desc">Walked the site's menus and key pages as a student would, including a keyboard-only pass, noting dead ends, duplicates, and handoffs to other offices.</div>
+        <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg></div>
+        <div class="method-name">Site audit</div>
+        <div class="method-desc">Walked menus and pages as a student, including keyboard-only.</div>
       </div>
       <div class="method">
-        <div class="method-num">04</div>
+        <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
         <div class="method-name">Desk research</div>
-        <div class="method-desc">Compared what I heard with ISU enrollment data and international student data, to check that the patterns weren't just a few loud voices.</div>
+        <div class="method-desc">Checked patterns against ISU enrollment data.</div>
       </div>
     </div>
 
-    <div class="process">
-      <div class="step"><div class="step-k">Collect</div><div class="step-v">Conversations, logged questions, page audit</div></div>
-      <div class="step"><div class="step-k">Tag</div><div class="step-v">Each question coded by topic and student type</div></div>
-      <div class="step"><div class="step-k">Cluster</div><div class="step-v">Affinity map into recurring needs</div></div>
-      <div class="step"><div class="step-k">Validate</div><div class="step-v">Checked against outside data</div></div>
+    <div class="process" aria-label="Research process">
+      <span class="chip"><i>1</i>Collect</span><span class="arrow">→</span>
+      <span class="chip"><i>2</i>Tag by topic</span><span class="arrow">→</span>
+      <span class="chip"><i>3</i>Affinity map</span><span class="arrow">→</span>
+      <span class="chip"><i>4</i>Validate with data</span>
     </div>
   </section>
 
-  <!-- 4. WHAT THEY LOOK FOR -->
+  <!-- NEEDS -->
   <section id="needs" class="section reveal">
     <div class="eyebrow">What students look for</div>
-    <h2 class="section-heading">The top question wasn't "which program?" It was "how do I pay for it?"</h2>
-    <p>The most common thread was <strong>funding: scholarships, fellowships, and research assistantships</strong>. Students wanted to know what was available, whether an assistantship covers tuition, and who to contact. For international students the stakes are higher: F-1 status generally limits them to on-campus work, capped at 20 hours a week during the semester, and a half-time assistantship already uses all 20 of those hours. Funding is both how they pay for school and how they work.</p>
+    <h2 class="section-heading">The top question: <span class="hl">"How do I pay for it?"</span></h2>
+    <p class="lead">Funding came first. And every top need sent students to <strong>two to four different places</strong> for one answer.</p>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>What students were looking for</th><th>What they actually asked</th><th>Where the answer lived</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="rank">1</span>Scholarships &amp; research funding</td>
-            <td data-k="What they asked">"What funding is available? How do I get a research assistantship? Does it cover my tuition?"</td>
-            <td data-k="Where it lived">"Funding Opportunities" under <em>Future Students</em>; assistantships posted by individual departments; tuition rules in the Graduate Catalog</td>
-          </tr>
-          <tr>
-            <td><span class="rank r2">2</span>On-campus part-time jobs</td>
-            <td data-k="What they asked">"Can I work on campus? How many hours? Does my assistantship count?"</td>
-            <td data-k="Where it lived">Hour rules on the ISSO site; job postings on a separate student employment site</td>
-          </tr>
-          <tr>
-            <td><span class="rank r3">3</span>Visa &amp; work authorization</td>
-            <td data-k="What they asked">"What do I need before my first day of work? Do I need an SSN?"</td>
-            <td data-k="Where it lived">Grad College "International Students" page sends students to ISSO; I-9 is done in Workday plus an in-person ISSO appointment</td>
-          </tr>
-          <tr>
-            <td><span class="rank r4">4</span>Forms &amp; deadlines</td>
-            <td data-k="What they asked">"Which form do I need, and is it in Workday or a PDF?"</td>
-            <td data-k="Where it lived">Student Forms page mixing Workday tasks and PDF forms under long headings</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="source">Ranking from my question log and student conversations. Rules from the <a href="https://catalog.iastate.edu/graduatecollege/" target="_blank" rel="noopener">ISU Graduate Catalog</a> and <a href="https://isso.dso.iastate.edu/students/f-1-students/on-campus-employment" target="_blank" rel="noopener">ISSO</a>.</p>
+    <div class="viz" id="vizMatrix">
+      <div class="viz-title">One question, many places to look</div>
+      <div class="viz-sub">Where the answer to each need lived, ranked by how often students asked</div>
+      <div class="matrix-scroll">
+        <div class="matrix" role="table" aria-label="Where each student need was answered">
+          <div class="mx-h l" role="columnheader">Student need</div>
+          <div class="mx-h" role="columnheader">Grad College</div>
+          <div class="mx-h" role="columnheader">Department pages</div>
+          <div class="mx-h" role="columnheader">Graduate Catalog</div>
+          <div class="mx-h" role="columnheader">ISSO</div>
+          <div class="mx-h" role="columnheader">Workday</div>
+          <div class="mx-h" role="columnheader">Job site</div>
+          <div class="mx-h r" role="columnheader">Places</div>
 
-    <div class="chart" id="chart">
-      <div class="chart-title">Where ISU's international Ph.D. students are</div>
-      <div class="chart-sub">Top 5 Ph.D. majors by international enrollment, Fall 2026</div>
-      <ul class="bars">
-        <li class="bar-row">
-          <div class="bar-label">Computer Science</div>
-          <div class="bar-track"><div class="bar-fill" style="--v:100.0%"></div></div>
-          <div class="bar-val">128</div>
-          <div class="bar-tip">128 international Ph.D. students in Computer Science</div>
-        </li>
-        <li class="bar-row">
-          <div class="bar-label">Mechanical Engineering</div>
-          <div class="bar-track"><div class="bar-fill" style="--v:90.6%"></div></div>
-          <div class="bar-val">116</div>
-          <div class="bar-tip">116 international Ph.D. students in Mechanical Engineering</div>
-        </li>
-        <li class="bar-row">
-          <div class="bar-label">Electrical Engineering</div>
-          <div class="bar-track"><div class="bar-fill" style="--v:61.7%"></div></div>
-          <div class="bar-val">79</div>
-          <div class="bar-tip">79 international Ph.D. students in Electrical Engineering</div>
-        </li>
-        <li class="bar-row">
-          <div class="bar-label">Civil Engineering</div>
-          <div class="bar-track"><div class="bar-fill" style="--v:61.7%"></div></div>
-          <div class="bar-val">79</div>
-          <div class="bar-tip">79 international Ph.D. students in Civil Engineering</div>
-        </li>
-        <li class="bar-row">
-          <div class="bar-label">Statistics</div>
-          <div class="bar-track"><div class="bar-fill" style="--v:53.1%"></div></div>
-          <div class="bar-val">68</div>
-          <div class="bar-tip">68 international Ph.D. students in Statistics</div>
-        </li>
-      </ul>
-      <p class="source">Source: <a href="https://isso.dso.iastate.edu/media/10/file/Student%20Fact%20Sheet" target="_blank" rel="noopener">ISU International Students &amp; Scholars Office, Student Fact Sheet</a>, Fall 2026.</p>
+          <div class="mx-row" role="row">
+            <div class="mx-need" role="cell"><span class="rank">1</span><span class="need-name">Scholarships &amp; research funding<span class="need-q">"Does it cover my tuition?"</span></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.05s"></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.1s"></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.15s"></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.2s"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div class="places" role="cell"><b>4</b></div>
+          </div>
+          <div class="mx-row" role="row">
+            <div class="mx-need" role="cell"><span class="rank r2">2</span><span class="need-name">On-campus part-time jobs<span class="need-q">"How many hours can I work?"</span></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.25s"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.3s"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.35s"></span></div>
+            <div class="places" role="cell"><b>3</b></div>
+          </div>
+          <div class="mx-row" role="row">
+            <div class="mx-need" role="cell"><span class="rank r3">3</span><span class="need-name">Visa &amp; work authorization<span class="need-q">"What do I need before day one?"</span></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.4s"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.45s"></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.5s"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div class="places" role="cell"><b>3</b></div>
+          </div>
+          <div class="mx-row" role="row">
+            <div class="mx-need" role="cell"><span class="rank r4">4</span><span class="need-name">Forms &amp; deadlines<span class="need-q">"Is it in Workday or a PDF?"</span></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.55s"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div role="cell"><span class="dot" style="transition-delay:.6s"></span></div>
+            <div role="cell"><span class="nodot"></span></div>
+            <div class="places" role="cell"><b>2</b></div>
+          </div>
+        </div>
+      </div>
+      <p class="source">Ranking from my question log and student conversations.</p>
     </div>
-    <p style="margin-top:20px;">These are research-heavy programs, where doctoral students typically depend on research and teaching assistantships. So it made sense that funding came up first. A student asking "Is there funding?" is often really asking, "Can I afford to stay, and am I allowed to work for it?"</p>
+
+    <div class="viz" id="vizPhd">
+      <div class="viz-title">Why funding leads: ISU's largest international Ph.D. programs</div>
+      <div class="viz-sub">International Ph.D. students by major, Fall 2026</div>
+      <div class="cols-wrap">
+        <div>
+          <div class="cols">
+            <div class="col"><span class="tip">Computer Science: 128</span><span class="col-val">128</span><div class="col-bar" style="--h:100%"></div></div>
+            <div class="col"><span class="tip">Mechanical Engineering: 116</span><span class="col-val">116</span><div class="col-bar" style="--h:90.6%"></div></div>
+            <div class="col"><span class="tip">Electrical Engineering: 79</span><span class="col-val">79</span><div class="col-bar" style="--h:61.7%"></div></div>
+            <div class="col"><span class="tip">Civil Engineering: 79</span><span class="col-val">79</span><div class="col-bar" style="--h:61.7%"></div></div>
+            <div class="col"><span class="tip">Statistics: 68</span><span class="col-val">68</span><div class="col-bar" style="--h:53.1%"></div></div>
+          </div>
+          <div class="col-labels">
+            <span>Computer Science</span><span>Mechanical Eng.</span><span>Electrical Eng.</span><span>Civil Eng.</span><span>Statistics</span>
+          </div>
+        </div>
+        <div class="total">
+          <b>470</b>
+          <span>international Ph.D. students in these 5 research-heavy programs, where funding usually means an assistantship</span>
+        </div>
+      </div>
+      <p class="source">Source: <a href="https://isso.dso.iastate.edu/media/10/file/Student%20Fact%20Sheet" target="_blank" rel="noopener">ISU International Students &amp; Scholars Office</a>, Fall 2026.</p>
+    </div>
   </section>
 
-  <!-- 5. INSIGHTS -->
+  <!-- INSIGHTS -->
   <section id="insights" class="section reveal">
     <div class="eyebrow">Key insights</div>
-    <h2 class="section-heading">Students weren't failing to search. The answers were split across offices.</h2>
+    <h2 class="section-heading">Students weren't failing to search. <span class="hl">The answers were split across offices.</span></h2>
     <ol class="insights">
       <li class="insight">
         <div class="insight-num">01</div>
-        <div>
-          <div class="insight-title">One question, four places to look</div>
-          <div class="insight-text">To answer "How do I fund my degree?", a student needed the Graduate College (scholarships and fellowships), department pages (research assistantships), the Graduate Catalog (tuition rules), and, for international students, ISSO (work-hour limits). No single page connected them, so students asked staff to do it for them.</div>
-          <div class="evidence"><b>Evidence:</b> question log, page audit</div>
-        </div>
+        <div class="insight-title">One question, four places to look</div>
+        <div class="insight-text">Funding info was spread across the Grad College, departments, the Catalog, and ISSO.</div>
+        <div class="tags"><span class="tag">Question log</span><span class="tag">Site audit</span></div>
       </li>
       <li class="insight">
         <div class="insight-num">02</div>
-        <div>
-          <div class="insight-title">Audience menus don't fit international students</div>
-          <div class="insight-text">"Future Students" and "Current Students" assume needs change on enrollment day. International students need visa and funding information across both stages, so they bounced between menus.</div>
-          <div class="evidence"><b>Evidence:</b> student conversations, navigation audit</div>
-        </div>
+        <div class="insight-title">Audience menus don't fit everyone</div>
+        <div class="insight-text">International students need visa and funding info both before and after they enroll.</div>
+        <div class="tags"><span class="tag">Conversations</span><span class="tag">Site audit</span></div>
       </li>
       <li class="insight">
         <div class="insight-num">03</div>
-        <div>
-          <div class="insight-title">"Is it in Workday or is it a PDF?"</div>
-          <div class="insight-text">After the move to Workday, the forms page mixed Workday tasks with downloadable PDFs. Students knew the form's purpose but not which system to open.</div>
-          <div class="evidence"><b>Evidence:</b> question log, content audit</div>
-        </div>
+        <div class="insight-title">"Workday or PDF?"</div>
+        <div class="insight-text">Students knew which form they needed, but not which system to open.</div>
+        <div class="tags"><span class="tag">Question log</span></div>
       </li>
       <li class="insight">
         <div class="insight-num">04</div>
-        <div>
-          <div class="insight-title">Menus need to work without a mouse</div>
-          <div class="insight-text">Checking the menus with only a keyboard showed that the highlighted item and the open menu need to stay in sync, so keyboard and screen-reader users always know where they are.</div>
-          <div class="evidence"><b>Evidence:</b> accessibility walkthrough</div>
-        </div>
+        <div class="insight-title">Menus must work without a mouse</div>
+        <div class="insight-text">Keyboard and screen-reader users need the highlighted item and open menu to stay in sync.</div>
+        <div class="tags"><span class="tag">Keyboard walkthrough</span></div>
       </li>
     </ol>
   </section>
 
-
-  <!-- 7. DESIGN DIRECTIONS -->
+  <!-- DESIGN -->
   <section id="design" class="section reveal">
     <div class="eyebrow">From research to design</div>
-    <h2 class="section-heading">Organize around the student's task, not the office's structure.</h2>
-    <p>Each insight shaped a part of the site I then designed and built, working with my supervisor on priorities and review.</p>
+    <h2 class="section-heading">Organize around the <span class="hl">student's task,</span> not the office's structure.</h2>
     <div class="directions">
       <div class="direction">
         <div class="direction-tag">From insight 01</div>
         <div class="direction-name">One funding hub</div>
-        <div class="direction-desc">A single page for scholarships, fellowships, and assistantships: what's available, what it covers, how to apply, and the work rules for international students, in the order a student needs them.</div>
+        <div class="direction-desc">What's available, what it covers, and how to apply, in one place.</div>
       </div>
       <div class="direction">
         <div class="direction-tag">From insights 02 &amp; 03</div>
         <div class="direction-name">"I want to…" entry points</div>
-        <div class="direction-desc">Task-based shortcuts ("find funding", "submit a form") that work for future and current students alike, with each form clearly labeled Workday or PDF.</div>
+        <div class="direction-desc">Task shortcuts for every student, with forms labeled Workday or PDF.</div>
       </div>
       <div class="direction">
         <div class="direction-tag">From insight 04</div>
         <div class="direction-name">Accessible menus</div>
-        <div class="direction-desc">Menus that close when focus leaves and open with Enter or Space, so keyboard and screen-reader users see what they're on.</div>
+        <div class="direction-desc">Keyboard and screen-reader friendly navigation.</div>
       </div>
     </div>
   </section>
 
-  <!-- 8. OUTCOME -->
+  <!-- OUTCOME -->
   <section id="outcome" class="section reveal">
     <div class="eyebrow">Outcome</div>
-    <div class="outcome">
-      <h2 class="section-heading">What I shipped.</h2>
-      <p>I designed and developed updates across the four areas the research pointed to, with my supervisor guiding priorities and reviewing each change before it went live.</p>
-      <ul class="shipped">
-        <li><b>Funding pages</b><span>Scholarships, fellowships, and assistantships organized around the questions students actually asked: what's available, what it covers, and how to apply.</span></li>
-        <li><b>Student Forms</b><span>A cleaner forms page where each item clearly shows whether it's done in Workday or as a PDF.</span></li>
-        <li><b>International student information</b><span>Clearer paths for international students, connecting Graduate College content with the ISSO rules they need.</span></li>
-        <li><b>Navigation &amp; menus</b><span>Menu structure and labels revised, with attention to keyboard and screen-reader behavior.</span></li>
-      </ul>
-      <p>The biggest lesson: students rarely say "I can't find the page." They say "Is there funding for me?" Listening to the real question, then tracing where its answer lived, showed that the problem wasn't the search box. It was how the information was split up.</p>
+    <h2 class="section-heading">What I shipped.</h2>
+    <p class="lead">I designed and developed all four areas, with my supervisor guiding priorities and reviewing changes before launch.</p>
+    <ul class="shipped">
+      <li><b>Funding pages</b>Organized around what students actually asked.</li>
+      <li><b>Student Forms</b>Every form clearly labeled Workday or PDF.</li>
+      <li><b>International student info</b>Clear paths connecting to ISSO rules.</li>
+      <li><b>Navigation &amp; menus</b>Clearer labels, keyboard-friendly.</li>
+    </ul>
+    <div class="lesson">
+      <div class="lesson-k">The biggest lesson</div>
+      <div class="lesson-q">Students rarely say "I can't find the page." They say "Is there funding for me?" The problem wasn't search. It was how the information was split up.</div>
       <a class="visit" href="https://www.grad-college.iastate.edu/" target="_blank" rel="noopener">
         Visit the Graduate College site
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -903,40 +888,31 @@
     </div>
   </section>
 
-  <!-- THE SITE TODAY -->
+  <!-- SITE TODAY -->
   <section id="today" class="section reveal">
     <div class="eyebrow">The site today</div>
-    <h2 class="section-heading">What students see on the Graduate College website now.</h2>
+    <h2 class="section-heading">What students see now.</h2>
     <div class="figs">
       <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/nav-future-menu.png" alt="Future Students menu open with a visible keyboard focus outline"></button>
-        <figcaption><b>Future Students menu.</b> Links grouped by task, with a clear focus outline for keyboard users.</figcaption>
+        <button type="button" class="shot"><img src="assets/ux/nav-future-menu.png" alt="Future Students menu with a visible keyboard focus outline"></button>
+        <figcaption><b>Future Students menu.</b> Grouped links, clear keyboard focus.</figcaption>
       </figure>
       <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/nav-current-focus.png" alt="Keyboard focus on the Current Students menu item"></button>
-        <figcaption><b>Moving through the menu.</b> Each menu and its toggle can be reached with the keyboard.</figcaption>
-      </figure>
-    </div>
-    <div class="figs three">
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/international-page.png" alt="International Students section with a link to the International Students and Scholars Office"></button>
-        <figcaption><b>International Students.</b> A welcoming overview with a direct link to ISSO.</figcaption>
+        <button type="button" class="shot"><img src="assets/ux/international-page.png" alt="International Students section with a link to ISSO"></button>
+        <figcaption><b>International Students.</b> Overview with a direct link to ISSO.</figcaption>
       </figure>
       <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/student-forms-workday.png" alt="Student Forms page introducing Workday with login and help links"></button>
-        <figcaption><b>Student Forms.</b> Explains what moved to Workday, with login and help links up front.</figcaption>
+        <button type="button" class="shot"><img src="assets/ux/student-forms-workday.png" alt="Student Forms page introducing Workday"></button>
+        <figcaption><b>Student Forms.</b> Workday login and help up front.</figcaption>
       </figure>
       <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/forms-list.png" alt="Forms grouped by topic, each labeled with Workday where it applies"></button>
-        <figcaption><b>Forms by topic.</b> Grouped by milestone, with Workday tasks labeled.</figcaption>
+        <button type="button" class="shot"><img src="assets/ux/forms-list.png" alt="Forms grouped by topic, with Workday tasks labeled"></button>
+        <figcaption><b>Forms by topic.</b> Grouped by milestone, Workday tasks labeled.</figcaption>
       </figure>
     </div>
   </section>
 
-
 </main>
-
-
 </div>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Zoomed image">
@@ -947,13 +923,30 @@
 </div>
 
 <script>
-  // fade sections in as they scroll into view; bars grow when the chart appears
+  // label each matrix cell with its column (used for the phone layout)
+  const mxHeads = Array.from(document.querySelectorAll('.mx-h')).map(h => h.textContent.trim());
+  document.querySelectorAll('.mx-row').forEach(row => {
+    Array.from(row.children).forEach((cell, i) => {
+      if (i > 0 && i < mxHeads.length - 1) cell.dataset.p = mxHeads[i];
+    });
+  });
+
+  // build the waffle: 100 squares, 35 international
+  const waffle = document.getElementById('waffle');
+  for (let i = 0; i < 100; i++){
+    const sq = document.createElement('i');
+    if (i < 35) sq.className = 'on';
+    sq.style.transitionDelay = (i * 8) + 'ms';
+    waffle.appendChild(sq);
+  }
+
+  // fade sections in; charts animate when they come into view
   const io = new IntersectionObserver((entries) => {
     entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal, .chart').forEach(el => io.observe(el));
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal, .viz').forEach(el => io.observe(el));
 
-  // mini bar: show it once the big title has scrolled off screen
+  // mini bar: show once the big title scrolls off; gold line shows reading progress
   const miniBar = document.getElementById('miniBar');
   const miniBack = miniBar.querySelector('a');
   new IntersectionObserver(([en]) => {
@@ -963,18 +956,20 @@
     miniBack.tabIndex = show ? 0 : -1;
   }).observe(document.querySelector('.page-title'));
 
-  // sidebar: highlight the section currently being read
+  // sidebar: highlight the section being read
   const tocLinks = Array.from(document.querySelectorAll('#toc a'));
   const tocTargets = tocLinks.map(a => document.querySelector(a.getAttribute('href')));
-  function updateToc(){
+  function onScroll(){
     const line = window.innerHeight * 0.3;
     let current = 0;
     tocTargets.forEach((sec, i) => { if (sec && sec.getBoundingClientRect().top <= line) current = i; });
     tocLinks.forEach((a, i) => a.classList.toggle('active', i === current));
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    miniBar.style.setProperty('--read', (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + '%');
   }
-  window.addEventListener('scroll', updateToc, { passive:true });
-  window.addEventListener('resize', updateToc);
-  updateToc();
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
 
   // click a screenshot to zoom
   const lightbox = document.getElementById('lightbox');
