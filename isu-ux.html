@@ -17,11 +17,12 @@
     --dim: #6e6e73;
     --blue: #0071e3;            /* site-wide link blue (Back hover) */
     /* Iowa State colors, used as this project's accent */
-    --cardinal: #c8102e;
-    --cardinal-deep: #9b0c23;
-    --cardinal-soft: #fcebed;
-    --gold: #f1be48;
-    --gold-soft: #fdf5e1;
+    /* one accent only: Apple blue */
+    --cardinal: #0071e3;
+    --cardinal-deep: #0058b9;
+    --cardinal-soft: #eef5ff;
+    --gold: #0071e3;
+    --gold-soft: #f5f5f7;
     --track: #ececf0;
     --hairline: rgba(0,0,0,0.08);
     --soft: #f5f5f7;
@@ -87,11 +88,11 @@
     font-size:17px; font-weight:700; letter-spacing:-0.015em; color:#111;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-  /* a thin ISU-gold line along the bottom of the bar */
+  /* thin blue reading-progress line along the bottom of the bar */
   .mini-bar::after{
     content:''; position:absolute; left:0; bottom:-1px; height:2px;
     width:var(--read, 0%);
-    background:linear-gradient(90deg, var(--cardinal), var(--gold));
+    background:var(--cardinal);
     transition:width 0.1s linear;
   }
 
@@ -104,6 +105,7 @@
     align-items:stretch;
   }
   .main{ min-width:0; width:100%; max-width:900px; margin:0 auto; }
+  @media (min-width:1760px){ .main{ max-width:1000px; } }
 
   .side{ min-width:0; }
   .page-lede{
@@ -131,19 +133,18 @@
     margin-top:32px;
     border-radius:18px;
     padding:20px 20px 18px;
-    background:linear-gradient(160deg, var(--cardinal) 0%, var(--cardinal-deep) 100%);
-    color:#fff;
+    background:var(--soft);
   }
-  .glance .glance-title{ color:rgba(255,255,255,0.7); }
-  .glance-row + .glance-row{ margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.18); }
+  .glance-row + .glance-row{ margin-top:14px; padding-top:14px; border-top:1px solid var(--hairline); }
   .glance-num{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     font-size:26px; font-weight:700; letter-spacing:-0.02em; line-height:1.1;
-    color:#fff;
+    color:#111;
   }
-  .glance-num small{ font-size:15px; color:var(--gold); font-weight:700; }
-  .glance-text{ font-size:13px; line-height:1.45; color:rgba(255,255,255,0.82); margin-top:4px; }
-  .glance-text b{ color:#fff; font-weight:600; }
+  .glance-row:first-of-type .glance-num{ color:var(--cardinal); }
+  .glance-num small{ font-size:15px; color:var(--dim); font-weight:700; }
+  .glance-text{ font-size:13px; line-height:1.45; color:var(--body); margin-top:4px; }
+  .glance-text b{ color:#111; font-weight:600; }
 
   /* ===== META ROW ===== */
   .meta{
@@ -163,21 +164,20 @@
   .eyebrow{
     display:flex; align-items:center; gap:10px;
     font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
-    color:var(--cardinal);
+    color:var(--dim);
     margin-bottom:12px;
   }
-  /* short ISU-gold rule, a nod to the Graduate College site */
-  .eyebrow::before{ content:''; width:22px; height:3px; border-radius:2px; background:var(--gold); }
+
   .section-heading{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:clamp(26px, 2.6vw, 34px);
-    font-weight:700; letter-spacing:-0.022em; line-height:1.18;
+    font-size:clamp(26px, 2.2vw, 32px);
+    font-weight:700; letter-spacing:-0.022em; line-height:1.2;
     color:#111;
     margin-bottom:14px;
   }
-  .section-heading .hl{ color:var(--cardinal); }
+  .section-heading .hl{ color:#86868b; }
   .lead{
-    font-size:18px; line-height:1.6; letter-spacing:-0.008em;
+    font-size:17px; line-height:1.6; letter-spacing:-0.006em;
     color:var(--body);
     max-width:720px;
   }
@@ -194,7 +194,7 @@
     background:var(--gold-soft);
     position:relative;
   }
-  .question-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8a6a10; margin-bottom:8px; }
+  .question-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); margin-bottom:8px; }
   .question-q{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     font-size:clamp(20px, 2vw, 24px); font-weight:700; letter-spacing:-0.018em; line-height:1.3; color:#111;
@@ -262,10 +262,10 @@
     padding:20px 18px 18px;
     transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
   }
-  @media (hover:hover){ .method:hover{ transform:translateY(-3px); background:var(--cardinal-soft); } }
+  @media (hover:hover){ .method:hover{ transform:translateY(-3px); background:#efeff2; } }
   .method-ic{
     width:38px; height:38px; border-radius:11px;
-    background:#fff; color:var(--cardinal);
+    background:#fff; color:#1d1d1f;
     display:flex; align-items:center; justify-content:center;
     margin-bottom:14px;
     box-shadow:0 1px 2px rgba(0,0,0,0.06);
@@ -283,7 +283,7 @@
   }
   .chip i{
     font-style:normal; width:22px; height:22px; border-radius:50%;
-    background:var(--cardinal); color:#fff;
+    background:#1d1d1f; color:#fff;
     display:inline-flex; align-items:center; justify-content:center;
     font-size:11.5px; font-weight:700;
   }
@@ -324,13 +324,13 @@
     display:inline-flex; align-items:center; justify-content:center;
     font-size:12px; font-weight:700;
   }
-  .rank.r2{ background:#d9475e; }
-  .rank.r3{ background:#e8808f; }
-  .rank.r4{ background:#f2b3bc; color:var(--cardinal-deep); }
+  .rank.r2, .rank.r3, .rank.r4{ background:#e8e8ed; color:#3a3a3c; }
   .need-name{ font-size:14.5px; font-weight:600; color:#111; line-height:1.3; }
   .need-q{ display:block; font-size:12.5px; font-weight:400; color:var(--dim); margin-top:2px; font-style:italic; }
-  .dot{ width:16px; height:16px; border-radius:50%; background:var(--cardinal); transform:scale(0); transition:transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .dot{ width:16px; height:16px; border-radius:50%; background:#3a3a3c; transform:scale(0); transition:transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
   .viz.in .dot{ transform:scale(1); }
+  .mx-row.top .dot{ background:var(--cardinal); }
+  .mx-row.top > div{ background:#f7faff; }
   .nodot{ width:5px; height:5px; border-radius:50%; background:#d8d8de; }
   .places{ justify-content:flex-end !important; gap:6px; }
   .places b{
@@ -359,10 +359,9 @@
     width:100%; max-width:68px;
     height:0;
     border-radius:6px 6px 0 0;
-    background:linear-gradient(180deg, var(--cardinal) 0%, var(--cardinal-deep) 100%);
+    background:#3a3a3c;
     transition:height 1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
   }
-  .col:nth-child(n+2) .col-bar{ background:linear-gradient(180deg, #d9475e 0%, #b81a33 100%); }
   .viz.in .col-bar{ height:var(--h); }
   .col-val{
     font-size:15px; font-weight:700; color:#111; margin-bottom:6px; font-variant-numeric:tabular-nums;
@@ -386,7 +385,7 @@
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     font-size:44px; font-weight:700; letter-spacing:-0.03em; line-height:1; color:var(--cardinal);
   }
-  .total span{ display:block; font-size:13.5px; line-height:1.45; color:#5a2a33; margin-top:8px; }
+  .total span{ display:block; font-size:13.5px; line-height:1.45; color:#1d3a5c; margin-top:8px; }
 
   /* tooltip for chart hovers */
   .tip{
@@ -401,6 +400,67 @@
   }
   .col:hover .tip{ opacity:1; transform:translate(-50%, 0); }
 
+  /* ===== NATIONAL STATS ===== */
+  .nat{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:26px; }
+  .nat-card{ background:var(--soft); border-radius:18px; padding:20px 20px 18px; }
+  .nat-num{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:34px; font-weight:700; letter-spacing:-0.03em; line-height:1; color:#111;
+    font-variant-numeric:tabular-nums;
+  }
+  .nat-num small{ font-size:18px; color:var(--dim); margin-left:2px; }
+  .nat-label{ font-size:13.5px; line-height:1.45; color:var(--body); margin-top:10px; }
+  .delta{ display:inline-block; font-size:12px; font-weight:600; border-radius:999px; padding:2px 8px; margin-left:6px; vertical-align:6px; }
+  .delta.down{ background:#f2f2f4; color:#3a3a3c; }
+  .delta.up{ background:#f2f2f4; color:#3a3a3c; }
+
+  /* horizontal bars (CGS), one bar highlighted */
+  .hbars{ list-style:none; margin-top:20px; }
+  .hbar{ display:grid; grid-template-columns:minmax(0, 1fr) 54px; column-gap:14px; align-items:center; padding:9px 0; position:relative; }
+  .hbar-label{ grid-column:1 / -1; font-size:14px; color:#333; margin-bottom:7px; line-height:1.35; }
+  .hbar-label b{ color:var(--cardinal); font-weight:600; }
+  .hbar-track{ height:10px; background:var(--track); border-radius:4px; overflow:hidden; }
+  .hbar-fill{ height:100%; width:0; background:#8e8e93; border-radius:4px; transition:width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+  .hbar.hi .hbar-fill{ background:var(--cardinal); }
+  .viz.in .hbar-fill{ width:var(--v); }
+  .hbar-val{ font-size:14px; font-weight:700; color:#111; text-align:right; font-variant-numeric:tabular-nums; }
+  @media (hover:hover){
+    .hbars:hover .hbar-fill{ opacity:0.4; }
+    .hbars .hbar:hover .hbar-fill{ opacity:1; }
+  }
+
+  /* ===== PEER BENCHMARK ===== */
+  .bench{
+    display:grid;
+    grid-template-columns:minmax(200px, 1.8fr) repeat(3, minmax(90px, 1fr));
+    margin-top:20px;
+    align-items:center;
+  }
+  .bench > div{ padding:13px 8px; border-bottom:1px solid var(--hairline); font-size:14px; color:#333; }
+  .bench .bh{ font-size:12px; font-weight:600; color:var(--dim); text-align:center; line-height:1.3; padding-bottom:12px; align-self:end; }
+  .bench .bh.l, .bench .bf{ text-align:left; }
+  .bench .bf{ font-weight:600; color:#111; }
+  .bench .bf small{ display:block; font-weight:400; color:var(--dim); font-size:12.5px; margin-top:2px; }
+  .bench .bc{ text-align:center; display:flex; justify-content:center; align-items:center; height:100%; }
+  .bench > div:nth-last-child(-n+4){ border-bottom:none; }
+  .mk{ width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
+  .mk svg{ width:13px; height:13px; }
+  .mk.y{ background:#1d1d1f; color:#fff; }
+  .mk.p{ background:#fff; border:2px solid #1d1d1f; position:relative; overflow:hidden; }
+  .mk.p::after{ content:''; position:absolute; left:0; top:0; bottom:0; width:50%; background:#1d1d1f; }
+  .mk.n{ background:var(--track); }
+  .bh .sh{ display:none; }
+  .bench-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:16px; font-size:12.5px; color:var(--dim); }
+  .bench-legend span{ display:inline-flex; align-items:center; gap:7px; }
+  .bench-legend .mk{ width:14px; height:14px; }
+  .bench-legend .mk.p{ border-width:1.5px; }
+  .ideas{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:16px; }
+  .idea{ border:1px solid var(--hairline); border-radius:16px; padding:18px 18px 16px; }
+  .idea-k{ font-size:12px; font-weight:600; color:var(--dim); margin-bottom:6px; }
+  .idea-t{ font-size:15.5px; font-weight:700; color:#111; letter-spacing:-0.012em; line-height:1.3; margin-bottom:5px; }
+  .idea-d{ font-size:13.5px; line-height:1.5; color:#555; }
+  .idea.isu{ background:var(--cardinal-soft); border-color:transparent; }
+
   /* ===== INSIGHTS ===== */
   .insights{ list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:26px; }
   .insight{
@@ -413,14 +473,13 @@
   .insight-num{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     font-size:44px; font-weight:700; letter-spacing:-0.04em; line-height:1;
-    color:var(--cardinal);
-    opacity:0.18;
+    color:#d2d2d7;
     position:absolute; top:16px; right:20px;
   }
   .insight-title{ font-size:17.5px; font-weight:700; letter-spacing:-0.018em; color:#111; margin-bottom:8px; line-height:1.3; padding-right:56px; }
   .insight-text{ font-size:14.5px; line-height:1.55; color:var(--body); }
   .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
-  .tag{ font-size:11.5px; font-weight:600; color:var(--cardinal-deep); background:#fff; border-radius:999px; padding:4px 10px; }
+  .tag{ font-size:11.5px; font-weight:600; color:#3a3a3c; background:#fff; border-radius:999px; padding:4px 10px; }
 
   /* ===== DESIGN DIRECTIONS ===== */
   .directions{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:26px; }
@@ -428,9 +487,8 @@
     border:1px solid var(--hairline);
     border-radius:18px;
     padding:20px 20px 18px;
-    border-top:3px solid var(--gold);
   }
-  .direction-tag{ font-size:12px; font-weight:600; color:var(--cardinal); margin-bottom:8px; }
+  .direction-tag{ font-size:12px; font-weight:600; color:var(--dim); margin-bottom:8px; }
   .direction-name{ font-size:16.5px; font-weight:700; letter-spacing:-0.015em; color:#111; margin-bottom:6px; line-height:1.3; }
   .direction-desc{ font-size:14px; line-height:1.5; color:#555; }
 
@@ -447,17 +505,17 @@
     content:'';
     position:absolute; left:18px; top:19px;
     width:22px; height:22px; border-radius:50%;
-    background:var(--cardinal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='5 12.5 10 17 19 7'/%3E%3C/svg%3E") center/13px no-repeat;
+    background:#1d1d1f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='5 12.5 10 17 19 7'/%3E%3C/svg%3E") center/13px no-repeat;
   }
   .shipped b{ display:block; font-size:15.5px; font-weight:700; color:#111; letter-spacing:-0.01em; margin-bottom:3px; }
   .lesson{
     margin-top:22px;
     border-radius:18px;
     padding:26px 28px;
-    background:linear-gradient(160deg, var(--cardinal) 0%, var(--cardinal-deep) 100%);
+    background:#1d1d1f;
     color:#fff;
   }
-  .lesson-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .lesson-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#a1a1a6; margin-bottom:8px; }
   .lesson-q{
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     font-size:clamp(19px, 1.9vw, 23px); font-weight:600; letter-spacing:-0.015em; line-height:1.4;
@@ -466,11 +524,11 @@
     display:inline-flex; align-items:center; gap:8px;
     margin-top:20px;
     font-size:14.5px; font-weight:600;
-    color:var(--cardinal-deep); background:#fff;
+    color:#fff; background:var(--cardinal);
     border-radius:980px; padding:11px 20px;
     transition:transform 0.15s ease, gap 0.15s ease;
   }
-  .visit:hover{ transform:translateY(-2px); gap:11px; }
+  .visit:hover{ transform:translateY(-2px); gap:11px; background:#0077ed; }
   .visit svg{ width:15px; height:15px; }
 
   /* ===== SITE TODAY — screenshots ===== */
@@ -522,12 +580,12 @@
   }
 
   /* ===== BIG MONITORS — scale up, keep aligned under the title ===== */
-  @media (min-width:1760px){ :root{ --z:1.1; } .layout{ zoom:var(--z); } }
-  @media (min-width:1920px){ :root{ --z:1.2; } .layout{ zoom:var(--z); } }
-  @media (min-width:2100px){ :root{ --z:1.3; } .layout{ zoom:var(--z); } }
-  @media (min-width:2300px){ :root{ --z:1.42; } .layout{ zoom:var(--z); } }
-  @media (min-width:2560px){ :root{ --z:1.6; } .layout{ zoom:var(--z); } }
-  @media (min-width:3000px){ :root{ --z:1.85; } .layout{ zoom:var(--z); } }
+  @media (min-width:1760px){ :root{ --z:1.04; } .layout{ zoom:var(--z); } }
+  @media (min-width:1920px){ :root{ --z:1.08; } .layout{ zoom:var(--z); } }
+  @media (min-width:2100px){ :root{ --z:1.14; } .layout{ zoom:var(--z); } }
+  @media (min-width:2300px){ :root{ --z:1.2; } .layout{ zoom:var(--z); } }
+  @media (min-width:2560px){ :root{ --z:1.3; } .layout{ zoom:var(--z); } }
+  @media (min-width:3000px){ :root{ --z:1.45; } .layout{ zoom:var(--z); } }
 
   /* ===== SMALL LAPTOPS / TABLETS ===== */
   @media (max-width:1100px){
@@ -541,6 +599,8 @@
     .directions{ grid-template-columns:1fr; }
     .meta{ grid-template-columns:repeat(2, auto); justify-content:start; column-gap:40px; }
     .cols-wrap{ grid-template-columns:1fr; }
+    .nat{ grid-template-columns:1fr 1fr; }
+    .ideas{ grid-template-columns:1fr; }
     .total{ width:auto; }
   }
   /* ===== PHONES ===== */
@@ -562,6 +622,12 @@
     .cols{ height:170px; }
     .col-labels span{ font-size:11px; }
     .lesson{ padding:22px 20px; }
+    .nat, .ideas{ grid-template-columns:1fr; }
+    .bench{ grid-template-columns:minmax(150px, 1.6fr) repeat(3, minmax(56px, 1fr)); }
+    .bench > div{ padding:12px 4px; font-size:13px; }
+    .bench .bh{ font-size:12px; }
+    .bh .lg{ display:none; }
+    .bh .sh{ display:inline; }
 
     /* matrix becomes one card per need, with the places as tags */
     .matrix-scroll{ overflow:visible; margin:16px 0 0; padding:0; }
@@ -613,6 +679,8 @@
       <li><a href="#who">Who uses it</a></li>
       <li><a href="#methods">How I researched it</a></li>
       <li><a href="#needs">What students look for</a></li>
+      <li><a href="#beyond">Beyond ISU</a></li>
+      <li><a href="#peers">Peer benchmark</a></li>
       <li><a href="#insights">Key insights</a></li>
       <li><a href="#design">Research to design</a></li>
       <li><a href="#outcome">Outcome</a></li>
@@ -649,7 +717,7 @@
   <!-- CONTEXT -->
   <section id="context" class="section reveal">
     <div class="eyebrow">Context</div>
-    <h2 class="section-heading">A website organized around the office, <span class="hl">not around the student.</span></h2>
+    <h2 class="section-heading"><span class="hl">Organized around the office.</span> Not around the student.</h2>
     <p class="lead">Pages were sorted by audience and by the office's own categories. That works if you already know where to look. Most new graduate students don't.</p>
     <div class="question">
       <div class="question-k">Research question</div>
@@ -660,7 +728,7 @@
   <!-- WHO -->
   <section id="who" class="section reveal">
     <div class="eyebrow">Who uses it</div>
-    <h2 class="section-heading">About <span class="hl">one in three</span> ISU graduate students is international.</h2>
+    <h2 class="section-heading"><span class="hl">One in three.</span> That's how many ISU grad students are international.</h2>
     <p class="lead">Their questions come with rules attached: visa status, work-hour limits, and extra paperwork.</p>
 
     <div class="viz" id="vizWho">
@@ -688,7 +756,7 @@
   <!-- METHODS -->
   <section id="methods" class="section reveal">
     <div class="eyebrow">How I researched it</div>
-    <h2 class="section-heading">I listened <span class="hl">where the questions were already happening.</span></h2>
+    <h2 class="section-heading"><span class="hl">No lab needed.</span> I listened where the questions already happened.</h2>
 
     <div class="methods">
       <div class="method">
@@ -709,7 +777,7 @@
       <div class="method">
         <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
         <div class="method-name">Desk research</div>
-        <div class="method-desc">Checked patterns against ISU enrollment data.</div>
+        <div class="method-desc">Checked patterns against ISU and national data.</div>
       </div>
     </div>
 
@@ -724,7 +792,7 @@
   <!-- NEEDS -->
   <section id="needs" class="section reveal">
     <div class="eyebrow">What students look for</div>
-    <h2 class="section-heading">The top question: <span class="hl">"How do I pay for it?"</span></h2>
+    <h2 class="section-heading"><span class="hl">The top question:</span> "How do I pay for it?"</h2>
     <p class="lead">Funding came first. And every top need sent students to <strong>two to four different places</strong> for one answer.</p>
 
     <div class="viz" id="vizMatrix">
@@ -741,7 +809,7 @@
           <div class="mx-h" role="columnheader">Job site</div>
           <div class="mx-h r" role="columnheader">Places</div>
 
-          <div class="mx-row" role="row">
+          <div class="mx-row top" role="row">
             <div class="mx-need" role="cell"><span class="rank">1</span><span class="need-name">Scholarships &amp; research funding<span class="need-q">"Does it cover my tuition?"</span></span></div>
             <div role="cell"><span class="dot" style="transition-delay:.05s"></span></div>
             <div role="cell"><span class="dot" style="transition-delay:.1s"></span></div>
@@ -811,10 +879,88 @@
     </div>
   </section>
 
+  <!-- BEYOND ISU -->
+  <section id="beyond" class="section reveal">
+    <div class="eyebrow">Beyond ISU</div>
+    <h2 class="section-heading"><span class="hl">It's not just ISU.</span> Funding and visas worry international grad students everywhere.</h2>
+    <p class="lead">National data shows the same pattern I heard in the office, so the findings weren't just local.</p>
+
+    <div class="nat">
+      <div class="nat-card"><div class="nat-num">488K</div><div class="nat-label">international graduate students in the U.S., 2024/25 <span class="delta down">−2.7%</span></div></div>
+      <div class="nat-card"><div class="nat-num">44<small>%</small></div><div class="nat-label">of international students study math, computer science or engineering, like ISU's top Ph.D. programs</div></div>
+      <div class="nat-card"><div class="nat-num">294K</div><div class="nat-label">on Optional Practical Training, the post-study work permit <span class="delta up">+21%</span></div></div>
+    </div>
+    <p class="source">Source: <a href="https://opendoorsdata.org/wp-content/uploads/2025/11/OD25_Fast-Facts.pdf" target="_blank" rel="noopener">IIE Open Doors 2025 Fast Facts</a>.</p>
+
+    <div class="viz" id="vizCgs">
+      <div class="viz-title">What U.S. graduate schools hear from international students</div>
+      <div class="viz-sub">Share of institutions reporting each concern, 2026</div>
+      <ul class="hbars">
+        <li class="hbar"><div class="hbar-label">Longer visa processing for admitted students</div><div class="hbar-track"><div class="hbar-fill" style="--v:82.6%"></div></div><div class="hbar-val">83%</div></li>
+        <li class="hbar"><div class="hbar-label">Current students worried about visa status</div><div class="hbar-track"><div class="hbar-fill" style="--v:75.3%"></div></div><div class="hbar-val">75%</div></li>
+        <li class="hbar"><div class="hbar-label">Current students worried about losing OPT</div><div class="hbar-track"><div class="hbar-fill" style="--v:60%"></div></div><div class="hbar-val">60%</div></li>
+        <li class="hbar hi"><div class="hbar-label"><b>Funding</b> cited when admitted students declined</div><div class="hbar-track"><div class="hbar-fill" style="--v:43%"></div></div><div class="hbar-val">43%</div></li>
+      </ul>
+      <p class="source">Source: <a href="https://cgsnet.org/wp-content/uploads/2026/08/2026-International-Flash-Survey-Brief.pdf" target="_blank" rel="noopener">Council of Graduate Schools, 2026 International Survey</a>.</p>
+    </div>
+  </section>
+
+  <!-- PEER BENCHMARK -->
+  <section id="peers" class="section reveal">
+    <div class="eyebrow">Peer benchmark</div>
+    <h2 class="section-heading"><span class="hl">Peer schools.</span> How others explain funding.</h2>
+    <p class="lead">I compared the funding pages of three peer public universities. None of them did everything well, but each had an idea worth borrowing.</p>
+
+    <div class="viz">
+      <div class="viz-title">Funding pages at peer graduate schools</div>
+      <div class="viz-sub">What a student finds on each school's main funding page</div>
+      <div class="matrix-scroll">
+        <div class="bench" role="table" aria-label="Peer funding page comparison">
+          <div class="bh l" role="columnheader">Feature</div>
+          <div class="bh" role="columnheader"><span class="lg">Illinois<br>Urbana-Champaign</span><span class="sh">UIUC</span></div>
+          <div class="bh" role="columnheader"><span class="lg">Illinois<br>Chicago</span><span class="sh">UIC</span></div>
+          <div class="bh" role="columnheader"><span class="lg">University<br>of Iowa</span><span class="sh">Iowa</span></div>
+        <div class="bf">Funding hub page<small>One place that lists all funding types</small></div>
+        <div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div>
+        <div class="bf">Searchable funding finder<small>Filter or search opportunities</small></div>
+        <div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk p" aria-label="Partly"></span></div><div class="bc"><span class="mk n" aria-label="No"></span></div>
+        <div class="bf">Plain-language explainer<small>How assistantships &amp; tuition waivers work</small></div>
+        <div class="bc"><span class="mk p" aria-label="Partly"></span></div><div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk n" aria-label="No"></span></div>
+        <div class="bf">Notes for international students<small>Eligibility, enrollment or work rules on the funding page</small></div>
+        <div class="bc"><span class="mk p" aria-label="Partly"></span></div><div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk n" aria-label="No"></span></div>
+        </div>
+      </div>
+      <div class="bench-legend">
+        <span><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span>Yes</span>
+        <span><span class="mk p" aria-label="Partly"></span>Partly</span>
+        <span><span class="mk n" aria-label="No"></span>No</span>
+      </div>
+      <p class="source">Reviewed October 2026: <a href="https://grad.illinois.edu/funding" target="_blank" rel="noopener">UIUC Graduate College</a>, <a href="https://grad.uic.edu/funding-awards/graduate-funding-overview/" target="_blank" rel="noopener">UIC Graduate College</a>, <a href="https://grad.uiowa.edu/funding" target="_blank" rel="noopener">University of Iowa Graduate College</a>.</p>
+    </div>
+
+    <div class="ideas">
+      <div class="idea">
+        <div class="idea-k">Illinois Urbana-Champaign</div>
+        <div class="idea-t">A searchable Fellowship Finder</div>
+        <div class="idea-d">Plus an assistantship clearinghouse and campus job boards in the same menu.</div>
+      </div>
+      <div class="idea">
+        <div class="idea-k">Illinois Chicago</div>
+        <div class="idea-t">Funding explained in plain words</div>
+        <div class="idea-d">A step-by-step guide with FAQs and clear notes for international students.</div>
+      </div>
+      <div class="idea isu">
+        <div class="idea-k">For ISU</div>
+        <div class="idea-t">Combine both</div>
+        <div class="idea-d">One funding hub that explains how it works, then points to where to apply.</div>
+      </div>
+    </div>
+  </section>
+
   <!-- INSIGHTS -->
   <section id="insights" class="section reveal">
     <div class="eyebrow">Key insights</div>
-    <h2 class="section-heading">Students weren't failing to search. <span class="hl">The answers were split across offices.</span></h2>
+    <h2 class="section-heading"><span class="hl">Students weren't failing to search.</span> The answers were split across offices.</h2>
     <ol class="insights">
       <li class="insight">
         <div class="insight-num">01</div>
@@ -846,7 +992,7 @@
   <!-- DESIGN -->
   <section id="design" class="section reveal">
     <div class="eyebrow">From research to design</div>
-    <h2 class="section-heading">Organize around the <span class="hl">student's task,</span> not the office's structure.</h2>
+    <h2 class="section-heading"><span class="hl">The fix.</span> Organize around the student's task, not the office.</h2>
     <div class="directions">
       <div class="direction">
         <div class="direction-tag">From insight 01</div>
@@ -945,7 +1091,7 @@
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal, .viz').forEach(el => io.observe(el));
 
-  // mini bar: show once the big title scrolls off; gold line shows reading progress
+  // mini bar: show once the big title scrolls off; blue line shows reading progress
   const miniBar = document.getElementById('miniBar');
   const miniBack = miniBar.querySelector('a');
   new IntersectionObserver(([en]) => {
