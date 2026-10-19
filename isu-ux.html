@@ -37,11 +37,11 @@
   }
   a{ color:inherit; text-decoration:none; }
   html{ scroll-behavior:smooth; }
-  section[id]{ scroll-margin-top:32px; }
+  section[id]{ scroll-margin-top:84px; }
   :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
 
   /* PAGE HEADER — identical to Digital Works / 1982 Benz */
-  .page-header{ padding:56px var(--page-gutter) 0; }
+  .page-header{ padding:56px var(--page-gutter) 0; margin-bottom:28px; }
   .back-link{
     display:inline-flex;
     align-items:center;
@@ -86,17 +86,30 @@
     display:grid;
     /* text column grows up to 1040px, sidebar sits right beside it,
        so there is no empty gap between them */
-    grid-template-columns:minmax(0, 1040px) 260px;
-    justify-content:start;
-    column-gap:clamp(48px, 6vw, 96px);
-    align-items:start;
+    /* left: intro + "On this page" (lined up under the title);
+       right: the case study, centered in the remaining space */
+    grid-template-columns:clamp(280px, 24vw, 360px) minmax(0, 1fr);
+    column-gap:clamp(48px, 6vw, 112px);
+    align-items:stretch;
   }
-  .main{ min-width:0; }
+  .main{
+    min-width:0;
+    width:100%;
+    max-width:900px;
+    margin:0 auto;
+  }
 
-  .side{
+  .side{ min-width:0; }
+  .side .page-lede{
+    font-size:18px;
+    line-height:1.55;
+    margin:0 0 40px;
+    max-width:none;
+  }
+  /* menu + at-a-glance follow you down the page */
+  .side-sticky{
     position:sticky;
-    top:40px;
-    padding-top:4px;
+    top:88px;
   }
   .toc-title, .glance-title{
     font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
@@ -144,7 +157,9 @@
 
   @media (max-width:1100px){
     .layout{ display:block; }
-    .side{ display:none; }
+    .side-sticky{ display:none; }
+    .side .page-lede{ font-size:clamp(17px, 2.2vw, 19px); margin-bottom:36px; }
+    .main{ max-width:var(--content-w); margin:0; }
   }
 
   /* fill-in markers: anything Hang still needs to confirm */
@@ -519,12 +534,45 @@
      display looks like a laptop, just larger, instead of leaving an
      empty strip on the right. Back + title stay identical to the other
      project pages. */
-  @media (min-width:1760px){ :root{ --z:1.1; } .layout, .page-lede{ zoom:var(--z); } }
-  @media (min-width:1920px){ :root{ --z:1.2; } .layout, .page-lede{ zoom:var(--z); } }
-  @media (min-width:2100px){ :root{ --z:1.3; } .layout, .page-lede{ zoom:var(--z); } }
-  @media (min-width:2300px){ :root{ --z:1.42; } .layout, .page-lede{ zoom:var(--z); } }
-  @media (min-width:2560px){ :root{ --z:1.6; } .layout, .page-lede{ zoom:var(--z); } }
-  @media (min-width:3000px){ :root{ --z:1.85; } .layout, .page-lede{ zoom:var(--z); } }
+  @media (min-width:1760px){ :root{ --z:1.1; } .layout{ zoom:var(--z); } }
+  @media (min-width:1920px){ :root{ --z:1.2; } .layout{ zoom:var(--z); } }
+  @media (min-width:2100px){ :root{ --z:1.3; } .layout{ zoom:var(--z); } }
+  @media (min-width:2300px){ :root{ --z:1.42; } .layout{ zoom:var(--z); } }
+  @media (min-width:2560px){ :root{ --z:1.6; } .layout{ zoom:var(--z); } }
+  @media (min-width:3000px){ :root{ --z:1.85; } .layout{ zoom:var(--z); } }
+
+  /* MINI BAR — once the big title scrolls away, a slim frosted bar
+     slides in so "Back" and the page name are always on screen */
+  .mini-bar{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:50;
+    height:56px;
+    padding:0 var(--page-gutter);
+    display:flex;
+    align-items:center;
+    gap:18px;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    border-bottom:1px solid var(--hairline);
+    transform:translateY(-100%);
+    opacity:0;
+    pointer-events:none;
+    transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+  }
+  .mini-bar.show{ transform:none; opacity:1; pointer-events:auto; }
+  .mini-bar .back-link{ margin-bottom:0; }
+  .mini-sep{ width:1px; height:18px; background:rgba(0,0,0,0.14); }
+  .mini-title{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:17px; font-weight:700; letter-spacing:-0.015em; color:#111;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  @media (max-width:560px){
+    .mini-bar{ height:50px; gap:14px; }
+    .mini-title{ font-size:16px; }
+  }
 
   /* TABLETS */
   @media (max-width:900px){
@@ -566,16 +614,58 @@
 </head>
 <body>
 
+<div class="mini-bar" id="miniBar" aria-hidden="true">
+  <a class="back-link" href="index.html" tabindex="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Back
+  </a>
+  <span class="mini-sep"></span>
+  <span class="mini-title">ISU Graduate College</span>
+</div>
+
 <div class="page-header">
   <a class="back-link" href="index.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     Back
   </a>
   <h1 class="page-title">ISU Graduate College</h1>
-  <p class="page-lede">As a Graduate Administrative Assistant, I designed and developed pages for the Iowa State University Graduate College website. Before changing anything, I set out to learn what graduate students were actually trying to find, and why so many of them still ended up emailing the office instead.</p>
 </div>
 
 <div class="layout">
+<aside class="side" aria-label="On this page">
+  <p class="page-lede">As a Graduate Administrative Assistant, I designed and developed pages for the Iowa State University Graduate College website. Before changing anything, I set out to learn what graduate students were actually trying to find, and why so many of them still ended up emailing the office instead.</p>
+  <div class="side-sticky">
+  <div class="toc-title">On this page</div>
+  <ul class="toc" id="toc">
+    <li><a href="#context">Context</a></li>
+    <li><a href="#who">Who uses it</a></li>
+    <li><a href="#methods">How I researched it</a></li>
+    <li><a href="#needs">What students look for</a></li>
+    <li><a href="#insights">Key insights</a></li>
+    <li><a href="#design">Research to design</a></li>
+    <li><a href="#outcome">Outcome</a></li>
+    <li><a href="#today">The site today</a></li>
+  </ul>
+
+  <div class="glance">
+    <div class="glance-title">At a glance</div>
+    <div class="glance-row">
+      <div class="glance-num">#1</div>
+      <div class="glance-text">Top need: <b>scholarships &amp; research funding</b></div>
+    </div>
+    <div class="glance-row">
+      <div class="glance-num">1 in 3</div>
+      <div class="glance-text">ISU graduate students is <b>international</b></div>
+    </div>
+    <div class="glance-row">
+      <div class="glance-num">4 <small>→</small> 3</div>
+      <div class="glance-text"><b>Insights</b> turned into <b>design directions</b></div>
+    </div>
+  </div>
+
+  </div>
+</aside>
+
 <main class="main">
 
   <div class="meta reveal">
@@ -753,50 +843,21 @@
         <div class="insight-num">03</div>
         <div>
           <div class="insight-title">"Is it in Workday or is it a PDF?"</div>
-          <div class="insight-text">After the move to Workday, the forms page mixed Workday tasks with downloadable PDFs. Students knew the form's purpose but not which system to open, and the "(Workday)" tag was easy to miss.</div>
+          <div class="insight-text">After the move to Workday, the forms page mixed Workday tasks with downloadable PDFs. Students knew the form's purpose but not which system to open.</div>
           <div class="evidence"><b>Evidence:</b> question log, content audit</div>
         </div>
       </li>
       <li class="insight">
         <div class="insight-num">04</div>
         <div>
-          <div class="insight-title">Menus that don't follow the keyboard</div>
-          <div class="insight-text">In a keyboard-only pass, focus moved to "Current Students" while the "Future Students" menu stayed open, so what was highlighted didn't match what was showing.</div>
+          <div class="insight-title">Menus need to work without a mouse</div>
+          <div class="insight-text">Checking the menus with only a keyboard showed that the highlighted item and the open menu need to stay in sync, so keyboard and screen-reader users always know where they are.</div>
           <div class="evidence"><b>Evidence:</b> accessibility walkthrough</div>
         </div>
       </li>
     </ol>
   </section>
 
-  <!-- 6. FROM THE AUDIT -->
-  <section id="audit" class="section reveal">
-    <div class="eyebrow">From the audit</div>
-    <h2 class="section-heading">What students saw.</h2>
-    <div class="figs">
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/nav-future-menu.png" alt="Future Students menu open with keyboard focus on Future Students"></button>
-        <figcaption><b>Keyboard pass, step 1.</b> Focus on "Future Students" with its menu open.</figcaption>
-      </figure>
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/nav-current-focus.png" alt="Focus moved to Current Students while Future Students menu stays open"></button>
-        <figcaption><b>Step 2.</b> Focus moves to "Current Students", but the old menu stays open.</figcaption>
-      </figure>
-    </div>
-    <div class="figs three">
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/international-page.png" alt="International Students section linking out to ISSO"></button>
-        <figcaption><b>International Students</b> is a short intro that hands off to another office.</figcaption>
-      </figure>
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/student-forms-workday.png" alt="Student Forms page explaining Workday"></button>
-        <figcaption><b>Student Forms</b>: most procedures live in Workday, "however" some forms are still required.</figcaption>
-      </figure>
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/forms-list.png" alt="List of forms mixing Workday tasks and PDFs"></button>
-        <figcaption><b>Form list</b> mixes Workday tasks and PDFs under long headings.</figcaption>
-      </figure>
-    </div>
-  </section>
 
   <!-- 7. DESIGN DIRECTIONS -->
   <section id="design" class="section reveal">
@@ -842,39 +903,40 @@
     </div>
   </section>
 
+  <!-- THE SITE TODAY -->
+  <section id="today" class="section reveal">
+    <div class="eyebrow">The site today</div>
+    <h2 class="section-heading">What students see on the Graduate College website now.</h2>
+    <div class="figs">
+      <figure class="fig">
+        <button type="button" class="shot"><img src="assets/ux/nav-future-menu.png" alt="Future Students menu open with a visible keyboard focus outline"></button>
+        <figcaption><b>Future Students menu.</b> Links grouped by task, with a clear focus outline for keyboard users.</figcaption>
+      </figure>
+      <figure class="fig">
+        <button type="button" class="shot"><img src="assets/ux/nav-current-focus.png" alt="Keyboard focus on the Current Students menu item"></button>
+        <figcaption><b>Moving through the menu.</b> Each menu and its toggle can be reached with the keyboard.</figcaption>
+      </figure>
+    </div>
+    <div class="figs three">
+      <figure class="fig">
+        <button type="button" class="shot"><img src="assets/ux/international-page.png" alt="International Students section with a link to the International Students and Scholars Office"></button>
+        <figcaption><b>International Students.</b> A welcoming overview with a direct link to ISSO.</figcaption>
+      </figure>
+      <figure class="fig">
+        <button type="button" class="shot"><img src="assets/ux/student-forms-workday.png" alt="Student Forms page introducing Workday with login and help links"></button>
+        <figcaption><b>Student Forms.</b> Explains what moved to Workday, with login and help links up front.</figcaption>
+      </figure>
+      <figure class="fig">
+        <button type="button" class="shot"><img src="assets/ux/forms-list.png" alt="Forms grouped by topic, each labeled with Workday where it applies"></button>
+        <figcaption><b>Forms by topic.</b> Grouped by milestone, with Workday tasks labeled.</figcaption>
+      </figure>
+    </div>
+  </section>
+
 
 </main>
 
-<aside class="side" aria-label="On this page">
-  <div class="toc-title">On this page</div>
-  <ul class="toc" id="toc">
-    <li><a href="#context">Context</a></li>
-    <li><a href="#who">Who uses it</a></li>
-    <li><a href="#methods">How I researched it</a></li>
-    <li><a href="#needs">What students look for</a></li>
-    <li><a href="#insights">Key insights</a></li>
-    <li><a href="#audit">From the audit</a></li>
-    <li><a href="#design">Research to design</a></li>
-    <li><a href="#outcome">Outcome</a></li>
-  </ul>
 
-  <div class="glance">
-    <div class="glance-title">At a glance</div>
-    <div class="glance-row">
-      <div class="glance-num">#1</div>
-      <div class="glance-text">Top need: <b>scholarships &amp; research funding</b></div>
-    </div>
-    <div class="glance-row">
-      <div class="glance-num">1 in 3</div>
-      <div class="glance-text">ISU graduate students is <b>international</b></div>
-    </div>
-    <div class="glance-row">
-      <div class="glance-num">4 <small>→</small> 3</div>
-      <div class="glance-text"><b>Insights</b> turned into <b>design directions</b></div>
-    </div>
-  </div>
-
-</aside>
 </div>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Zoomed image">
@@ -890,6 +952,16 @@
     entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal, .chart').forEach(el => io.observe(el));
+
+  // mini bar: show it once the big title has scrolled off screen
+  const miniBar = document.getElementById('miniBar');
+  const miniBack = miniBar.querySelector('a');
+  new IntersectionObserver(([en]) => {
+    const show = !en.isIntersecting && en.boundingClientRect.top < 0;
+    miniBar.classList.toggle('show', show);
+    miniBar.setAttribute('aria-hidden', show ? 'false' : 'true');
+    miniBack.tabIndex = show ? 0 : -1;
+  }).observe(document.querySelector('.page-title'));
 
   // sidebar: highlight the section currently being read
   const tocLinks = Array.from(document.querySelectorAll('#toc a'));
