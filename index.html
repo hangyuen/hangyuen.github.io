@@ -497,9 +497,9 @@
   }
   /* small portrait shown only on the intro step */
   .onboard-avatar{
-    width:56px;
-    height:56px;
-    border-radius:14px;
+    width:72px;
+    height:72px;
+    border-radius:18px;
     object-fit:cover;
     margin-bottom:16px;
     box-shadow:0 8px 18px rgba(0,0,0,0.18);
@@ -1269,11 +1269,6 @@
     .about-label{ width:auto; font-size:11px; letter-spacing:0.04em; color:#8a8a8a; }
     .about-value{ font-size:14px; color:#111; overflow-wrap:anywhere; }
     .about-value.about-link{ color:#2f6fed; }
-  }
-  /* small phones (iPhone SE etc.): shrink the email a little so it
-     always stays on one line */
-  @media (max-width:380px){
-    .about-value.about-link{ font-size:12.5px; white-space:nowrap; overflow-wrap:normal; letter-spacing:-0.01em; }
     .about-titlebar{ padding:14px 16px; }
     .about-dot.red{ width:26px; height:26px; }
     .about-dot.red::after,
@@ -1281,6 +1276,11 @@
       width:14px;
       margin-left:-7px;
     }
+  }
+  /* small phones (iPhone SE etc.): shrink the email a little so it
+     always stays on one line */
+  @media (max-width:380px){
+    .about-value.about-link{ font-size:12.5px; white-space:nowrap; overflow-wrap:normal; letter-spacing:-0.01em; }
   }
 
   /* LIVE FACES — the six character SVGs are inlined at load time so their
