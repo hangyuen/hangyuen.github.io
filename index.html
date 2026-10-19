@@ -1261,6 +1261,19 @@
     .about-content{ padding:22px 20px 26px; }
     .about-content h1{ font-size:24px; }
     .about-photo{ width:76px; height:76px; }
+    /* phones: label sits above its value so long values like the
+       email address get the full row width instead of overflowing */
+    .about-profile{ gap:14px; }
+    .about-field{ flex-direction:column; align-items:flex-start; gap:3px; padding:8px 0; }
+    .about-field:first-child{ padding-top:0; }
+    .about-label{ width:auto; font-size:11px; letter-spacing:0.04em; color:#8a8a8a; }
+    .about-value{ font-size:14px; color:#111; overflow-wrap:anywhere; }
+    .about-value.about-link{ color:#2f6fed; }
+  }
+  /* small phones (iPhone SE etc.): shrink the email a little so it
+     always stays on one line */
+  @media (max-width:380px){
+    .about-value.about-link{ font-size:12.5px; white-space:nowrap; overflow-wrap:normal; letter-spacing:-0.01em; }
     .about-titlebar{ padding:14px 16px; }
     .about-dot.red{ width:26px; height:26px; }
     .about-dot.red::after,
