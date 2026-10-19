@@ -229,7 +229,7 @@
   .icon.p4{ top:57%; left:36%; --tilt:2deg; }   /* Papel (Animation & VFX) */
   .icon.p6{ top:45%; left:54%; --tilt:-1deg; }  /* Publications (anchor) */
   .icon.p5{ top:61%; left:67%; --tilt:-3deg; }  /* Digital Works */
-  .icon.p7{ top:69%; left:47%; --tilt:2deg; }   /* UX Design */
+  .icon.p7{ top:69%; left:47%; --tilt:2deg; }   /* ISU Graduate College (UX Research) */
   .icon-box{ rotate:var(--tilt, 0deg); }
 
   /* Phones: "ordered scatter". Two columns x four rows as the skeleton so it
@@ -1550,8 +1550,8 @@
   </div>
   <div class="icon p7" data-project="ux">
     <div class="icon-float">
-      <div class="icon-box"><img src="assets/faces/ux.svg" alt="UX Design"></div>
-      <div class="icon-label">UX Design</div>
+      <div class="icon-box"><img src="assets/faces/ux.svg" alt="ISU Graduate College (UX Research)"></div>
+      <div class="icon-label">ISU Graduate College (UX Research)</div>
     </div>
   </div>
   <div class="icon p8" data-project="game">
@@ -2483,10 +2483,6 @@
       credits: 'Solo Project',
       image: 'assets/faces/dw.svg'
     },
-    'ux': {
-      title: 'UX Design',
-      desc: 'Placeholder: add the UX project description here.'
-    },
     'game': {
       title: 'Game Design',
       desc: 'Placeholder: add the game project description here.'
@@ -2533,6 +2529,13 @@
 
     // 1982 Benz (Computer Graphics) lives on its own dedicated 3D viewer
     // page, not a popup window
+    // ISU Graduate College (UX Research) lives on its own dedicated page,
+    // not a popup window
+    if (key === 'ux') {
+      window.location.href = 'isu-ux.html';
+      return;
+    }
+
     if (key === 'cm') {
       window.location.href = 'https://hangyuen.github.io/1982mb.html';
       return;
