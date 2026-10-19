@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="address=no, telephone=no, email=no, date=no">
+<title>ISU Graduate College (UX Research) · Hang Yuan's Web</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #ffffff;
+    --ink: #1d1d1f;
+    --dim: #6e6e73;
+    --accent: #0071e3;
+    --hairline: rgba(0,0,0,0.08);
+    --soft: #f5f5f7;
+    --page-gutter: clamp(40px, 9vw, 123px);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding-bottom:56px;
+  }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
+
+  /* PAGE HEADER — identical to Digital Works */
+  .page-header{ padding:56px var(--page-gutter) 0; }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:16px;
+    font-weight:500;
+    line-height:19px;
+    color:var(--dim);
+    padding:4px 0;
+    transition:color 0.15s ease, gap 0.15s ease;
+    margin-bottom:40px;
+  }
+  .back-link:hover{ color:var(--accent); gap:9px; }
+  .back-link svg{ width:16px; height:16px; }
+
+  .page-title{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:clamp(34px, 5vw, 56px);
+    font-weight:700;
+    letter-spacing:-0.02em;
+    line-height:1.05;
+    color:#111111;
+    margin-bottom:20px;
+  }
+  .page-lede{
+    font-size:clamp(18px, 1.6vw, 22px);
+    line-height:1.5;
+    letter-spacing:-0.01em;
+    color:#4a4a4a;
+    max-width:760px;
+    margin-bottom:48px;
+  }
+
+  /* "In progress" pill under the title */
+  .wip-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    font-weight:600;
+    color:#b25000;
+    background:#fff4e5;
+    border-radius:999px;
+    padding:6px 14px 6px 12px;
+    margin-bottom:16px;
+  }
+  .wip-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:#ff9f0a;
+    animation:wipPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes wipPulse{
+    0%, 100% { box-shadow:0 0 0 0 rgba(255,159,10,0.5); }
+    50%      { box-shadow:0 0 0 5px rgba(255,159,10,0); }
+  }
+
+  .main{ padding:0 var(--page-gutter); }
+
+  /* HERO IMAGE — drop a screenshot at assets/UX-hero.jpg.
+     Until then a soft grey panel with a browser bar shows instead. */
+  .hero{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    max-height:72vh;
+    border-radius:18px;
+    overflow:hidden;
+    background:var(--soft);
+    transition:border-radius 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover:hover){
+    .hero:hover{ border-radius:0; transform:scale(1.006); }
+  }
+  .hero img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .hero-fallback{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+  }
+  .hero-bar{
+    display:flex; align-items:center; gap:7px;
+    padding:14px 18px;
+    border-bottom:1px solid var(--hairline);
+    background:#ececef;
+  }
+  .hero-bar span{ width:11px; height:11px; border-radius:50%; background:#d0d0d5; }
+  .hero-bar .url{
+    flex:0 1 380px; height:24px; margin-left:14px; border-radius:7px;
+    background:#fff; font-size:12px; color:var(--dim);
+    display:flex; align-items:center; padding:0 10px;
+    width:auto; border-radius:7px;
+  }
+  .hero-body{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:#a1a1a6;
+  }
+
+  /* META ROW */
+  .meta{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:24px;
+    padding:28px 0;
+    margin-top:36px;
+    border-top:1px solid var(--hairline);
+    border-bottom:1px solid var(--hairline);
+  }
+  .meta-label{ font-size:13px; color:var(--dim); margin-bottom:6px; }
+  .meta-value{ font-size:16px; font-weight:600; letter-spacing:-0.01em; color:#111; }
+
+  /* SECTIONS — label on the left, content on the right */
+  .section{
+    display:grid;
+    grid-template-columns:minmax(160px, 1fr) 3fr;
+    gap:40px;
+    padding:64px 0 0;
+  }
+  .section-label{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--dim);
+    padding-top:6px;
+  }
+  .section-heading{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:clamp(24px, 2.4vw, 32px);
+    font-weight:700;
+    letter-spacing:-0.02em;
+    line-height:1.2;
+    color:#111;
+    margin-bottom:16px;
+    max-width:780px;
+  }
+  .section p{
+    font-size:17px;
+    line-height:1.65;
+    letter-spacing:-0.005em;
+    color:#4a4a4a;
+    max-width:780px;
+  }
+  .section p + p{ margin-top:14px; }
+
+  /* METHODS — soft tiles */
+  .methods{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:16px;
+    margin-top:24px;
+  }
+  .method{
+    background:var(--soft);
+    border-radius:18px;
+    padding:24px 26px;
+    transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover:hover){ .method:hover{ transform:translateY(-3px); } }
+  .method-num{
+    font-size:13px; font-weight:600; color:var(--accent);
+    margin-bottom:12px; font-variant-numeric:tabular-nums;
+  }
+  .method-name{ font-size:19px; font-weight:700; letter-spacing:-0.02em; color:#111; margin-bottom:8px; }
+  .method-desc{ font-size:15px; line-height:1.55; color:#555; }
+
+  /* FINDINGS — big numbered rows */
+  .findings{ list-style:none; margin-top:12px; }
+  .finding{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    gap:12px;
+    padding:24px 0;
+    border-bottom:1px solid var(--hairline);
+  }
+  .finding:last-child{ border-bottom:none; }
+  .finding-num{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size:32px; font-weight:700; letter-spacing:-0.03em; line-height:1;
+    color:#d2d2d7;
+  }
+  .finding-title{ font-size:19px; font-weight:700; letter-spacing:-0.02em; color:#111; margin-bottom:6px; }
+  .finding-text{ font-size:16px; line-height:1.6; color:#4a4a4a; }
+
+  /* GALLERY — 2 up, click to zoom */
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:16px;
+    margin-top:24px;
+  }
+  .shot{
+    position:relative;
+    aspect-ratio:3/2;
+    border-radius:18px;
+    overflow:hidden;
+    background:var(--soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:#a1a1a6;
+    border:0; padding:0; font-family:inherit;
+    transition:border-radius 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .shot.has-img{ cursor:zoom-in; }
+  @media (hover:hover){ .shot.has-img:hover{ border-radius:0; } }
+  .shot img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .shot-caption{ font-size:13px; color:var(--dim); margin-top:10px; }
+
+  /* OUTCOME — highlighted panel */
+  .outcome{
+    background:var(--soft);
+    border-radius:18px;
+    padding:36px 40px;
+    max-width:900px;
+  }
+  .outcome p{ color:#333; }
+
+  .visit{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:28px;
+    font-size:15px;
+    font-weight:600;
+    color:#fff;
+    background:var(--accent);
+    border-radius:980px;
+    padding:12px 24px;
+    transition:transform 0.15s ease, background 0.15s ease, gap 0.15s ease;
+  }
+  .visit:hover{ background:#0077ed; transform:translateY(-2px); gap:11px; }
+  .visit svg{ width:15px; height:15px; }
+
+  /* LIGHTBOX — same look as Digital Works */
+  .lightbox{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(20,20,22,0.92);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.25s ease;
+  }
+  .lightbox.open{ opacity:1; pointer-events:auto; }
+  .lightbox img{ max-width:90vw; max-height:86vh; border-radius:6px; }
+  .lightbox-close{
+    position:absolute; top:24px; right:24px;
+    width:44px; height:44px; border-radius:50%;
+    background:linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    border:1px solid rgba(255,255,255,0.22);
+    color:#fff; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform 0.2s ease;
+  }
+  .lightbox-close:hover{ transform:scale(1.06); }
+  .lightbox-close svg{ width:18px; height:18px; }
+
+  /* scroll-in fade */
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration:0.01ms !important; animation-duration:0.01ms !important; }
+    .reveal{ opacity:1; transform:none; }
+  }
+
+  @media (min-width:1800px){
+    .section p{ font-size:18px; }
+    .finding-text, .method-desc{ font-size:17px; }
+  }
+
+  /* TABLETS */
+  @media (max-width:900px){
+    .meta{ grid-template-columns:repeat(2, 1fr); }
+    .section{ grid-template-columns:1fr; gap:14px; padding-top:52px; }
+    .section-label{ padding-top:0; }
+  }
+  /* PHONES — same top spacing as Digital Works */
+  @media (max-width:560px){
+    .page-header{ padding-top:32px; }
+    body{ padding-bottom:32px; }
+    .back-link{ margin-bottom:39px; }
+    .page-lede{ margin-bottom:32px; }
+    .hero, .shot, .method, .outcome{ border-radius:14px; }
+    .methods, .gallery{ grid-template-columns:1fr; }
+    .finding{ grid-template-columns:44px 1fr; }
+    .finding-num{ font-size:26px; }
+    .outcome{ padding:26px 22px; }
+    .section p{ font-size:16px; }
+    .hero-bar .url{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a class="back-link" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Back
+  </a>
+  <h1 class="page-title">ISU Graduate College</h1>
+  <div class="wip-badge"><span class="wip-dot"></span>In progress</div>
+  <p class="page-lede">This page is still being developed. The full case study on UX research for the Iowa State University Graduate College website is coming soon.</p>
+</div>
+
+<main class="main">
+
+  <div class="hero reveal">
+    <div class="hero-fallback">
+      <div class="hero-bar"><span></span><span></span><span></span><div class="url">grad-college.iastate.edu</div></div>
+      <div class="hero-body">Add a screenshot at assets/UX-hero.jpg</div>
+    </div>
+    <img src="assets/UX-hero.jpg" alt="ISU Graduate College website" onerror="this.remove()">
+  </div>
+
+  <div class="meta reveal">
+    <div><div class="meta-label">Type</div><div class="meta-value">UX Research</div></div>
+    <div><div class="meta-label">Client</div><div class="meta-value">ISU Graduate College</div></div>
+    <div><div class="meta-label">Role</div><div class="meta-value">UX Researcher</div></div>
+    <div><div class="meta-label">Year</div><div class="meta-value">2023</div></div>
+  </div>
+
+  <section class="section reveal">
+    <div class="section-label">Overview</div>
+    <div>
+      <h2 class="section-heading">[Placeholder] One website, three very different audiences.</h2>
+      <p>[Placeholder] The Graduate College website serves prospective students, current graduate students, and faculty. This project looked at how each group searches for information, where they get stuck, and what would make key tasks easier.</p>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-label">The Challenge</div>
+    <div>
+      <h2 class="section-heading">[Placeholder] Important information was hard to find.</h2>
+      <p>[Placeholder] Describe the problem here. For example: deadlines, forms, and thesis requirements were spread across many pages, and users often gave up and emailed staff instead.</p>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-label">Methods</div>
+    <div>
+      <h2 class="section-heading">[Placeholder] How the research was done.</h2>
+      <div class="methods">
+        <div class="method">
+          <div class="method-num">01</div>
+          <div class="method-name">User Interviews</div>
+          <div class="method-desc">[Placeholder] Who you talked to and what you wanted to learn.</div>
+        </div>
+        <div class="method">
+          <div class="method-num">02</div>
+          <div class="method-name">Usability Testing</div>
+          <div class="method-desc">[Placeholder] Tasks participants tried to complete on the site.</div>
+        </div>
+        <div class="method">
+          <div class="method-num">03</div>
+          <div class="method-name">Survey</div>
+          <div class="method-desc">[Placeholder] How many responses and what you asked.</div>
+        </div>
+        <div class="method">
+          <div class="method-num">04</div>
+          <div class="method-name">Card Sorting</div>
+          <div class="method-desc">[Placeholder] How users grouped the site's content.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-label">Key Findings</div>
+    <div>
+      <ol class="findings">
+        <li class="finding">
+          <div class="finding-num">01</div>
+          <div>
+            <div class="finding-title">[Placeholder] Finding one</div>
+            <div class="finding-text">e.g. Users relied on search because the navigation labels didn't match the words they used.</div>
+          </div>
+        </li>
+        <li class="finding">
+          <div class="finding-num">02</div>
+          <div>
+            <div class="finding-title">[Placeholder] Finding two</div>
+            <div class="finding-text">A sentence or two explaining what you saw and why it matters.</div>
+          </div>
+        </li>
+        <li class="finding">
+          <div class="finding-num">03</div>
+          <div>
+            <div class="finding-title">[Placeholder] Finding three</div>
+            <div class="finding-text">A sentence or two explaining what you saw and why it matters.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-label">From the Research</div>
+    <div>
+      <div class="gallery">
+        <div><button type="button" class="shot"><img src="assets/UX01.jpg" alt="Research artifact 1" onerror="this.remove()">Image 1</button><div class="shot-caption">[Placeholder] Caption</div></div>
+        <div><button type="button" class="shot"><img src="assets/UX02.jpg" alt="Research artifact 2" onerror="this.remove()">Image 2</button><div class="shot-caption">[Placeholder] Caption</div></div>
+        <div><button type="button" class="shot"><img src="assets/UX03.jpg" alt="Research artifact 3" onerror="this.remove()">Image 3</button><div class="shot-caption">[Placeholder] Caption</div></div>
+        <div><button type="button" class="shot"><img src="assets/UX04.jpg" alt="Research artifact 4" onerror="this.remove()">Image 4</button><div class="shot-caption">[Placeholder] Caption</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="section-label">Outcome</div>
+    <div>
+      <div class="outcome">
+        <h2 class="section-heading">[Placeholder] What changed.</h2>
+        <p>[Placeholder] Recommendations delivered, redesigns adopted, or improvements in how easily users completed tasks.</p>
+        <a class="visit" href="https://www.grad-college.iastate.edu/" target="_blank" rel="noopener">
+          Visit the Graduate College site
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Zoomed image">
+  <img id="lightboxImg" src="" alt="">
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+</div>
+
+<script>
+  // fade sections in as they scroll into view
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // gallery: only images that actually loaded can be zoomed
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  function closeLightbox(){ lightbox.classList.remove('open'); document.body.style.overflow = ''; }
+
+  document.querySelectorAll('.shot').forEach(shot => {
+    const img = shot.querySelector('img');
+    const ready = () => shot.classList.add('has-img');
+    if (img){ if (img.complete && img.naturalWidth) ready(); else img.addEventListener('load', ready); }
+    shot.addEventListener('click', () => {
+      const im = shot.querySelector('img');
+      if (!im) return;
+      lightboxImg.src = im.src;
+      lightboxImg.alt = im.alt;
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+</body>
+</html>
