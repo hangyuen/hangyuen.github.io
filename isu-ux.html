@@ -15,563 +15,392 @@
     --ink: #1d1d1f;
     --body: #4a4a4a;
     --dim: #6e6e73;
-    --blue: #0071e3;            /* site-wide link blue (Back hover) */
-    /* Iowa State colors, used as this project's accent */
-    /* one accent only: Apple blue */
-    --cardinal: #0071e3;
-    --cardinal-deep: #0058b9;
-    --cardinal-soft: #eef5ff;
-    --gold: #0071e3;
-    --gold-soft: #f5f5f7;
+    --mute: #86868b;
+    --blue: #0071e3;
+    --blue-soft: #eef5ff;
     --track: #ececf0;
     --hairline: rgba(0,0,0,0.08);
     --soft: #f5f5f7;
     --page-gutter: clamp(40px, 9vw, 123px);
     --content-w: 860px;
+
+    /* the six places an answer lived (colorblind-checked categorical set) */
+    --p-grad: #2a78d6;
+    --p-dept: #eb6834;
+    --p-cat:  #1baf7a;
+    --p-isso: #eda100;
+    --p-wd:   #e87ba4;
+    --p-job:  #008300;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   section[id]{ scroll-margin-top:84px; }
-
   body{
-    background:var(--bg);
-    color:var(--ink);
+    background:var(--bg); color:var(--ink);
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     padding-bottom:56px;
   }
   a{ color:inherit; text-decoration:none; }
   :focus-visible{ outline:2px solid var(--blue); outline-offset:3px; border-radius:4px; }
-
-  .display{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; }
+  .sfd{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; }
 
   /* ===== HEADER — identical to Digital Works / 1982 Benz ===== */
   .page-header{ padding:56px var(--page-gutter) 0; margin-bottom:28px; }
-  .back-link{
-    display:inline-flex; align-items:center; gap:6px;
-    font-size:16px; font-weight:500; line-height:19px;
-    color:var(--dim);
-    padding:4px 0;
-    transition:color 0.15s ease, gap 0.15s ease;
-    margin-bottom:40px;
-  }
+  .back-link{ display:inline-flex; align-items:center; gap:6px; font-size:16px; font-weight:500; line-height:19px; color:var(--dim); padding:4px 0; transition:color 0.15s ease, gap 0.15s ease; margin-bottom:40px; }
   .back-link:hover{ color:var(--blue); gap:9px; }
   .back-link svg{ width:16px; height:16px; }
-  .page-title{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:clamp(34px, 5vw, 56px);
-    font-weight:700; letter-spacing:-0.02em; line-height:1.05;
-    color:#111111;
-    margin-bottom:20px;
-  }
+  .page-title{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:clamp(34px, 5vw, 56px); font-weight:700; letter-spacing:-0.02em; line-height:1.05; color:#111111; margin-bottom:20px; }
 
-  /* ===== MINI BAR — Back + title stay on screen while scrolling ===== */
-  .mini-bar{
-    position:fixed; top:0; left:0; right:0; z-index:50;
-    height:56px;
-    padding:0 var(--page-gutter);
-    display:flex; align-items:center; gap:18px;
-    background:rgba(255,255,255,0.92);
-    backdrop-filter:blur(20px) saturate(180%);
-    -webkit-backdrop-filter:blur(20px) saturate(180%);
-    border-bottom:1px solid var(--hairline);
-    transform:translateY(-100%); opacity:0; pointer-events:none;
-    transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
-  }
+  /* ===== MINI BAR ===== */
+  .mini-bar{ position:fixed; top:0; left:0; right:0; z-index:50; height:56px; padding:0 var(--page-gutter); display:flex; align-items:center; gap:18px; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border-bottom:1px solid var(--hairline); transform:translateY(-100%); opacity:0; pointer-events:none; transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease; }
   .mini-bar.show{ transform:none; opacity:1; pointer-events:auto; }
   .mini-bar .back-link{ margin-bottom:0; }
   .mini-sep{ width:1px; height:18px; background:rgba(0,0,0,0.14); }
-  .mini-title{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:17px; font-weight:700; letter-spacing:-0.015em; color:#111;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  /* thin blue reading-progress line along the bottom of the bar */
-  .mini-bar::after{
-    content:''; position:absolute; left:0; bottom:-1px; height:2px;
-    width:var(--read, 0%);
-    background:var(--cardinal);
-    transition:width 0.1s linear;
-  }
+  .mini-title{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:17px; font-weight:700; letter-spacing:-0.015em; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mini-bar::after{ content:''; position:absolute; left:0; bottom:-1px; height:2px; width:var(--read, 0%); background:var(--blue); transition:width 0.1s linear; }
 
-  /* ===== LAYOUT — left: intro + menu, right: centered content ===== */
-  .layout{
-    padding:0 calc(var(--page-gutter) / var(--z, 1));
-    display:grid;
-    grid-template-columns:clamp(280px, 24vw, 340px) minmax(0, 1fr);
-    column-gap:clamp(48px, 6vw, 112px);
-    align-items:stretch;
-  }
-  .main{ min-width:0; width:100%; max-width:900px; margin:0 auto; }
-  @media (min-width:1760px){ .main{ max-width:1000px; } }
-
+  /* ===== LAYOUT ===== */
+  .layout{ padding:0 calc(var(--page-gutter) / var(--z, 1)); display:grid; grid-template-columns:clamp(220px, 19vw, 280px) minmax(0, 1fr); column-gap:clamp(48px, 6vw, 104px); align-items:stretch; }
+  .main{ min-width:0; width:100%; max-width:960px; margin:0 auto; }
+  @media (min-width:1760px){ .main{ max-width:1040px; } }
   .side{ min-width:0; }
-  .page-lede{
-    font-size:18px; line-height:1.55; letter-spacing:-0.01em;
-    color:var(--body);
-    margin-bottom:40px;
-  }
-  .side-sticky{ position:sticky; top:88px; }
-  .toc-title, .glance-title{
-    font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
-    color:var(--dim); margin-bottom:12px;
-  }
+  .side-sticky{ position:sticky; top:80px; }
+  .toc-title, .glance-title{ font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); margin-bottom:12px; }
   .toc{ list-style:none; border-left:1px solid var(--hairline); }
-  .toc a{
-    display:block;
-    font-size:14px; line-height:1.35; color:var(--dim);
-    padding:7px 0 7px 16px; margin-left:-1px;
-    border-left:2px solid transparent;
-    transition:color 0.15s ease, border-color 0.15s ease;
-  }
+  .toc a{ display:block; font-size:14px; line-height:1.35; color:var(--dim); padding:5px 0 5px 16px; margin-left:-1px; border-left:2px solid transparent; transition:color 0.15s ease, border-color 0.15s ease; }
   .toc a:hover{ color:#111; }
-  .toc a.active{ color:#111; font-weight:600; border-left-color:var(--cardinal); }
-
-  .glance{
-    margin-top:32px;
-    border-radius:18px;
-    padding:20px 20px 18px;
-    background:var(--soft);
-  }
+  .toc a.active{ color:#111; font-weight:600; border-left-color:var(--blue); }
+  .glance{ margin-top:22px; border-radius:18px; padding:20px 20px 18px; background:var(--soft); }
   .glance-row + .glance-row{ margin-top:14px; padding-top:14px; border-top:1px solid var(--hairline); }
-  .glance-num{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:26px; font-weight:700; letter-spacing:-0.02em; line-height:1.1;
-    color:#111;
-  }
-  .glance-row:first-of-type .glance-num{ color:var(--cardinal); }
-  .glance-num small{ font-size:15px; color:var(--dim); font-weight:700; }
+  .glance-num{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em; line-height:1.1; color:#111; }
+  .glance-num.b{ color:var(--blue); }
   .glance-text{ font-size:13px; line-height:1.45; color:var(--body); margin-top:4px; }
   .glance-text b{ color:#111; font-weight:600; }
 
-  /* ===== META ROW ===== */
-  .meta{
-    display:grid;
-    grid-template-columns:repeat(4, auto);
-    justify-content:space-between;
-    column-gap:32px; row-gap:18px;
-    padding:22px 0;
-    border-top:1px solid var(--hairline);
-    border-bottom:1px solid var(--hairline);
-  }
+  /* ===== META ===== */
+  .meta{ display:grid; grid-template-columns:repeat(4, auto); justify-content:space-between; column-gap:32px; row-gap:18px; padding:22px 0; border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline); }
   .meta-label{ font-size:13px; color:var(--dim); margin-bottom:5px; }
   .meta-value{ font-size:15px; font-weight:600; letter-spacing:-0.01em; color:#111; }
 
-  /* ===== SECTIONS ===== */
-  .section{ padding-top:88px; }
-  .eyebrow{
-    display:flex; align-items:center; gap:10px;
-    font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
-    color:var(--dim);
-    margin-bottom:12px;
-  }
-
-  .section-heading{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:clamp(26px, 2.2vw, 32px);
-    font-weight:700; letter-spacing:-0.022em; line-height:1.2;
-    color:#111;
-    margin-bottom:14px;
-  }
-  .section-heading .hl{ color:#86868b; }
-  .lead{
-    font-size:17px; line-height:1.6; letter-spacing:-0.006em;
-    color:var(--body);
-    max-width:720px;
-  }
+  /* ===== SECTION TYPE ===== */
+  .section{ padding-top:96px; }
+  .eyebrow{ font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); margin-bottom:12px; }
+  .section-heading{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:clamp(26px, 2.2vw, 32px); font-weight:700; letter-spacing:-0.022em; line-height:1.2; color:#111; margin-bottom:14px; max-width:820px; }
+  .section-heading .hl{ color:var(--mute); }
+  .lead{ font-size:17px; line-height:1.6; letter-spacing:-0.006em; color:var(--body); max-width:720px; }
   .lead strong{ color:#111; font-weight:600; }
-  .source{ font-size:12.5px; line-height:1.5; color:var(--dim); margin-top:14px; }
+  .source{ font-size:12.5px; line-height:1.5; color:var(--dim); margin-top:16px; }
   .source a{ text-decoration:underline; text-underline-offset:2px; }
   .source a:hover{ color:var(--blue); }
-
-  /* research question */
-  .question{
-    margin-top:28px;
-    padding:28px 32px;
-    border-radius:18px;
-    background:var(--gold-soft);
-    position:relative;
-  }
+  .question{ margin-top:28px; padding:26px 30px; border-radius:18px; background:var(--soft); }
   .question-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); margin-bottom:8px; }
-  .question-q{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:clamp(20px, 2vw, 24px); font-weight:700; letter-spacing:-0.018em; line-height:1.3; color:#111;
-  }
+  .question-q{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:clamp(20px, 2vw, 24px); font-weight:700; letter-spacing:-0.018em; line-height:1.3; color:#111; }
 
-  /* ===== CARD shell used by every visualization ===== */
-  .viz{
-    margin-top:28px;
-    border:1px solid var(--hairline);
-    border-radius:20px;
-    padding:26px 28px 22px;
-    background:#fff;
-  }
-  .viz-title{ font-size:16px; font-weight:700; letter-spacing:-0.01em; color:#111; }
+  /* ===== VIZ CARD ===== */
+  .viz{ margin-top:28px; border:1px solid var(--hairline); border-radius:22px; padding:28px 30px 24px; background:#fff; }
+  .viz-title{ font-size:17px; font-weight:700; letter-spacing:-0.012em; color:#111; }
   .viz-sub{ font-size:13.5px; color:var(--dim); margin-top:3px; }
+  .takeaway{ margin-top:22px; padding:14px 16px; border-radius:12px; background:var(--soft); font-size:14px; line-height:1.5; color:#333; display:flex; gap:10px; align-items:flex-start; }
+  .takeaway::before{ content:''; flex:none; width:6px; height:6px; border-radius:50%; background:var(--blue); margin-top:7px; }
+  .takeaway b{ color:#111; font-weight:600; }
 
-  /* ===== WAFFLE — 1 square = 1% of grad & professional students ===== */
-  .who-grid{
-    display:grid;
-    grid-template-columns:auto 1fr;
-    gap:36px;
-    align-items:center;
-    margin-top:22px;
-  }
-  .waffle{
-    display:grid;
-    grid-template-columns:repeat(10, 18px);
-    grid-auto-rows:18px;
-    gap:4px;
-  }
-  .waffle i{
-    border-radius:4px;
-    background:var(--track);
-    transform:scale(0.4); opacity:0;
-    transition:transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, background 0.2s ease;
-  }
-  .waffle i.on{ background:var(--cardinal); }
-  .viz.in .waffle i{ transform:none; opacity:1; }
-  .who-big{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:64px; font-weight:700; letter-spacing:-0.04em; line-height:1;
-    color:var(--cardinal);
-  }
-  .who-big small{ font-size:30px; letter-spacing:-0.02em; }
-  .who-cap{ font-size:15px; color:var(--body); margin-top:8px; line-height:1.45; }
-  .legend{ display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:20px; }
-  .legend span{ display:inline-flex; align-items:center; gap:8px; font-size:13.5px; color:var(--body); }
-  .legend span b{ color:#111; font-weight:600; font-variant-numeric:tabular-nums; }
-  .sw{ width:12px; height:12px; border-radius:3px; background:var(--track); }
-  .sw.c{ background:var(--cardinal); }
-  .mini-stats{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:22px; }
-  .mini-stat{ background:var(--soft); border-radius:14px; padding:14px 16px; }
-  .mini-stat b{
-    display:block;
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:24px; font-weight:700; letter-spacing:-0.02em; color:#111; font-variant-numeric:tabular-nums;
-  }
-  .mini-stat span{ font-size:13px; color:var(--body); line-height:1.4; }
+  [data-tip]{ position:relative; }
+  [data-tip]::after{ content:attr(data-tip); position:absolute; bottom:calc(100% + 8px); left:50%; transform:translate(-50%, 4px); background:#1d1d1f; color:#fff; font-size:12px; font-weight:500; line-height:1.35; white-space:nowrap; padding:6px 10px; border-radius:8px; opacity:0; pointer-events:none; transition:opacity 0.15s ease, transform 0.15s ease; z-index:5; }
+  @media (hover:hover){ [data-tip]:hover::after{ opacity:1; transform:translate(-50%, 0); } }
 
-  /* ===== METHODS ===== */
-  .methods{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-top:26px; }
-  .method{
-    background:var(--soft);
-    border-radius:18px;
-    padding:20px 18px 18px;
-    transition:transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease;
-  }
-  @media (hover:hover){ .method:hover{ transform:translateY(-3px); background:#efeff2; } }
-  .method-ic{
-    width:38px; height:38px; border-radius:11px;
-    background:#fff; color:#1d1d1f;
-    display:flex; align-items:center; justify-content:center;
-    margin-bottom:14px;
-    box-shadow:0 1px 2px rgba(0,0,0,0.06);
-  }
-  .method-ic svg{ width:20px; height:20px; }
-  .method-name{ font-size:16px; font-weight:700; letter-spacing:-0.015em; color:#111; margin-bottom:5px; line-height:1.25; }
-  .method-desc{ font-size:13.5px; line-height:1.5; color:#555; }
+  /* ===== FUNNEL ===== */
+  .funnel-wrap{ display:grid; grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr); gap:40px; margin-top:26px; align-items:start; }
+  .fstep + .fstep{ margin-top:18px; }
+  .fstep-top{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:8px; }
+  .fstep-label{ font-size:14px; color:#333; line-height:1.35; }
+  .fstep-num{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em; color:#111; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .fstep-num small{ font-size:13px; font-weight:600; color:var(--dim); margin-left:6px; letter-spacing:0; }
+  .ftrack{ height:30px; border-radius:7px; background:var(--track); overflow:hidden; }
+  .ffill{ height:100%; width:0; border-radius:7px; background:#3a3a3c; transition:width 1.1s cubic-bezier(0.22, 1, 0.36, 1); }
+  .fstep.b .ffill{ background:var(--blue); }
+  .fstep.bb .ffill{ background:#0b4ea2; }
+  .viz.in .ffill{ width:var(--v); }
+  .breakdown-title{ font-size:13px; font-weight:600; color:var(--dim); margin-bottom:12px; }
+  .brow{ display:grid; grid-template-columns:118px minmax(0, 1fr) 34px; gap:10px; align-items:center; padding:6px 0; }
+  .brow span{ font-size:13.5px; color:#333; }
+  .brow b{ font-size:13.5px; font-weight:700; color:#111; text-align:right; font-variant-numeric:tabular-nums; }
+  .btrack{ height:10px; border-radius:4px; background:var(--track); overflow:hidden; }
+  .bfill{ height:100%; width:0; border-radius:4px; background:#0b4ea2; transition:width 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s; }
+  .viz.in .bfill{ width:var(--v); }
+  .rule-chip{ display:inline-block; margin-top:18px; font-size:13px; color:#333; background:var(--soft); border-radius:999px; padding:7px 12px; line-height:1.4; }
+  .rule-chip b{ font-weight:700; color:#111; }
 
-  .process{ display:flex; align-items:center; gap:8px; margin-top:16px; flex-wrap:wrap; }
-  .chip{
-    display:inline-flex; align-items:center; gap:8px;
-    font-size:13.5px; font-weight:600; color:#111;
-    background:#fff; border:1px solid var(--hairline);
-    border-radius:999px; padding:8px 14px 8px 8px;
-  }
-  .chip i{
-    font-style:normal; width:22px; height:22px; border-radius:50%;
-    background:#1d1d1f; color:#fff;
-    display:inline-flex; align-items:center; justify-content:center;
-    font-size:11.5px; font-weight:700;
-  }
-  .arrow{ color:#c7c7cc; font-size:16px; }
+  /* ===== METHOD STRIP ===== */
+  .method-strip{ display:grid; grid-template-columns:repeat(4, 1fr); margin-top:26px; border:1px solid var(--hairline); border-radius:20px; overflow:hidden; }
+  .mstep{ padding:20px 20px 18px; }
+  .mstep + .mstep{ border-left:1px solid var(--hairline); }
+  .mstep-n{ font-size:12px; font-weight:700; color:var(--blue); margin-bottom:10px; }
+  .mstep-t{ font-size:15.5px; font-weight:700; letter-spacing:-0.012em; color:#111; margin-bottom:5px; }
+  .mstep-d{ font-size:13.5px; line-height:1.5; color:#555; }
+  .mstep-o{ margin-top:12px; font-size:12px; color:var(--dim); }
+  .mstep-o b{ color:#111; font-weight:600; }
 
-  /* ===== MATRIX — where each need's answer lived ===== */
-  .matrix-scroll{ overflow-x:auto; margin:20px -6px 0; padding:0 6px; }
-  .matrix{
-    min-width:640px;
-    display:grid;
-    grid-template-columns:minmax(240px, 2.3fr) repeat(6, minmax(54px, 1fr)) 64px;
-    align-items:center;
-  }
-  .mx-h{
-    font-size:11.5px; font-weight:600; color:var(--dim);
-    text-align:center; line-height:1.25;
-    padding:0 2px 12px;
-    border-bottom:1px solid var(--hairline);
-    align-self:end;
-  }
-  .mx-h.l{ text-align:left; }
-  .mx-h.r{ text-align:right; }
-  .mx-row{ display:contents; }
-  .mx-row > div{
-    padding:14px 2px;
-    border-bottom:1px solid var(--hairline);
-    height:100%;
-    display:flex; align-items:center; justify-content:center;
-    transition:background 0.15s ease;
-  }
-  .mx-row:last-child > div{ border-bottom:none; }
-  .mx-row:hover > div{ background:#fafafb; }
-  .mx-need{ justify-content:flex-start !important; gap:10px; position:relative; }
-  .rank{
-    flex:none;
-    width:24px; height:24px; border-radius:50%;
-    background:var(--cardinal); color:#fff;
-    display:inline-flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:700;
-  }
-  .rank.r2, .rank.r3, .rank.r4{ background:#e8e8ed; color:#3a3a3c; }
+  /* ===== FRAGMENTATION ===== */
+  .frag-legend{ display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:18px; }
+  .frag-legend span{ display:inline-flex; align-items:center; gap:7px; font-size:12.5px; color:#333; }
+  .sw{ width:12px; height:12px; border-radius:3px; display:inline-block; }
+  .frag{ margin-top:18px; }
+  .frow{ display:grid; grid-template-columns:28px minmax(160px, 0.9fr) minmax(0, 2.4fr) 50px 92px; gap:16px; align-items:center; padding:16px 0; border-top:1px solid var(--hairline); }
+  .frow.h{ border-top:none; padding:0 0 10px; }
+  .frow.h div{ font-size:11.5px; font-weight:600; color:var(--dim); text-transform:uppercase; letter-spacing:0.04em; }
+  .frow.h .r{ text-align:right; }
+  .rank{ width:26px; height:26px; border-radius:50%; background:#e8e8ed; color:#3a3a3c; display:inline-flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; }
+  .frow.top .rank{ background:var(--blue); color:#fff; }
   .need-name{ font-size:14.5px; font-weight:600; color:#111; line-height:1.3; }
-  .need-q{ display:block; font-size:12.5px; font-weight:400; color:var(--dim); margin-top:2px; font-style:italic; }
-  .dot{ width:16px; height:16px; border-radius:50%; background:#3a3a3c; transform:scale(0); transition:transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .viz.in .dot{ transform:scale(1); }
-  .mx-row.top .dot{ background:var(--cardinal); }
-  .mx-row.top > div{ background:#f7faff; }
-  .nodot{ width:5px; height:5px; border-radius:50%; background:#d8d8de; }
-  .places{ justify-content:flex-end !important; gap:6px; }
-  .places b{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:22px; font-weight:700; color:#111; letter-spacing:-0.02em; font-variant-numeric:tabular-nums;
-  }
-  .places span{ font-size:12px; color:var(--dim); }
-
-  /* ===== COLUMN CHART — international Ph.D. students by major ===== */
-  .cols-wrap{ display:grid; grid-template-columns:1fr auto; gap:28px; align-items:end; margin-top:22px; }
-  .cols{
-    display:grid; grid-template-columns:repeat(5, 1fr);
-    gap:clamp(10px, 2vw, 22px);
-    height:220px;
-    align-items:end;
-    border-bottom:1px solid #d2d2d7;
-    position:relative;
-  }
-  .cols::before, .cols::after{
-    content:''; position:absolute; left:0; right:0; height:1px; background:var(--hairline);
-  }
-  .cols::before{ bottom:50%; }
-  .cols::after{ bottom:100%; }
-  .col{ position:relative; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; cursor:default; }
-  .col-bar{
-    width:100%; max-width:68px;
-    height:0;
-    border-radius:6px 6px 0 0;
-    background:#3a3a3c;
-    transition:height 1s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
-  }
-  .viz.in .col-bar{ height:var(--h); }
-  .col-val{
-    font-size:15px; font-weight:700; color:#111; margin-bottom:6px; font-variant-numeric:tabular-nums;
-    opacity:0; transition:opacity 0.4s ease 0.6s;
-  }
-  .viz.in .col-val{ opacity:1; }
+  .need-q{ display:block; font-size:12.5px; font-weight:400; color:var(--dim); margin-top:3px; font-style:italic; }
+  .segs{ display:flex; gap:2px; height:34px; transition:opacity 0.15s ease; }
+  .seg{ flex:0 0 calc((100% - 6px) / 4); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 6px; color:#fff; transform:scaleX(0); transform-origin:left center; transition:transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+  .viz.in .seg{ transform:none; }
+  .seg.grad{ background:var(--p-grad); }
+  .seg.dept{ background:var(--p-dept); }
+  .seg.cat{ background:var(--p-cat); color:#06281b; }
+  .seg.isso{ background:var(--p-isso); color:#3d2a00; }
+  .seg.wd{ background:var(--p-wd); color:#4a0f26; }
+  .seg.job{ background:var(--p-job); }
   @media (hover:hover){
-    .cols:hover .col-bar{ opacity:0.35; }
-    .cols .col:hover .col-bar{ opacity:1; }
+    .frag:hover .frow:not(.h) .segs{ opacity:0.45; }
+    .frag .frow:hover .segs{ opacity:1; }
   }
-  .col-labels{ display:grid; grid-template-columns:repeat(5, 1fr); gap:clamp(10px, 2vw, 22px); margin-top:10px; }
-  .col-labels span{ font-size:12.5px; line-height:1.3; color:var(--body); text-align:center; }
-  .total{
-    background:var(--cardinal-soft);
-    border-radius:16px;
-    padding:18px 20px;
-    width:200px;
-  }
-  .total b{
-    display:block;
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:44px; font-weight:700; letter-spacing:-0.03em; line-height:1; color:var(--cardinal);
-  }
-  .total span{ display:block; font-size:13.5px; line-height:1.45; color:#1d3a5c; margin-top:8px; }
+  .hand{ text-align:right; }
+  .hand b{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:22px; font-weight:700; color:#111; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; }
+  .intl{ text-align:right; }
+  .pill{ display:inline-block; font-size:11.5px; font-weight:600; border-radius:999px; padding:4px 9px; white-space:nowrap; }
+  .pill.y{ background:#1d1d1f; color:#fff; }
+  .pill.n{ background:var(--soft); color:var(--dim); }
 
-  /* tooltip for chart hovers */
-  .tip{
-    position:absolute; bottom:calc(100% + 8px); left:50%;
-    transform:translate(-50%, 4px);
-    background:#1d1d1f; color:#fff;
-    font-size:12.5px; line-height:1.35; white-space:nowrap;
-    padding:6px 10px; border-radius:8px;
-    opacity:0; pointer-events:none;
-    transition:opacity 0.15s ease, transform 0.15s ease;
-    z-index:3;
-  }
-  .col:hover .tip{ opacity:1; transform:translate(-50%, 0); }
+  /* ===== SITE MAP ===== */
+  .smap{ display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:10px; margin-top:22px; }
+  .scol{ background:var(--soft); border-radius:16px; padding:14px 12px 12px; }
+  .scol-h{ display:flex; justify-content:space-between; align-items:baseline; gap:6px; font-size:13px; font-weight:700; color:#111; margin-bottom:10px; line-height:1.25; }
+  .scol-h span{ font-size:11.5px; font-weight:600; color:var(--dim); }
+  .sitem{ display:block; font-size:12px; line-height:1.3; color:#555; background:#fff; border-radius:8px; padding:6px 8px; margin-top:5px; border:1px solid transparent; transition:transform 0.15s ease; }
+  .sitem.f{ background:var(--blue); color:#fff; font-weight:600; }
+  .sitem.i{ background:#fff4d6; color:#5c4100; font-weight:600; border-color:#eda100; }
+  .sitem.d{ background:#1d1d1f; color:#fff; font-weight:600; }
+  .smap-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:16px; font-size:12.5px; color:#333; }
+  .smap-legend span{ display:inline-flex; align-items:center; gap:7px; }
+  .smap-stats{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:20px; }
+  .sstat{ border:1px solid var(--hairline); border-radius:14px; padding:14px 16px; }
+  .sstat b{ display:block; font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; color:#111; }
+  .sstat b.bl{ color:var(--blue); }
+  .sstat span{ font-size:13px; line-height:1.4; color:var(--body); }
 
-  /* ===== NATIONAL STATS ===== */
-  .nat{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:26px; }
-  .nat-card{ background:var(--soft); border-radius:18px; padding:20px 20px 18px; }
-  .nat-num{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:34px; font-weight:700; letter-spacing:-0.03em; line-height:1; color:#111;
-    font-variant-numeric:tabular-nums;
-  }
-  .nat-num small{ font-size:18px; color:var(--dim); margin-left:2px; }
-  .nat-label{ font-size:13.5px; line-height:1.45; color:var(--body); margin-top:10px; }
-  .delta{ display:inline-block; font-size:12px; font-weight:600; border-radius:999px; padding:2px 8px; margin-left:6px; vertical-align:6px; }
-  .delta.down{ background:#f2f2f4; color:#3a3a3c; }
-  .delta.up{ background:#f2f2f4; color:#3a3a3c; }
+  /* ===== NEED → PLACE WEB ===== */
+  .web-wrap{ margin-top:18px; }
+  .web{ width:100%; height:auto; display:block; overflow:visible; }
+  .web .lnk{ fill:none; stroke:#d2d2d7; stroke-width:2; transition:stroke 0.2s ease, opacity 0.2s ease, stroke-width 0.2s ease; }
+  .web .lnk.top{ stroke:var(--blue); stroke-width:3; }
+  .web .lnk{ stroke-dasharray:var(--len); stroke-dashoffset:var(--len); }
+  .viz.in .web .lnk{ stroke-dashoffset:0; transition:stroke-dashoffset 1.1s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.2s ease, opacity 0.2s ease; }
+  .web.hovering .lnk{ opacity:0.12; }
+  .web.hovering .lnk.on{ opacity:1; stroke:#1d1d1f; stroke-width:3; }
+  .web.hovering .lnk.top.on{ stroke:var(--blue); }
+  .web .need{ cursor:default; }
+  .web .need-bg{ fill:transparent; }
+  .web .need:hover .need-bg{ fill:#f5f5f7; }
+  .web text{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', sans-serif; }
+  .web .nt{ font-size:15px; font-weight:600; fill:#111; }
+  .web .nq{ font-size:12.5px; fill:#6e6e73; font-style:italic; }
+  .web .nr{ font-size:12px; font-weight:700; fill:#fff; }
+  .web .nc{ font-size:12px; font-weight:600; fill:#6e6e73; }
+  .web .pt{ font-size:14.5px; font-weight:600; fill:#111; }
+  .web .pc{ font-size:12px; fill:#6e6e73; }
+  .web .dotn{ fill:#1d1d1f; }
+  .web .dotp{ fill:#fff; stroke:#1d1d1f; stroke-width:2; }
+  .web-list{ display:none; list-style:none; margin-top:16px; }
+  .web-list li{ padding:14px 0; border-top:1px solid var(--hairline); }
+  .web-list li:first-child{ border-top:none; }
+  .wl-h{ display:flex; justify-content:space-between; gap:10px; font-size:14.5px; font-weight:600; color:#111; }
+  .wl-h b{ font-size:13px; color:var(--dim); font-weight:600; white-space:nowrap; }
+  .wl-q{ font-size:12.5px; color:var(--dim); font-style:italic; margin-top:2px; }
+  .wl-p{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .wl-p span{ font-size:12px; font-weight:600; color:#333; background:var(--soft); border-radius:999px; padding:4px 10px; }
+  .web-list li.top .wl-p span{ background:var(--blue-soft); color:#0b4ea2; }
 
-  /* horizontal bars (CGS), one bar highlighted */
-  .hbars{ list-style:none; margin-top:20px; }
-  .hbar{ display:grid; grid-template-columns:minmax(0, 1fr) 54px; column-gap:14px; align-items:center; padding:9px 0; position:relative; }
+  /* ===== NAV ROWS ===== */
+  .nav-rows{ margin-top:22px; }
+  .nrow{ display:grid; grid-template-columns:150px minmax(0, 1fr); gap:18px; align-items:center; padding:14px 0; border-top:1px solid var(--hairline); }
+  .nrow:first-child{ border-top:none; }
+  .nrow-h{ font-size:14px; font-weight:600; color:#111; line-height:1.3; }
+  .nrow-h span{ display:block; font-size:12px; font-weight:500; color:var(--dim); margin-top:2px; }
+  .nrow-items{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+  .ndot{ width:10px; height:10px; border-radius:50%; background:#d2d2d7; flex:none; }
+  .npill{ font-size:12.5px; font-weight:600; border-radius:999px; padding:5px 11px; white-space:nowrap; }
+  .npill.f{ background:var(--blue); color:#fff; }
+  .npill.i{ background:#fff; color:#0b4ea2; box-shadow:inset 0 0 0 2px var(--blue); }
+  .npill.d{ background:#1d1d1f; color:#fff; }
+  .name-strip{ margin-top:20px; display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; padding:14px 16px; border-radius:12px; border:1px dashed #c7c7cc; }
+  .name-strip-k{ font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--dim); }
+  .names{ display:flex; flex-wrap:wrap; gap:6px; }
+  .names span{ font-size:13px; font-weight:600; color:#0b4ea2; background:var(--blue-soft); border-radius:8px; padding:4px 10px; }
+
+  /* ===== QUOTES ===== */
+  .quotes{ display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:26px; }
+  .quote{ margin:0; background:var(--soft); border-radius:18px; padding:20px 22px; }
+  .q-tag{ display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--dim); margin-bottom:10px; }
+  .quote blockquote{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:18px; font-weight:600; letter-spacing:-0.012em; line-height:1.4; color:#111; }
+  .quote:first-child{ background:#1d1d1f; }
+  .quote:first-child .q-tag{ color:#6cb2ff; }
+  .quote:first-child blockquote{ color:#fff; }
+
+  /* ===== JOURNEY ===== */
+  .jr-scroll{ overflow-x:auto; margin:18px -8px 0; padding:0 8px; }
+  .jr{ position:relative; min-width:720px; }
+  .jr-curve{ width:100%; height:auto; display:block; overflow:visible; }
+  .jr-curve .area{ fill:url(#jrGrad); opacity:0.9; }
+  .jr-curve .line{ fill:none; stroke:#1d1d1f; stroke-width:2.5; stroke-linejoin:round; stroke-dasharray:1400; stroke-dashoffset:1400; transition:stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1); }
+  .viz.in .jr-curve .line{ stroke-dashoffset:0; }
+  .jr-curve .pt{ stroke:#fff; stroke-width:2.5; }
+  .jr-curve .pt.hi{ fill:#1d1d1f; }
+  .jr-curve .pt.lo{ fill:var(--blue); }
+  .jr-curve .base{ stroke:var(--hairline); stroke-width:1; stroke-dasharray:3 4; }
+  .jr-steps{ display:grid; grid-template-columns:repeat(6, 1fr); gap:8px; margin-top:12px; }
+  .jstep{ border-radius:14px; padding:12px 12px 12px; background:var(--soft); }
+  .jstep.low{ background:var(--blue-soft); box-shadow:inset 0 0 0 1.5px var(--blue); }
+  .js-n{ font-size:11px; font-weight:700; color:var(--dim); }
+  .js-t{ font-size:13.5px; font-weight:700; color:#111; margin-top:4px; line-height:1.3; }
+  .js-d{ font-size:12px; color:#555; margin-top:4px; line-height:1.4; }
+  .js-p{ display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+  .js-p span{ font-size:10.5px; font-weight:600; color:#333; background:#fff; border-radius:999px; padding:2px 7px; }
+  .js-fix{ margin-top:8px; font-size:11.5px; font-weight:600; color:#0b4ea2; }
+  .jr-legend{ display:flex; gap:18px; margin-top:14px; font-size:12.5px; color:var(--dim); }
+  .jr-legend span{ display:inline-flex; align-items:center; gap:7px; }
+  .jr-dot{ width:10px; height:10px; border-radius:50%; }
+  .jr-dot.hi{ background:#1d1d1f; }
+  .jr-dot.lo{ background:var(--blue); }
+
+  /* ===== TEST PLAN ===== */
+  .viz-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+  .plan-pill{ font-size:12px; font-weight:700; color:#3a3a3c; background:var(--soft); border:1px dashed #a1a1a6; border-radius:999px; padding:5px 12px; white-space:nowrap; }
+  .tasks{ margin-top:18px; }
+  .task{ display:grid; grid-template-columns:32px minmax(0, 2.4fr) minmax(120px, 1fr) minmax(140px, 1.1fr); gap:14px; align-items:center; padding:13px 0; border-top:1px solid var(--hairline); }
+  .task.t-h{ border-top:none; padding:0 0 10px; }
+  .task.t-h div{ font-size:11.5px; font-weight:600; color:var(--dim); text-transform:uppercase; letter-spacing:0.04em; }
+  .tn{ width:26px; height:26px; border-radius:50%; background:#1d1d1f; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+  .tt{ font-size:14px; color:#111; line-height:1.4; }
+  .ti{ font-size:12px; font-weight:600; color:#333; background:var(--soft); border-radius:999px; padding:4px 10px; white-space:nowrap; }
+  .ts{ font-size:13px; color:var(--body); }
+  .metrics{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-top:14px; }
+  .metric{ border:1px solid var(--hairline); border-radius:16px; padding:16px 16px 14px; }
+  .m-ic{ width:30px; height:30px; border-radius:9px; background:var(--soft); display:flex; align-items:center; justify-content:center; font-size:15px; color:#1d1d1f; margin-bottom:10px; }
+  .m-t{ font-size:14.5px; font-weight:700; color:#111; }
+  .m-d{ font-size:12.5px; line-height:1.45; color:#555; margin-top:4px; }
+  .m-dir{ font-size:12px; font-weight:700; color:var(--blue); margin-top:8px; }
+
+  /* ===== LIMITATIONS ===== */
+  .limits{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-top:26px; }
+  .limit{ border-radius:16px; padding:16px 16px 14px; background:var(--soft); }
+  .l-k{ font-size:11.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--dim); margin-bottom:6px; }
+  .l-t{ font-size:14.5px; font-weight:700; color:#111; line-height:1.3; }
+  .l-d{ font-size:12.5px; line-height:1.45; color:#555; margin-top:5px; }
+  .next{ margin-top:14px; border-radius:18px; padding:22px 24px; border:1px solid var(--hairline); }
+  .next-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); margin-bottom:10px; }
+  .next-list{ list-style:none; counter-reset:n; display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
+  .next-list li{ counter-increment:n; font-size:14px; line-height:1.5; color:#333; position:relative; padding-top:30px; }
+  .next-list li::before{ content:counter(n); position:absolute; top:0; left:0; width:22px; height:22px; border-radius:50%; background:var(--blue); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .next-list b{ color:#111; }
+
+  /* ===== NATIONAL ===== */
+  .nat{ display:grid; grid-template-columns:repeat(3, 1fr); margin-top:24px; border-bottom:1px solid var(--hairline); padding-bottom:22px; }
+  .nat-cell{ padding-right:18px; }
+  .nat-cell + .nat-cell{ padding-left:18px; border-left:1px solid var(--hairline); }
+  .nat-num{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:32px; font-weight:700; letter-spacing:-0.03em; line-height:1; color:#111; font-variant-numeric:tabular-nums; }
+  .nat-num small{ font-size:17px; color:var(--dim); margin-left:1px; }
+  .delta{ display:inline-block; font-size:12px; font-weight:600; border-radius:999px; padding:2px 8px; margin-left:6px; vertical-align:8px; background:#f2f2f4; color:#3a3a3c; letter-spacing:0; }
+  .nat-label{ font-size:13px; line-height:1.45; color:var(--body); margin-top:8px; }
+  .sub-h{ font-size:13px; font-weight:600; color:var(--dim); margin-top:22px; }
+  .hbars{ list-style:none; margin-top:12px; }
+  .hbar{ display:grid; grid-template-columns:minmax(0, 1fr) 46px; column-gap:14px; align-items:center; padding:8px 0; }
   .hbar-label{ grid-column:1 / -1; font-size:14px; color:#333; margin-bottom:7px; line-height:1.35; }
-  .hbar-label b{ color:var(--cardinal); font-weight:600; }
+  .hbar-label b{ color:var(--blue); font-weight:600; }
   .hbar-track{ height:10px; background:var(--track); border-radius:4px; overflow:hidden; }
   .hbar-fill{ height:100%; width:0; background:#8e8e93; border-radius:4px; transition:width 1s cubic-bezier(0.22, 1, 0.36, 1); }
-  .hbar.hi .hbar-fill{ background:var(--cardinal); }
+  .hbar.hi .hbar-fill{ background:var(--blue); }
   .viz.in .hbar-fill{ width:var(--v); }
   .hbar-val{ font-size:14px; font-weight:700; color:#111; text-align:right; font-variant-numeric:tabular-nums; }
-  @media (hover:hover){
-    .hbars:hover .hbar-fill{ opacity:0.4; }
-    .hbars .hbar:hover .hbar-fill{ opacity:1; }
-  }
 
-  /* ===== PEER BENCHMARK ===== */
-  .bench{
-    display:grid;
-    grid-template-columns:minmax(200px, 1.8fr) repeat(3, minmax(90px, 1fr));
-    margin-top:20px;
-    align-items:center;
-  }
-  .bench > div{ padding:13px 8px; border-bottom:1px solid var(--hairline); font-size:14px; color:#333; }
-  .bench .bh{ font-size:12px; font-weight:600; color:var(--dim); text-align:center; line-height:1.3; padding-bottom:12px; align-self:end; }
-  .bench .bh.l, .bench .bf{ text-align:left; }
-  .bench .bf{ font-weight:600; color:#111; }
-  .bench .bf small{ display:block; font-weight:400; color:var(--dim); font-size:12.5px; margin-top:2px; }
-  .bench .bc{ text-align:center; display:flex; justify-content:center; align-items:center; height:100%; }
-  .bench > div:nth-last-child(-n+4){ border-bottom:none; }
-  .mk{ width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
-  .mk svg{ width:13px; height:13px; }
+  /* ===== BENCHMARK ===== */
+  .bench-scroll{ overflow-x:auto; margin:20px -8px 0; padding:0 8px; }
+  .bench{ min-width:760px; }
+  .brw{ display:grid; grid-template-columns:minmax(230px, 1.9fr) repeat(7, minmax(48px, 0.55fr)) minmax(120px, 1.1fr); align-items:center; border-top:1px solid var(--hairline); transition:background 0.15s ease; }
+  .brw > div{ padding:12px 4px; }
+  .brw.h{ border-top:none; }
+  .brw.h > div{ font-size:11.5px; font-weight:600; color:var(--dim); text-align:center; line-height:1.25; align-self:end; padding-bottom:12px; }
+  .brw.h > div:first-child, .brw.h > div:last-child{ text-align:left; }
+  .brw:not(.h):hover{ background:#fafafb; }
+  .brw.isu{ background:#fdf3f4; border-radius:12px; border-top-color:transparent; }
+  .brw.isu + .brw{ border-top-color:transparent; }
+  .school{ font-size:14px; font-weight:600; color:#111; padding-left:10px !important; display:flex; align-items:center; gap:10px; }
+  .badge{ flex:none; position:relative; width:38px; height:38px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; letter-spacing:0.01em; overflow:hidden; }
+  /* if a logo file is in assets/logos/, it covers the badge */
+  .badge img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; padding:3px; }
+  .badge.has-logo{ box-shadow:inset 0 0 0 1px var(--hairline); }
+  .sname{ line-height:1.25; font-size:13.5px; }
+  .sname em{ font-style:normal; font-weight:500; color:var(--dim); }
+  .sname{ white-space:nowrap; }
+  .brw.foot .school{ display:block; }
+  .school small{ display:block; font-size:12px; font-weight:400; color:var(--dim); margin-top:2px; }
+  .mkc{ display:flex; justify-content:center; }
+  .mk{ width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
+  .mk svg{ width:12px; height:12px; }
   .mk.y{ background:#1d1d1f; color:#fff; }
-  .mk.p{ background:#fff; border:2px solid #1d1d1f; position:relative; overflow:hidden; }
-  .mk.p::after{ content:''; position:absolute; left:0; top:0; bottom:0; width:50%; background:#1d1d1f; }
+  .mk.p{ background:#fff; border:2px solid #1d1d1f; overflow:hidden; background-image:linear-gradient(90deg, #1d1d1f 50%, transparent 50%); }
   .mk.n{ background:var(--track); }
-  .bh .sh{ display:none; }
-  .bench-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:16px; font-size:12.5px; color:var(--dim); }
+  .score{ display:flex; align-items:center; gap:10px; padding-right:10px !important; }
+  .score-track{ flex:1; height:8px; border-radius:4px; background:var(--track); overflow:hidden; }
+  .score-fill{ height:100%; width:0; border-radius:4px; background:#3a3a3c; transition:width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+  .brw.isu .score-fill{ background:var(--blue); }
+  .viz.in .score-fill{ width:var(--v); }
+  .score b{ font-size:14px; font-weight:700; color:#111; font-variant-numeric:tabular-nums; min-width:28px; text-align:right; }
+  .brw.foot{ border-top:1px solid #d2d2d7; margin-top:4px; }
+  .brw.foot .school{ font-size:13px; }
+  .cnt{ font-size:15px; font-weight:700; color:#111; font-variant-numeric:tabular-nums; }
+  .cnt.lo{ color:var(--blue); }
+  .swipe{ display:none; font-size:12px; color:var(--dim); margin-top:10px; }
+  .bench-legend{ display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:4px; font-size:12.5px; color:var(--dim); }
   .bench-legend span{ display:inline-flex; align-items:center; gap:7px; }
   .bench-legend .mk{ width:14px; height:14px; }
   .bench-legend .mk.p{ border-width:1.5px; }
+  .feat-key{ display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:6px 18px; margin-top:12px; font-size:12.5px; color:var(--dim); }
+  .feat-key b{ color:#111; font-weight:600; margin-right:4px; }
   .ideas{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:16px; }
   .idea{ border:1px solid var(--hairline); border-radius:16px; padding:18px 18px 16px; }
   .idea-k{ font-size:12px; font-weight:600; color:var(--dim); margin-bottom:6px; }
   .idea-t{ font-size:15.5px; font-weight:700; color:#111; letter-spacing:-0.012em; line-height:1.3; margin-bottom:5px; }
   .idea-d{ font-size:13.5px; line-height:1.5; color:#555; }
-  .idea.isu{ background:var(--cardinal-soft); border-color:transparent; }
+  .idea.isu{ background:var(--blue-soft); border-color:transparent; }
 
-  /* ===== INSIGHTS ===== */
-  .insights{ list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:26px; }
-  .insight{
-    border-radius:18px;
-    padding:22px 22px 20px;
-    background:var(--soft);
-    position:relative;
-    overflow:hidden;
-  }
-  .insight-num{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:44px; font-weight:700; letter-spacing:-0.04em; line-height:1;
-    color:#d2d2d7;
-    position:absolute; top:16px; right:20px;
-  }
-  .insight-title{ font-size:17.5px; font-weight:700; letter-spacing:-0.018em; color:#111; margin-bottom:8px; line-height:1.3; padding-right:56px; }
-  .insight-text{ font-size:14.5px; line-height:1.55; color:var(--body); }
-  .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
-  .tag{ font-size:11.5px; font-weight:600; color:#3a3a3c; background:#fff; border-radius:999px; padding:4px 10px; }
-
-  /* ===== DESIGN DIRECTIONS ===== */
-  .directions{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:26px; }
-  .direction{
-    border:1px solid var(--hairline);
-    border-radius:18px;
-    padding:20px 20px 18px;
-  }
-  .direction-tag{ font-size:12px; font-weight:600; color:var(--dim); margin-bottom:8px; }
-  .direction-name{ font-size:16.5px; font-weight:700; letter-spacing:-0.015em; color:#111; margin-bottom:6px; line-height:1.3; }
-  .direction-desc{ font-size:14px; line-height:1.5; color:#555; }
-
-  /* ===== OUTCOME ===== */
-  .shipped{ list-style:none; display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; margin-top:26px; }
-  .shipped li{
-    background:var(--soft);
-    border-radius:16px;
-    padding:18px 18px 18px 52px;
-    position:relative;
-    font-size:14px; line-height:1.5; color:#555;
-  }
-  .shipped li::before{
-    content:'';
-    position:absolute; left:18px; top:19px;
-    width:22px; height:22px; border-radius:50%;
-    background:#1d1d1f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='5 12.5 10 17 19 7'/%3E%3C/svg%3E") center/13px no-repeat;
-  }
-  .shipped b{ display:block; font-size:15.5px; font-weight:700; color:#111; letter-spacing:-0.01em; margin-bottom:3px; }
-  .lesson{
-    margin-top:22px;
-    border-radius:18px;
-    padding:26px 28px;
-    background:#1d1d1f;
-    color:#fff;
-  }
-  .lesson-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#a1a1a6; margin-bottom:8px; }
-  .lesson-q{
-    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-    font-size:clamp(19px, 1.9vw, 23px); font-weight:600; letter-spacing:-0.015em; line-height:1.4;
-  }
-  .visit{
-    display:inline-flex; align-items:center; gap:8px;
-    margin-top:20px;
-    font-size:14.5px; font-weight:600;
-    color:#fff; background:var(--cardinal);
-    border-radius:980px; padding:11px 20px;
-    transition:transform 0.15s ease, gap 0.15s ease;
-  }
+  /* ===== INSIGHT → SHIPPED ===== */
+  .flow{ margin-top:26px; }
+  .flow-h, .flow-row{ display:grid; grid-template-columns:1fr 28px 1fr 28px 1fr; align-items:stretch; }
+  .flow-h div{ font-size:11.5px; font-weight:600; color:var(--dim); text-transform:uppercase; letter-spacing:0.05em; padding:0 4px 10px; }
+  .flow-row + .flow-row{ margin-top:10px; }
+  .fcell{ border-radius:16px; padding:16px 16px 14px; background:var(--soft); }
+  .fcell.ship{ background:#1d1d1f; }
+  .fcell .n{ font-size:11.5px; font-weight:700; color:var(--blue); margin-bottom:6px; }
+  .fcell .t{ font-size:15px; font-weight:700; letter-spacing:-0.012em; color:#111; line-height:1.3; }
+  .fcell .d{ font-size:13px; line-height:1.5; color:#555; margin-top:4px; }
+  .fcell.ship .t{ color:#fff; }
+  .fcell.ship .d{ color:rgba(255,255,255,0.72); }
+  .fcell.ship .n{ color:#6cb2ff; }
+  .farrow{ display:flex; align-items:center; justify-content:center; color:#c7c7cc; }
+  .farrow svg{ width:16px; height:16px; }
+  .lesson{ margin-top:28px; border-radius:22px; padding:30px 32px; background:#1d1d1f; color:#fff; }
+  .lesson-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#a1a1a6; margin-bottom:10px; }
+  .lesson-q{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:clamp(20px, 2vw, 24px); font-weight:600; letter-spacing:-0.015em; line-height:1.4; }
+  .lesson-q .g{ color:#a1a1a6; }
+  .visit{ display:inline-flex; align-items:center; gap:8px; margin-top:22px; font-size:14.5px; font-weight:600; color:#fff; background:var(--blue); border-radius:980px; padding:11px 20px; transition:transform 0.15s ease, gap 0.15s ease, background 0.15s ease; }
   .visit:hover{ transform:translateY(-2px); gap:11px; background:#0077ed; }
   .visit svg{ width:15px; height:15px; }
 
-  /* ===== SITE TODAY — screenshots ===== */
-  .figs{ display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; margin-top:26px; }
-  .fig{ margin:0; }
-  .shot{
-    display:block; width:100%;
-    aspect-ratio:16/10;
-    border-radius:14px; overflow:hidden;
-    background:var(--soft);
-    border:1px solid var(--hairline);
-    padding:0; cursor:zoom-in;
-    transition:border-radius 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
-  }
-  .shot img{ width:100%; height:100%; object-fit:cover; object-position:top left; display:block; }
-  @media (hover:hover){ .shot:hover{ border-radius:0; transform:scale(1.015); box-shadow:0 18px 40px rgba(0,0,0,0.12); } }
-  .fig figcaption{ font-size:13.5px; line-height:1.5; color:var(--dim); margin-top:10px; }
-  .fig figcaption b{ color:#111; font-weight:600; }
-
-  /* ===== LIGHTBOX ===== */
-  .lightbox{
-    position:fixed; inset:0; z-index:100;
-    background:rgba(20,20,22,0.92);
-    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-    display:flex; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none;
-    transition:opacity 0.25s ease;
-  }
-  .lightbox.open{ opacity:1; pointer-events:auto; }
-  .lightbox img{ max-width:90vw; max-height:86vh; border-radius:6px; background:#fff; }
-  .lightbox-close{
-    position:absolute; top:24px; right:24px;
-    width:44px; height:44px; border-radius:50%;
-    background:linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
-    border:1px solid rgba(255,255,255,0.22);
-    color:#fff; cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    transition:transform 0.2s ease;
-  }
-  .lightbox-close:hover{ transform:scale(1.06); }
-  .lightbox-close svg{ width:18px; height:18px; }
-
-  /* ===== scroll-in fade ===== */
+  /* ===== reveal ===== */
   .reveal{ opacity:0; transform:translateY(18px); transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
   .reveal.in{ opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce){
@@ -579,7 +408,7 @@
     .reveal{ opacity:1; transform:none; }
   }
 
-  /* ===== BIG MONITORS — scale up, keep aligned under the title ===== */
+  /* ===== big monitors ===== */
   @media (min-width:1760px){ :root{ --z:1.04; } .layout{ zoom:var(--z); } }
   @media (min-width:1920px){ :root{ --z:1.08; } .layout{ zoom:var(--z); } }
   @media (min-width:2100px){ :root{ --z:1.14; } .layout{ zoom:var(--z); } }
@@ -587,66 +416,112 @@
   @media (min-width:2560px){ :root{ --z:1.3; } .layout{ zoom:var(--z); } }
   @media (min-width:3000px){ :root{ --z:1.45; } .layout{ zoom:var(--z); } }
 
-  /* ===== SMALL LAPTOPS / TABLETS ===== */
+  /* ===== FIT TO LAPTOP SCREENS (MacBook 13"/14") =====
+     every chart card is sized to fit in one screen, with its heading */
+  @media (min-width:1101px){
+    .section{ padding-top:72px; }
+    .section-heading{ font-size:clamp(24px, 2vw, 30px); margin-bottom:10px; }
+    .lead{ font-size:16px; }
+    .viz{ margin-top:20px; padding:22px 26px 18px; }
+    .takeaway{ margin-top:14px; padding:10px 14px; font-size:13.5px; }
+    .source{ margin-top:10px; font-size:12px; }
+    .funnel-wrap{ margin-top:18px; }
+    .ftrack{ height:24px; }
+    .fstep + .fstep{ margin-top:12px; }
+    .web-wrap{ max-width:820px; margin-top:8px; }
+    .jr-steps{ margin-top:6px; }
+    .jstep{ padding:10px 10px; }
+    .nav-rows{ margin-top:12px; }
+    .nrow{ padding:9px 0; }
+    .name-strip{ margin-top:12px; padding:10px 14px; }
+    .smap-legend{ margin-top:10px; }
+    .nat{ margin-top:16px; padding-bottom:16px; }
+    .hbar{ padding:5px 0; }
+    .hbar-label{ margin-bottom:5px; }
+    .sub-h{ margin-top:14px; }
+    .bench-scroll{ margin-top:10px; }
+    .brw > div{ padding:6px 4px; }
+    .brw.h > div{ padding-bottom:8px; }
+    .badge{ width:30px; height:30px; border-radius:8px; font-size:10px; }
+    .ideas{ margin-top:12px; }
+    .idea{ padding:14px 16px 12px; }
+    .flow{ margin-top:18px; }
+    .flow-row + .flow-row{ margin-top:8px; }
+    .fcell{ padding:12px 14px 11px; }
+    .lesson{ margin-top:18px; padding:24px 28px; }
+    .task{ padding:9px 0; }
+    .metrics{ margin-top:12px; }
+    .metric{ padding:12px 14px; }
+    .limits{ margin-top:18px; }
+    .next{ padding:18px 22px; }
+  }
+  /* shorter laptop screens: shrink the tallest diagram a bit more */
+  @media (min-width:1101px) and (max-height:860px){
+    .web-wrap{ max-width:720px; }
+    .glance-row:last-child{ display:none; }
+  }
+  @media (min-width:1101px) and (max-height:760px){
+    .glance{ display:none; }
+  }
+
+  /* ===== laptops / tablets ===== */
   @media (max-width:1100px){
     .layout{ display:block; }
-    .side-sticky{ display:none; }
-    .page-lede{ font-size:clamp(17px, 2.2vw, 19px); margin-bottom:36px; max-width:var(--content-w); }
+    .side{ display:none; }
     .main{ max-width:var(--content-w); margin:0; }
-    .methods{ grid-template-columns:repeat(2, 1fr); }
   }
   @media (max-width:900px){
-    .directions{ grid-template-columns:1fr; }
     .meta{ grid-template-columns:repeat(2, auto); justify-content:start; column-gap:40px; }
-    .cols-wrap{ grid-template-columns:1fr; }
-    .nat{ grid-template-columns:1fr 1fr; }
+    .funnel-wrap{ grid-template-columns:1fr; gap:28px; }
+    .method-strip{ grid-template-columns:1fr 1fr; }
+    .mstep:nth-child(3){ border-left:none; }
+    .mstep:nth-child(n+3){ border-top:1px solid var(--hairline); }
     .ideas{ grid-template-columns:1fr; }
-    .total{ width:auto; }
+    .limits, .metrics{ grid-template-columns:1fr 1fr; }
+    .frow{ grid-template-columns:28px minmax(0, 1fr) 50px 96px; row-gap:10px; }
+    .frow .segs{ grid-column:2 / -1; grid-row:2; }
+    .frow.h .hseg{ display:none; }
   }
-  /* ===== PHONES ===== */
+  /* ===== phones ===== */
   @media (max-width:560px){
     .page-header{ padding-top:32px; }
     body{ padding-bottom:32px; }
     .back-link{ margin-bottom:39px; }
     .mini-bar{ height:50px; gap:14px; }
     .mini-title{ font-size:16px; }
-    .section{ padding-top:64px; }
+    .section{ padding-top:68px; }
     .lead{ font-size:16.5px; }
-    .viz{ padding:20px 18px 18px; }
-    .who-grid{ grid-template-columns:1fr; gap:20px; }
-    .waffle{ grid-template-columns:repeat(10, 1fr); grid-auto-rows:auto; }
-    .waffle i{ aspect-ratio:1; }
-    .who-big{ font-size:52px; }
-    .methods, .insights, .shipped, .figs{ grid-template-columns:1fr; }
-    .question{ padding:22px 22px; }
-    .cols{ height:170px; }
-    .col-labels span{ font-size:11px; }
-    .lesson{ padding:22px 20px; }
-    .nat, .ideas{ grid-template-columns:1fr; }
-    .bench{ grid-template-columns:minmax(150px, 1.6fr) repeat(3, minmax(56px, 1fr)); }
-    .bench > div{ padding:12px 4px; font-size:13px; }
-    .bench .bh{ font-size:12px; }
-    .bh .lg{ display:none; }
-    .bh .sh{ display:inline; }
-
-    /* matrix becomes one card per need, with the places as tags */
-    .matrix-scroll{ overflow:visible; margin:16px 0 0; padding:0; }
-    .matrix{ display:block; min-width:0; }
-    .mx-h{ display:none; }
-    .mx-row{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:14px 0; border-bottom:1px solid var(--hairline); }
-    .mx-row:last-child{ border-bottom:none; }
-    .mx-row > div{ border:none; padding:0; height:auto; background:none !important; }
-    .mx-row .mx-need{ width:100%; margin-bottom:6px; }
-    .mx-row > div:has(.nodot){ display:none; }
-    .mx-row > div[data-p]:has(.dot){
-      gap:6px;
-      font-size:12px; font-weight:600; color:var(--cardinal-deep);
-      background:var(--cardinal-soft) !important;
-      border-radius:999px; padding:5px 10px 5px 7px;
-    }
-    .mx-row > div[data-p]::after{ content:attr(data-p); }
-    .mx-row .dot{ width:8px; height:8px; }
-    .places{ display:none !important; }
+    .viz{ padding:20px 18px 18px; border-radius:18px; }
+    .question{ padding:22px; }
+    .method-strip{ grid-template-columns:1fr; }
+    .mstep + .mstep{ border-left:none; border-top:1px solid var(--hairline); }
+    .nat{ grid-template-columns:1fr; gap:16px; }
+    .nat-cell + .nat-cell{ border-left:none; padding-left:0; border-top:1px solid var(--hairline); padding-top:16px; }
+    .frow{ grid-template-columns:26px minmax(0, 1fr) 40px; gap:10px 12px; }
+    .frow .intl{ grid-column:2 / -1; grid-row:3; text-align:left; }
+    .frow.h .hint{ display:none; }
+    .web-wrap{ display:none; }
+    .bench .school{ position:sticky; left:0; z-index:2; background:#fff; box-shadow:6px 0 8px -6px rgba(0,0,0,0.12); }
+    .brw.isu .school{ background:#fdf3f4; }
+    .brw.h > div:first-child{ position:sticky; left:0; z-index:2; background:#fff; }
+    .bench{ min-width:640px; }
+    .brw{ grid-template-columns:148px repeat(7, 46px) 100px; }
+    .sname{ font-size:12px; }
+    .sname small{ display:none; }
+    .badge{ width:32px; height:32px; font-size:10px; }
+    .school{ gap:8px; }
+    .swipe{ display:block !important; }
+    .web-list{ display:block; }
+    .nrow{ grid-template-columns:1fr; gap:8px; }
+    .quotes, .limits, .next-list, .metrics{ grid-template-columns:1fr; }
+    .quote blockquote{ font-size:16.5px; }
+    .task{ grid-template-columns:28px minmax(0, 1fr); row-gap:6px; }
+    .task > div:nth-child(3), .task > div:nth-child(4){ grid-column:2; }
+    .task.t-h{ display:none; }
+    .flow-h{ display:none; }
+    .flow-row{ grid-template-columns:1fr; }
+    .farrow{ height:22px; transform:rotate(90deg); }
+    .lesson{ padding:24px 20px; }
   }
 </style>
 </head>
@@ -676,31 +551,23 @@
     <div class="toc-title">On this page</div>
     <ul class="toc" id="toc">
       <li><a href="#context">Context</a></li>
-      <li><a href="#who">Who uses it</a></li>
-      <li><a href="#methods">How I researched it</a></li>
-      <li><a href="#needs">What students look for</a></li>
+      <li><a href="#who">Who it serves</a></li>
+      <li><a href="#method">Method</a></li>
+      <li><a href="#needs">What students ask</a></li>
+      <li><a href="#voices">In their words</a></li>
+      <li><a href="#journey">Student journey</a></li>
+      <li><a href="#sitemap">Inside the ISU site</a></li>
       <li><a href="#beyond">Beyond ISU</a></li>
       <li><a href="#peers">Peer benchmark</a></li>
-      <li><a href="#insights">Key insights</a></li>
-      <li><a href="#design">Research to design</a></li>
-      <li><a href="#outcome">Outcome</a></li>
-      <li><a href="#today">The site today</a></li>
+      <li><a href="#shipped">Insight to shipped</a></li>
+      <li><a href="#measure">Measuring &amp; testing</a></li>
+      <li><a href="#reflect">Limitations</a></li>
     </ul>
-
     <div class="glance">
       <div class="glance-title">At a glance</div>
-      <div class="glance-row">
-        <div class="glance-num">#1</div>
-        <div class="glance-text">Top need: <b>scholarships &amp; research funding</b></div>
-      </div>
-      <div class="glance-row">
-        <div class="glance-num">1 in 3</div>
-        <div class="glance-text">ISU graduate students is <b>international</b></div>
-      </div>
-      <div class="glance-row">
-        <div class="glance-num">4 <small>→</small> 3</div>
-        <div class="glance-text"><b>Insights</b> turned into <b>design directions</b></div>
-      </div>
+      <div class="glance-row"><div class="glance-num b">#1</div><div class="glance-text">Top need: <b>scholarships &amp; research funding</b></div></div>
+      <div class="glance-row"><div class="glance-num">~25</div><div class="glance-text">graduate students <b>talked to</b></div></div>
+      <div class="glance-row"><div class="glance-num">10 schools</div><div class="glance-text">one per state, scored on <b>7 funding-page features</b></div></div>
     </div>
   </div>
 </aside>
@@ -710,7 +577,7 @@
   <div class="meta reveal">
     <div><div class="meta-label">Role</div><div class="meta-value">Graduate Administrative Assistant</div></div>
     <div><div class="meta-label">Focus</div><div class="meta-value">User research, web design &amp; development</div></div>
-    <div><div class="meta-label">Users</div><div class="meta-value">Current &amp; prospective grad students</div></div>
+    <div><div class="meta-label">Participants</div><div class="meta-value">~25 graduate students</div></div>
     <div><div class="meta-label">Timeline</div><div class="meta-value">2023 – 2024</div></div>
   </div>
 
@@ -718,7 +585,7 @@
   <section id="context" class="section reveal">
     <div class="eyebrow">Context</div>
     <h2 class="section-heading"><span class="hl">Organized around the office.</span> Not around the student.</h2>
-    <p class="lead">Pages were sorted by audience and by the office's own categories. That works if you already know where to look. Most new graduate students don't.</p>
+    <p class="lead">Pages were sorted by audience and by the office's own categories. That works if you already know where to look. Most new graduate students don't, so many ended up emailing the office instead.</p>
     <div class="question">
       <div class="question-k">Research question</div>
       <div class="question-q">What are graduate students really looking for, and what stops them from finding it on their own?</div>
@@ -727,155 +594,128 @@
 
   <!-- WHO -->
   <section id="who" class="section reveal">
-    <div class="eyebrow">Who uses it</div>
-    <h2 class="section-heading"><span class="hl">One in three.</span> That's how many ISU grad students are international.</h2>
-    <p class="lead">Their questions come with rules attached: visa status, work-hour limits, and extra paperwork.</p>
-
+    <div class="eyebrow">Who it serves</div>
+    <h2 class="section-heading"><span class="hl">One in three is international.</span> Many study in research-heavy STEM programs.</h2>
     <div class="viz" id="vizWho">
-      <div class="viz-title">ISU graduate &amp; professional students, Fall 2026</div>
-      <div class="viz-sub">Each square is 1% of 4,466 students</div>
-      <div class="who-grid">
-        <div class="waffle" id="waffle" role="img" aria-label="35 of 100 squares are international students"></div>
+      <div class="viz-title">From all grad students to the ones funding matters most to</div>
+      <div class="viz-sub">ISU graduate &amp; professional students, Fall 2026</div>
+      <div class="funnel-wrap">
         <div>
-          <div class="who-big">35<small>%</small></div>
-          <div class="who-cap">are international students,<br>1,566 people</div>
-          <div class="legend">
-            <span><i class="sw c"></i>International <b>1,566</b></span>
-            <span><i class="sw"></i>Domestic <b>2,900</b></span>
+          <div class="fstep">
+            <div class="fstep-top"><span class="fstep-label">All graduate &amp; professional students</span><span class="fstep-num">4,466</span></div>
+            <div class="ftrack" data-tip="4,466 students"><div class="ffill" style="--v:100%"></div></div>
           </div>
+          <div class="fstep b">
+            <div class="fstep-top"><span class="fstep-label">International students</span><span class="fstep-num">1,566<small>35%</small></span></div>
+            <div class="ftrack" data-tip="1,566 of 4,466 (35%)"><div class="ffill" style="--v:35.1%"></div></div>
+          </div>
+          <div class="fstep bb">
+            <div class="fstep-top"><span class="fstep-label">International Ph.D. students in just 5 STEM programs</span><span class="fstep-num">470<small>30% of int'l</small></span></div>
+            <div class="ftrack" data-tip="470 of 1,566 international (30%)"><div class="ffill" style="--v:10.5%"></div></div>
+          </div>
+          <div class="rule-chip">F-1 rule: on-campus work capped at <b>20 hrs/week</b>, the same as a half-time assistantship</div>
+        </div>
+        <div>
+          <div class="breakdown-title">Where those 470 study</div>
+          <div class="brow" data-tip="128 students"><span>Computer Science</span><div class="btrack"><div class="bfill" style="--v:100%"></div></div><b>128</b></div>
+          <div class="brow" data-tip="116 students"><span>Mechanical Eng.</span><div class="btrack"><div class="bfill" style="--v:90.6%"></div></div><b>116</b></div>
+          <div class="brow" data-tip="79 students"><span>Electrical Eng.</span><div class="btrack"><div class="bfill" style="--v:61.7%"></div></div><b>79</b></div>
+          <div class="brow" data-tip="79 students"><span>Civil Eng.</span><div class="btrack"><div class="bfill" style="--v:61.7%"></div></div><b>79</b></div>
+          <div class="brow" data-tip="68 students"><span>Statistics</span><div class="btrack"><div class="bfill" style="--v:53.1%"></div></div><b>68</b></div>
         </div>
       </div>
-      <div class="mini-stats">
-        <div class="mini-stat"><b>4,466</b><span>graduate &amp; professional students</span></div>
-        <div class="mini-stat"><b>20 hrs</b><span>weekly on-campus work cap for F-1 students</span></div>
-      </div>
-      <p class="source">Sources: <a href="https://www.registrar.iastate.edu/resources/enrollment-statistics" target="_blank" rel="noopener">ISU Registrar</a> (3,817 graduate + 649 professional); <a href="https://isso.dso.iastate.edu/media/10/file/Student%20Fact%20Sheet" target="_blank" rel="noopener">ISSO fact sheet</a>; <a href="https://isso.dso.iastate.edu/students/f-1-students/on-campus-employment" target="_blank" rel="noopener">ISSO employment rules</a>.</p>
+      <div class="takeaway"><span>In these programs, funding usually means a <b>research or teaching assistantship</b>. For international students, that assistantship also uses up their legal work hours.</span></div>
+      <p class="source">Sources: <a href="https://www.registrar.iastate.edu/resources/enrollment-statistics" target="_blank" rel="noopener">ISU Registrar</a> (3,817 graduate + 649 professional); <a href="https://isso.dso.iastate.edu/media/10/file/Student%20Fact%20Sheet" target="_blank" rel="noopener">ISSO fact sheet</a>; <a href="https://isso.dso.iastate.edu/students/f-1-students/on-campus-employment" target="_blank" rel="noopener">ISSO employment rules</a>; <a href="https://catalog.iastate.edu/graduatecollege/" target="_blank" rel="noopener">Graduate Catalog</a>.</p>
     </div>
   </section>
 
-  <!-- METHODS -->
-  <section id="methods" class="section reveal">
-    <div class="eyebrow">How I researched it</div>
-    <h2 class="section-heading"><span class="hl">No lab needed.</span> I listened where the questions already happened.</h2>
-
-    <div class="methods">
-      <div class="method">
-        <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></div>
-        <div class="method-name">Student conversations</div>
-        <div class="method-desc">"What were you looking for? Where did you look first?"</div>
-      </div>
-      <div class="method">
-        <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
-        <div class="method-name">Question log</div>
-        <div class="method-desc">Tagged the questions students emailed or asked in person.</div>
-      </div>
-      <div class="method">
-        <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg></div>
-        <div class="method-name">Site audit</div>
-        <div class="method-desc">Walked menus and pages as a student, including keyboard-only.</div>
-      </div>
-      <div class="method">
-        <div class="method-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
-        <div class="method-name">Desk research</div>
-        <div class="method-desc">Checked patterns against ISU and national data.</div>
-      </div>
-    </div>
-
-    <div class="process" aria-label="Research process">
-      <span class="chip"><i>1</i>Collect</span><span class="arrow">→</span>
-      <span class="chip"><i>2</i>Tag by topic</span><span class="arrow">→</span>
-      <span class="chip"><i>3</i>Affinity map</span><span class="arrow">→</span>
-      <span class="chip"><i>4</i>Validate with data</span>
+  <!-- METHOD -->
+  <section id="method" class="section reveal">
+    <div class="eyebrow">Method</div>
+    <h2 class="section-heading"><span class="hl">About 25 students.</span> I listened where the questions already happened.</h2>
+    <div class="method-strip">
+      <div class="mstep"><div class="mstep-n">01 · Collect</div><div class="mstep-t">~25 student conversations</div><div class="mstep-d">Plus the questions students emailed or asked in person, and where they looked first.</div><div class="mstep-o">Output: <b>raw questions</b></div></div>
+      <div class="mstep"><div class="mstep-n">02 · Tag</div><div class="mstep-t">Code every question</div><div class="mstep-d">By topic, student type, and which page should have answered it.</div><div class="mstep-o">Output: <b>tagged log</b></div></div>
+      <div class="mstep"><div class="mstep-n">03 · Map</div><div class="mstep-t">Affinity map + site audit</div><div class="mstep-d">Clustered needs, then traced where each answer actually lived.</div><div class="mstep-o">Output: <b>4 core needs</b></div></div>
+      <div class="mstep"><div class="mstep-n">04 · Validate</div><div class="mstep-t">Check against data</div><div class="mstep-d">ISU enrollment, national surveys, and peer schools' sites.</div><div class="mstep-o">Output: <b>4 insights</b></div></div>
     </div>
   </section>
 
   <!-- NEEDS -->
   <section id="needs" class="section reveal">
-    <div class="eyebrow">What students look for</div>
-    <h2 class="section-heading"><span class="hl">The top question:</span> "How do I pay for it?"</h2>
-    <p class="lead">Funding came first. And every top need sent students to <strong>two to four different places</strong> for one answer.</p>
+    <div class="eyebrow">What students ask</div>
+    <h2 class="section-heading"><span class="hl">The top question:</span> "How do I pay for it?" Its answer lived in four places.</h2>
+    <p class="lead">Each line is a trip a student had to make for one answer. <strong>More lines, harder journey.</strong></p>
 
-    <div class="viz" id="vizMatrix">
+    <div class="viz" id="vizFrag">
       <div class="viz-title">One question, many places to look</div>
-      <div class="viz-sub">Where the answer to each need lived, ranked by how often students asked</div>
-      <div class="matrix-scroll">
-        <div class="matrix" role="table" aria-label="Where each student need was answered">
-          <div class="mx-h l" role="columnheader">Student need</div>
-          <div class="mx-h" role="columnheader">Grad College</div>
-          <div class="mx-h" role="columnheader">Department pages</div>
-          <div class="mx-h" role="columnheader">Graduate Catalog</div>
-          <div class="mx-h" role="columnheader">ISSO</div>
-          <div class="mx-h" role="columnheader">Workday</div>
-          <div class="mx-h" role="columnheader">Job site</div>
-          <div class="mx-h r" role="columnheader">Places</div>
-
-          <div class="mx-row top" role="row">
-            <div class="mx-need" role="cell"><span class="rank">1</span><span class="need-name">Scholarships &amp; research funding<span class="need-q">"Does it cover my tuition?"</span></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.05s"></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.1s"></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.15s"></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.2s"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div class="places" role="cell"><b>4</b></div>
-          </div>
-          <div class="mx-row" role="row">
-            <div class="mx-need" role="cell"><span class="rank r2">2</span><span class="need-name">On-campus part-time jobs<span class="need-q">"How many hours can I work?"</span></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.25s"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.3s"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.35s"></span></div>
-            <div class="places" role="cell"><b>3</b></div>
-          </div>
-          <div class="mx-row" role="row">
-            <div class="mx-need" role="cell"><span class="rank r3">3</span><span class="need-name">Visa &amp; work authorization<span class="need-q">"What do I need before day one?"</span></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.4s"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.45s"></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.5s"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div class="places" role="cell"><b>3</b></div>
-          </div>
-          <div class="mx-row" role="row">
-            <div class="mx-need" role="cell"><span class="rank r4">4</span><span class="need-name">Forms &amp; deadlines<span class="need-q">"Is it in Workday or a PDF?"</span></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.55s"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div role="cell"><span class="dot" style="transition-delay:.6s"></span></div>
-            <div role="cell"><span class="nodot"></span></div>
-            <div class="places" role="cell"><b>2</b></div>
-          </div>
-        </div>
+      <div class="viz-sub">Each line connects a student need to a place that held part of its answer. Hover a need to trace it.</div>
+      <div class="web-wrap">
+        <svg class="web" id="web" viewBox="0 0 880 420" role="img" aria-label="Diagram linking 4 student needs to the 6 places their answers lived"></svg>
       </div>
-      <p class="source">Ranking from my question log and student conversations.</p>
+      <ul class="web-list" id="webList" aria-hidden="true"></ul>
+      <div class="takeaway"><span><b>Funding, the #1 need, needed four places.</b> ISSO and Workday each show up for several needs, so international students bounced between the same offices again and again.</span></div>
+      <p class="source">Ranking and places from my question log, student conversations and site audit. Job board per the <a href="https://www.grad-college.iastate.edu/finance/employment/" target="_blank" rel="noopener">Grad College employment page</a>.</p>
     </div>
+  </section>
 
-    <div class="viz" id="vizPhd">
-      <div class="viz-title">Why funding leads: ISU's largest international Ph.D. programs</div>
-      <div class="viz-sub">International Ph.D. students by major, Fall 2026</div>
-      <div class="cols-wrap">
-        <div>
-          <div class="cols">
-            <div class="col"><span class="tip">Computer Science: 128</span><span class="col-val">128</span><div class="col-bar" style="--h:100%"></div></div>
-            <div class="col"><span class="tip">Mechanical Engineering: 116</span><span class="col-val">116</span><div class="col-bar" style="--h:90.6%"></div></div>
-            <div class="col"><span class="tip">Electrical Engineering: 79</span><span class="col-val">79</span><div class="col-bar" style="--h:61.7%"></div></div>
-            <div class="col"><span class="tip">Civil Engineering: 79</span><span class="col-val">79</span><div class="col-bar" style="--h:61.7%"></div></div>
-            <div class="col"><span class="tip">Statistics: 68</span><span class="col-val">68</span><div class="col-bar" style="--h:53.1%"></div></div>
-          </div>
-          <div class="col-labels">
-            <span>Computer Science</span><span>Mechanical Eng.</span><span>Electrical Eng.</span><span>Civil Eng.</span><span>Statistics</span>
-          </div>
-        </div>
-        <div class="total">
-          <b>470</b>
-          <span>international Ph.D. students in these 5 research-heavy programs, where funding usually means an assistantship</span>
+  <!-- VOICES -->
+  <section id="voices" class="section reveal">
+    <div class="eyebrow">In their words</div>
+    <h2 class="section-heading"><span class="hl">What students told me.</span> Four themes came up again and again.</h2>
+    <div class="quotes">
+      <figure class="quote"><div class="q-tag">Funding</div><blockquote>"I got admitted, but I still don't understand how funding works here or who decides it."</blockquote></figure>
+      <figure class="quote"><div class="q-tag">Part-time jobs</div><blockquote>"I need a job on campus. Can I even work more than my assistantship?"</blockquote></figure>
+      <figure class="quote"><div class="q-tag">Visa &amp; work rules</div><blockquote>"Every answer sends me to another office. I'm scared of doing something wrong with my visa."</blockquote></figure>
+      <figure class="quote"><div class="q-tag">Forms</div><blockquote>"There are so many forms. I don't know which one I need or where it goes."</blockquote></figure>
+    </div>
+    <p class="source">Paraphrased from my conversations with ~25 graduate students; representative of recurring themes, not verbatim quotes.</p>
+  </section>
+
+  <!-- JOURNEY -->
+  <section id="journey" class="section reveal">
+    <div class="eyebrow">Student journey</div>
+    <h2 class="section-heading"><span class="hl">Admitted to first paycheck.</span> The low points are where students emailed the office.</h2>
+    <p class="lead">A composite of international Ph.D. students trying to get funded.</p>
+
+    <div class="viz" id="vizJourney">
+      <div class="viz-title">Getting funded as an international Ph.D. student</div>
+      <div class="viz-sub">How confident the student feels at each step, and where the answer lived</div>
+      <div class="swipe">Swipe to follow all 6 steps →</div>
+      <div class="jr-scroll">
+        <div class="jr">
+          <svg class="jr-curve" id="jrCurve" viewBox="0 0 600 84" aria-hidden="true"></svg>
+          <div class="jr-steps" id="jrSteps"></div>
         </div>
       </div>
-      <p class="source">Source: <a href="https://isso.dso.iastate.edu/media/10/file/Student%20Fact%20Sheet" target="_blank" rel="noopener">ISU International Students &amp; Scholars Office</a>, Fall 2026.</p>
+      <div class="jr-legend"><span><i class="jr-dot hi"></i>Confident</span><span><i class="jr-dot lo"></i>Stuck, likely to email the office</span></div>
+      <div class="takeaway"><span>The two lowest points, <b>searching for funding</b> and <b>checking work rules</b>, are exactly where the answer was split across offices. That's where the design work focused.</span></div>
+      <p class="source">Composite journey based on my research; not a single real student.</p>
+    </div>
+  </section>
+
+  <!-- SITE MAP -->
+  <section id="sitemap" class="section reveal">
+    <div class="eyebrow">Inside the ISU site</div>
+    <h2 class="section-heading"><span class="hl">43 menu links, 5 menus.</span> Funding shows up in four of them, under three different names.</h2>
+    <p class="lead">I mapped every main-menu link to see where students' top needs live.</p>
+
+    <div class="viz" id="vizMap">
+      <div class="viz-title">Graduate College main navigation</div>
+      <div class="viz-sub">Each dot is one menu link. Only the links tied to students' top needs are named.</div>
+      <div class="nav-rows" id="navRows"></div>
+      <div class="smap-legend">
+        <span><i class="sw" style="background:var(--blue)"></i>Funding</span>
+        <span><i class="sw" style="background:#fff; box-shadow:inset 0 0 0 2px var(--blue)"></i>International</span>
+        <span><i class="sw" style="background:#1d1d1f"></i>Forms, deadlines &amp; Workday</span>
+        <span><i class="sw" style="background:#d2d2d7; border-radius:50%"></i>Other link</span>
+      </div>
+      <div class="name-strip">
+        <div class="name-strip-k">Same topic, three names</div>
+        <div class="names"><span>Funding Opportunities</span><span>Graduate Financing</span><span>Funding Resources</span></div>
+      </div>
+      <div class="takeaway"><span>Next opportunity: <b>one consistent funding label</b> across menus, and an international path that continues into Current Students.</span></div>
+      <p class="source">Source: <a href="https://www.grad-college.iastate.edu/" target="_blank" rel="noopener">grad-college.iastate.edu</a> main menu, reviewed October 2026.</p>
     </div>
   </section>
 
@@ -883,149 +723,110 @@
   <section id="beyond" class="section reveal">
     <div class="eyebrow">Beyond ISU</div>
     <h2 class="section-heading"><span class="hl">It's not just ISU.</span> Funding and visas worry international grad students everywhere.</h2>
-    <p class="lead">National data shows the same pattern I heard in the office, so the findings weren't just local.</p>
-
-    <div class="nat">
-      <div class="nat-card"><div class="nat-num">488K</div><div class="nat-label">international graduate students in the U.S., 2024/25 <span class="delta down">−2.7%</span></div></div>
-      <div class="nat-card"><div class="nat-num">44<small>%</small></div><div class="nat-label">of international students study math, computer science or engineering, like ISU's top Ph.D. programs</div></div>
-      <div class="nat-card"><div class="nat-num">294K</div><div class="nat-label">on Optional Practical Training, the post-study work permit <span class="delta up">+21%</span></div></div>
-    </div>
-    <p class="source">Source: <a href="https://opendoorsdata.org/wp-content/uploads/2025/11/OD25_Fast-Facts.pdf" target="_blank" rel="noopener">IIE Open Doors 2025 Fast Facts</a>.</p>
-
-    <div class="viz" id="vizCgs">
-      <div class="viz-title">What U.S. graduate schools hear from international students</div>
-      <div class="viz-sub">Share of institutions reporting each concern, 2026</div>
+    <div class="viz" id="vizNat">
+      <div class="viz-title">The national picture</div>
+      <div class="viz-sub">International students in the U.S.</div>
+      <div class="nat">
+        <div class="nat-cell"><div class="nat-num">488K<span class="delta">−2.7%</span></div><div class="nat-label">international graduate students, 2024/25</div></div>
+        <div class="nat-cell"><div class="nat-num">44<small>%</small></div><div class="nat-label">study math, computer science or engineering, like ISU's top Ph.D. programs</div></div>
+        <div class="nat-cell"><div class="nat-num">294K<span class="delta">+21%</span></div><div class="nat-label">on OPT, the post-study work permit</div></div>
+      </div>
+      <div class="sub-h">What graduate schools hear from international students, 2026 (% of institutions)</div>
       <ul class="hbars">
         <li class="hbar"><div class="hbar-label">Longer visa processing for admitted students</div><div class="hbar-track"><div class="hbar-fill" style="--v:82.6%"></div></div><div class="hbar-val">83%</div></li>
         <li class="hbar"><div class="hbar-label">Current students worried about visa status</div><div class="hbar-track"><div class="hbar-fill" style="--v:75.3%"></div></div><div class="hbar-val">75%</div></li>
         <li class="hbar"><div class="hbar-label">Current students worried about losing OPT</div><div class="hbar-track"><div class="hbar-fill" style="--v:60%"></div></div><div class="hbar-val">60%</div></li>
-        <li class="hbar hi"><div class="hbar-label"><b>Funding</b> cited when admitted students declined</div><div class="hbar-track"><div class="hbar-fill" style="--v:43%"></div></div><div class="hbar-val">43%</div></li>
+        <li class="hbar hi"><div class="hbar-label"><b>Funding</b> cited when admitted students declined an offer</div><div class="hbar-track"><div class="hbar-fill" style="--v:43%"></div></div><div class="hbar-val">43%</div></li>
       </ul>
-      <p class="source">Source: <a href="https://cgsnet.org/wp-content/uploads/2026/08/2026-International-Flash-Survey-Brief.pdf" target="_blank" rel="noopener">Council of Graduate Schools, 2026 International Survey</a>.</p>
+      <div class="takeaway"><span>Nearly half of schools lose admitted international students over <b>funding</b>. The same need topped my ISU question log, so the finding wasn't just local.</span></div>
+      <p class="source">Sources: <a href="https://opendoorsdata.org/wp-content/uploads/2025/11/OD25_Fast-Facts.pdf" target="_blank" rel="noopener">IIE Open Doors 2025</a>; <a href="https://cgsnet.org/wp-content/uploads/2026/08/2026-International-Flash-Survey-Brief.pdf" target="_blank" rel="noopener">Council of Graduate Schools 2026 survey</a>.</p>
     </div>
   </section>
 
-  <!-- PEER BENCHMARK -->
+  <!-- PEERS -->
   <section id="peers" class="section reveal">
     <div class="eyebrow">Peer benchmark</div>
-    <h2 class="section-heading"><span class="hl">Peer schools.</span> How others explain funding.</h2>
-    <p class="lead">I compared the funding pages of three peer public universities. None of them did everything well, but each had an idea worth borrowing.</p>
+    <h2 class="section-heading"><span class="hl">Ten states, ten flagship schools.</span> No one explains funding completely.</h2>
+    <p class="lead">One public research university per state, plus ISU today, scored on seven things a new grad student needs to find.</p>
 
-    <div class="viz">
-      <div class="viz-title">Funding pages at peer graduate schools</div>
-      <div class="viz-sub">What a student finds on each school's main funding page</div>
-      <div class="matrix-scroll">
-        <div class="bench" role="table" aria-label="Peer funding page comparison">
-          <div class="bh l" role="columnheader">Feature</div>
-          <div class="bh" role="columnheader"><span class="lg">Illinois<br>Urbana-Champaign</span><span class="sh">UIUC</span></div>
-          <div class="bh" role="columnheader"><span class="lg">Illinois<br>Chicago</span><span class="sh">UIC</span></div>
-          <div class="bh" role="columnheader"><span class="lg">University<br>of Iowa</span><span class="sh">Iowa</span></div>
-        <div class="bf">Funding hub page<small>One place that lists all funding types</small></div>
-        <div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div>
-        <div class="bf">Searchable funding finder<small>Filter or search opportunities</small></div>
-        <div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk p" aria-label="Partly"></span></div><div class="bc"><span class="mk n" aria-label="No"></span></div>
-        <div class="bf">Plain-language explainer<small>How assistantships &amp; tuition waivers work</small></div>
-        <div class="bc"><span class="mk p" aria-label="Partly"></span></div><div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk n" aria-label="No"></span></div>
-        <div class="bf">Notes for international students<small>Eligibility, enrollment or work rules on the funding page</small></div>
-        <div class="bc"><span class="mk p" aria-label="Partly"></span></div><div class="bc"><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span></div><div class="bc"><span class="mk n" aria-label="No"></span></div>
+    <div class="viz" id="vizBench">
+      <div class="viz-head">
+        <div><div class="viz-title">Graduate funding pages, scored</div>
+        <div class="viz-sub">Yes = 1, partly = ½, out of 7. Hover a column for its meaning.</div></div>
+        <div class="bench-legend">
+          <span><span class="mk y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span>Yes</span>
+          <span><span class="mk p"></span>Partly</span>
+          <span><span class="mk n"></span>No</span>
         </div>
       </div>
-      <div class="bench-legend">
-        <span><span class="mk y" aria-label="Yes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg></span>Yes</span>
-        <span><span class="mk p" aria-label="Partly"></span>Partly</span>
-        <span><span class="mk n" aria-label="No"></span>No</span>
+      <div class="swipe">Swipe the table to see all 7 features →</div>
+      <div class="bench-scroll">
+        <div class="bench" role="table" aria-label="Peer funding page benchmark">
+          <div class="brw h" role="row">
+            <div role="columnheader">School</div>
+            <div role="columnheader" data-tip="One page listing all funding types">Overview</div>
+            <div role="columnheader" data-tip="Searchable funding finder">Finder</div>
+            <div role="columnheader" data-tip="Listing of open assistantships">Open roles</div>
+            <div role="columnheader" data-tip="What assistantships cover, in plain terms">Plain terms</div>
+            <div role="columnheader" data-tip="Notes for international students">Int'l notes</div>
+            <div role="columnheader" data-tip="Link to a campus job board">Job board</div>
+            <div role="columnheader" data-tip="Frequently asked questions">FAQ</div>
+            <div role="columnheader">Coverage</div>
+          </div>
+          <div id="benchRows"></div>
+        </div>
       </div>
-      <p class="source">Reviewed October 2026: <a href="https://grad.illinois.edu/funding" target="_blank" rel="noopener">UIUC Graduate College</a>, <a href="https://grad.uic.edu/funding-awards/graduate-funding-overview/" target="_blank" rel="noopener">UIC Graduate College</a>, <a href="https://grad.uiowa.edu/funding" target="_blank" rel="noopener">University of Iowa Graduate College</a>.</p>
+      <p class="source">Reviewed October 2026: <a href="https://grad.illinois.edu/funding" target="_blank" rel="noopener">Illinois</a>, <a href="https://grad.wisc.edu/funding/" target="_blank" rel="noopener">Wisconsin</a>, <a href="https://gradschool.utexas.edu/funding" target="_blank" rel="noopener">UT Austin</a>, <a href="https://gradsch.osu.edu/funding" target="_blank" rel="noopener">Ohio State</a>, <a href="https://www.gradschool.psu.edu/graduate-funding/" target="_blank" rel="noopener">Penn State</a>, <a href="https://grad.ufl.edu/future/funding/streams/" target="_blank" rel="noopener">Florida</a>, <a href="https://grad.berkeley.edu/financial/" target="_blank" rel="noopener">UC Berkeley</a>, <a href="https://www.colorado.edu/graduateschool/funding/departmental-funding" target="_blank" rel="noopener">CU Boulder</a> (+ <a href="https://www.colorado.edu/graduateschool/admissions/where-begin/international-students/tuition-money-matters-international-students" target="_blank" rel="noopener">international page</a>), <a href="https://rackham.umich.edu/funding/" target="_blank" rel="noopener">Michigan</a>, <a href="https://grad.umn.edu/funding/current-students" target="_blank" rel="noopener">Minnesota</a>, <a href="https://www.grad-college.iastate.edu/finance/" target="_blank" rel="noopener">ISU</a>.</p>
     </div>
 
+    <div class="takeaway out"><span>Only <b>1 of 10</b> peers has a real funding finder or a list of open assistantships (UIUC), and only <b>1 of 10</b> fully explains funding for international students (UW–Madison). ISU ties for 3rd, and the gap my research pointed to is the same gap almost everyone has.</span></div>
     <div class="ideas">
-      <div class="idea">
-        <div class="idea-k">Illinois Urbana-Champaign</div>
-        <div class="idea-t">A searchable Fellowship Finder</div>
-        <div class="idea-d">Plus an assistantship clearinghouse and campus job boards in the same menu.</div>
-      </div>
-      <div class="idea">
-        <div class="idea-k">Illinois Chicago</div>
-        <div class="idea-t">Funding explained in plain words</div>
-        <div class="idea-d">A step-by-step guide with FAQs and clear notes for international students.</div>
-      </div>
-      <div class="idea isu">
-        <div class="idea-k">For ISU</div>
-        <div class="idea-t">Combine both</div>
-        <div class="idea-d">One funding hub that explains how it works, then points to where to apply.</div>
-      </div>
+      <div class="idea"><div class="idea-k">Borrow from Illinois Urbana-Champaign</div><div class="idea-t">Search + open roles</div><div class="idea-d">A searchable Fellowship Finder and a list of open assistantships.</div></div>
+      <div class="idea"><div class="idea-k">Borrow from Wisconsin–Madison</div><div class="idea-t">Say who is eligible</div><div class="idea-d">Clear notes on which funding international students can get, plus a jobs link.</div></div>
+      <div class="idea isu"><div class="idea-k">For ISU</div><div class="idea-t">Combine both, add the work rules</div><div class="idea-d">One hub that explains, lists, and says what international students may work.</div></div>
     </div>
   </section>
 
-  <!-- INSIGHTS -->
-  <section id="insights" class="section reveal">
-    <div class="eyebrow">Key insights</div>
-    <h2 class="section-heading"><span class="hl">Students weren't failing to search.</span> The answers were split across offices.</h2>
-    <ol class="insights">
-      <li class="insight">
-        <div class="insight-num">01</div>
-        <div class="insight-title">One question, four places to look</div>
-        <div class="insight-text">Funding info was spread across the Grad College, departments, the Catalog, and ISSO.</div>
-        <div class="tags"><span class="tag">Question log</span><span class="tag">Site audit</span></div>
-      </li>
-      <li class="insight">
-        <div class="insight-num">02</div>
-        <div class="insight-title">Audience menus don't fit everyone</div>
-        <div class="insight-text">International students need visa and funding info both before and after they enroll.</div>
-        <div class="tags"><span class="tag">Conversations</span><span class="tag">Site audit</span></div>
-      </li>
-      <li class="insight">
-        <div class="insight-num">03</div>
-        <div class="insight-title">"Workday or PDF?"</div>
-        <div class="insight-text">Students knew which form they needed, but not which system to open.</div>
-        <div class="tags"><span class="tag">Question log</span></div>
-      </li>
-      <li class="insight">
-        <div class="insight-num">04</div>
-        <div class="insight-title">Menus must work without a mouse</div>
-        <div class="insight-text">Keyboard and screen-reader users need the highlighted item and open menu to stay in sync.</div>
-        <div class="tags"><span class="tag">Keyboard walkthrough</span></div>
-      </li>
-    </ol>
-  </section>
-
-  <!-- DESIGN -->
-  <section id="design" class="section reveal">
-    <div class="eyebrow">From research to design</div>
-    <h2 class="section-heading"><span class="hl">The fix.</span> Organize around the student's task, not the office.</h2>
-    <div class="directions">
-      <div class="direction">
-        <div class="direction-tag">From insight 01</div>
-        <div class="direction-name">One funding hub</div>
-        <div class="direction-desc">What's available, what it covers, and how to apply, in one place.</div>
-      </div>
-      <div class="direction">
-        <div class="direction-tag">From insights 02 &amp; 03</div>
-        <div class="direction-name">"I want to…" entry points</div>
-        <div class="direction-desc">Task shortcuts for every student, with forms labeled Workday or PDF.</div>
-      </div>
-      <div class="direction">
-        <div class="direction-tag">From insight 04</div>
-        <div class="direction-name">Accessible menus</div>
-        <div class="direction-desc">Keyboard and screen-reader friendly navigation.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- OUTCOME -->
-  <section id="outcome" class="section reveal">
-    <div class="eyebrow">Outcome</div>
-    <h2 class="section-heading">What I shipped.</h2>
+  <!-- INSIGHT → SHIPPED -->
+  <section id="shipped" class="section reveal">
+    <div class="eyebrow">Insight to shipped</div>
+    <h2 class="section-heading"><span class="hl">From what I heard</span> to what went live.</h2>
     <p class="lead">I designed and developed all four areas, with my supervisor guiding priorities and reviewing changes before launch.</p>
-    <ul class="shipped">
-      <li><b>Funding pages</b>Organized around what students actually asked.</li>
-      <li><b>Student Forms</b>Every form clearly labeled Workday or PDF.</li>
-      <li><b>International student info</b>Clear paths connecting to ISSO rules.</li>
-      <li><b>Navigation &amp; menus</b>Clearer labels, keyboard-friendly.</li>
-    </ul>
+    <div class="flow">
+      <div class="flow-h"><div>Insight</div><div></div><div>Design move</div><div></div><div>Shipped</div></div>
+      <div class="flow-row">
+        <div class="fcell"><div class="n">01</div><div class="t">One question, four places</div><div class="d">Funding info split across offices.</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="fcell"><div class="n">Move</div><div class="t">One financing hub</div><div class="d">Explain first, then link out.</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="fcell ship"><div class="n">Live</div><div class="t">Graduate Financing pages</div><div class="d">Assistantships, employment, aid and job boards in one section.</div></div>
+      </div>
+      <div class="flow-row">
+        <div class="fcell"><div class="n">02</div><div class="t">Audience menus don't fit</div><div class="d">International needs span before and after enrollment.</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="fcell"><div class="n">Move</div><div class="t">Clear international path</div><div class="d">Connect Grad College content to ISSO rules.</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="fcell ship"><div class="n">Live</div><div class="t">International Students</div><div class="d">Overview plus a homepage section linking to ISSO.</div></div>
+      </div>
+      <div class="flow-row">
+        <div class="fcell"><div class="n">03</div><div class="t">"Workday or PDF?"</div><div class="d">Right form, wrong system.</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="fcell"><div class="n">Move</div><div class="t">Label every form</div><div class="d">Say where it's done, up front.</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="fcell ship"><div class="n">Live</div><div class="t">Student Forms</div><div class="d">Grouped by milestone, Workday tasks labeled, a Student Forms shortcut on the homepage.</div></div>
+      </div>
+      <div class="flow-row">
+        <div class="fcell"><div class="n">04</div><div class="t">Menus need a keyboard path</div><div class="d">Focus and open menu must stay in sync.</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="fcell"><div class="n">Move</div><div class="t">Accessible navigation</div><div class="d">Clear labels, visible focus.</div></div>
+        <div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div class="fcell ship"><div class="n">Live</div><div class="t">Navigation &amp; menus</div><div class="d">Keyboard-friendly menus with visible focus.</div></div>
+      </div>
+    </div>
+
     <div class="lesson">
       <div class="lesson-k">The biggest lesson</div>
-      <div class="lesson-q">Students rarely say "I can't find the page." They say "Is there funding for me?" The problem wasn't search. It was how the information was split up.</div>
+      <div class="lesson-q"><span class="g">Students rarely say "I can't find the page."</span> They say "Is there funding for me?" The problem wasn't search. It was how the information was split up.</div>
       <a class="visit" href="https://www.grad-college.iastate.edu/" target="_blank" rel="noopener">
         Visit the Graduate College site
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -1033,65 +834,205 @@
     </div>
   </section>
 
-  <!-- SITE TODAY -->
-  <section id="today" class="section reveal">
-    <div class="eyebrow">The site today</div>
-    <h2 class="section-heading">What students see now.</h2>
-    <div class="figs">
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/nav-future-menu.png" alt="Future Students menu with a visible keyboard focus outline"></button>
-        <figcaption><b>Future Students menu.</b> Grouped links, clear keyboard focus.</figcaption>
-      </figure>
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/international-page.png" alt="International Students section with a link to ISSO"></button>
-        <figcaption><b>International Students.</b> Overview with a direct link to ISSO.</figcaption>
-      </figure>
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/student-forms-workday.png" alt="Student Forms page introducing Workday"></button>
-        <figcaption><b>Student Forms.</b> Workday login and help up front.</figcaption>
-      </figure>
-      <figure class="fig">
-        <button type="button" class="shot"><img src="assets/ux/forms-list.png" alt="Forms grouped by topic, with Workday tasks labeled"></button>
-        <figcaption><b>Forms by topic.</b> Grouped by milestone, Workday tasks labeled.</figcaption>
-      </figure>
+
+  <!-- MEASURE & TEST -->
+  <section id="measure" class="section reveal">
+    <div class="eyebrow">Measuring &amp; testing</div>
+    <h2 class="section-heading"><span class="hl">How to know it worked.</span> A plan to close the loop.</h2>
+    <p class="lead">I didn't collect formal before-and-after numbers during the project. Here is how I'd measure the impact and test the redesign with students.</p>
+
+    <div class="viz" id="vizTest">
+      <div class="viz-head">
+        <div><div class="viz-title">Usability test plan</div><div class="viz-sub">5 students per round, think-aloud, before and after the redesign</div></div>
+        <span class="plan-pill">Planned</span>
+      </div>
+      <div class="tasks">
+        <div class="task t-h"><div>#</div><div>Task</div><div>Tests insight</div><div>Success looks like</div></div>
+        <div class="task"><div class="tn">1</div><div class="tt">Find out whether a half-time assistantship covers your tuition</div><div><span class="ti">01 · Funding</span></div><div class="ts">4 of 5 in under 2 min</div></div>
+        <div class="task"><div class="tn">2</div><div class="tt">As an F-1 student, find how many hours you can work on campus</div><div><span class="ti">02 · International</span></div><div class="ts">4 of 5, no ISSO email</div></div>
+        <div class="task"><div class="tn">3</div><div class="tt">Find an open on-campus job and where to apply</div><div><span class="ti">01 · Funding</span></div><div class="ts">Reaches CyHire in ≤ 3 clicks</div></div>
+        <div class="task"><div class="tn">4</div><div class="tt">Find the form for your Ph.D. preliminary exam and where to submit it</div><div><span class="ti">03 · Forms</span></div><div class="ts">Picks Workday correctly</div></div>
+        <div class="task"><div class="tn">5</div><div class="tt">Using only a keyboard, open the Current Students menu and reach Student Forms</div><div><span class="ti">04 · Navigation</span></div><div class="ts">5 of 5, focus always visible</div></div>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="m-ic">✉︎</div><div class="m-t">Repeat emails</div><div class="m-d">Funding and work-rule questions to the office, per month</div><div class="m-dir">Goal: ↓</div></div>
+      <div class="metric"><div class="m-ic">◎</div><div class="m-t">Funding page reach</div><div class="m-d">Views of Graduate Financing from the homepage and menus</div><div class="m-dir">Goal: ↑</div></div>
+      <div class="metric"><div class="m-ic">⌕</div><div class="m-t">Site search terms</div><div class="m-d">How often students search "funding," "tuition," "work hours"</div><div class="m-dir">Goal: ↓</div></div>
+      <div class="metric"><div class="m-ic">◷</div><div class="m-t">Time to answer</div><div class="m-d">Task time in the usability test, before vs. after</div><div class="m-dir">Goal: ↓</div></div>
+    </div>
+  </section>
+
+  <!-- LIMITATIONS -->
+  <section id="reflect" class="section reveal">
+    <div class="eyebrow">Limitations &amp; reflection</div>
+    <h2 class="section-heading"><span class="hl">What this research can and can't say.</span> And what I'd do differently.</h2>
+    <div class="limits">
+      <div class="limit"><div class="l-k">Sample</div><div class="l-t">~25 students shows patterns, not percentages</div><div class="l-d">Enough to find recurring themes; the ranking of needs is directional.</div></div>
+      <div class="limit"><div class="l-k">Who I heard from</div><div class="l-t">Mostly students who reached out</div><div class="l-d">Students who never contacted the office may have different needs.</div></div>
+      <div class="limit"><div class="l-k">Evidence</div><div class="l-t">No formal before/after metrics</div><div class="l-d">Impact is shown through what shipped, not measured change.</div></div>
+      <div class="limit"><div class="l-k">Benchmark</div><div class="l-t">Public pages, reviewed in 2026</div><div class="l-d">Peer scores reflect main funding pages only, as they appear today.</div></div>
+    </div>
+    <div class="next">
+      <div class="next-k">Next time, I would</div>
+      <ol class="next-list">
+        <li><b>Recruit wider</b> with a short survey to all grad students, not just those who came to the office.</li>
+        <li><b>Set a baseline</b> by counting repeat emails and page views before launch.</li>
+        <li><b>Test early</b> with 5 students on a prototype, then again after launch.</li>
+      </ol>
     </div>
   </section>
 
 </main>
 </div>
 
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Zoomed image">
-  <img id="lightboxImg" src="" alt="">
-  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-  </button>
-</div>
-
 <script>
-  // label each matrix cell with its column (used for the phone layout)
-  const mxHeads = Array.from(document.querySelectorAll('.mx-h')).map(h => h.textContent.trim());
-  document.querySelectorAll('.mx-row').forEach(row => {
-    Array.from(row.children).forEach((cell, i) => {
-      if (i > 0 && i < mxHeads.length - 1) cell.dataset.p = mxHeads[i];
+  // ---- need → place web ----
+  const places = ['Grad College site','Department pages','Graduate Catalog','ISSO (international office)','Workday','CyHire job board'];
+  const needs = [
+    { t:'Scholarships & research funding', q:'"Does an assistantship cover my tuition?"', p:[0,1,2,3], top:true },
+    { t:'On-campus part-time jobs',        q:'"How many hours can I work?"',             p:[0,3,5] },
+    { t:'Visa & work authorization',       q:'"What do I need before day one?"',         p:[0,3,4] },
+    { t:'Forms & deadlines',               q:'"Is it in Workday or a PDF?"',             p:[0,4] },
+  ];
+  (function drawWeb(){
+    const svg = document.getElementById('web');
+    const NS = 'http://www.w3.org/2000/svg';
+    const W = 880, H = 420, nx = 380, px = 620;
+    const ny = i => 60 + i * 100;
+    const py = j => 30 + j * 72;
+    const use = places.map((_, j) => needs.filter(n => n.p.includes(j)).length);
+    let html = '';
+    // links first so dots sit on top
+    needs.forEach((n, i) => n.p.forEach(j => {
+      const y1 = ny(i), y2 = py(j), mx = (nx + px) / 2;
+      html += `<path class="lnk${n.top ? ' top' : ''}" data-n="${i}" d="M${nx},${y1} C${mx},${y1} ${mx},${y2} ${px},${y2}"/>`;
+    }));
+    needs.forEach((n, i) => {
+      const y = ny(i);
+      html += `<g class="need" data-n="${i}">
+        <rect class="need-bg" x="-8" y="${y - 34}" width="${nx + 4}" height="68" rx="12"/>
+        <circle cx="12" cy="${y - 9}" r="12" fill="${n.top ? 'var(--blue)' : '#8e8e93'}"/>
+        <text class="nr" x="12" y="${y - 5}" text-anchor="middle">${i + 1}</text>
+        <text class="nt" x="34" y="${y - 4}">${n.t.replace('&','&amp;')}</text>
+        <text class="nq" x="34" y="${y + 15}">${n.q}</text>
+        <text class="nc" x="${nx - 16}" y="${y - 4}" text-anchor="end">${n.p.length} places</text>
+        <circle class="dotn" cx="${nx}" cy="${y}" r="6"/>
+      </g>`;
     });
-  });
+    places.forEach((p, j) => {
+      const y = py(j);
+      html += `<circle class="dotp" cx="${px}" cy="${y}" r="7"/>
+        <text class="pt" x="${px + 18}" y="${y + 1}">${p}</text>
+        <text class="pc" x="${px + 18}" y="${y + 18}">part of ${use[j]} need${use[j] > 1 ? 's' : ''}</text>`;
+    });
+    svg.innerHTML = html;
+    svg.querySelectorAll('.lnk').forEach(l => l.style.setProperty('--len', Math.ceil(l.getTotalLength())));
+    svg.querySelectorAll('.need').forEach(g => {
+      g.addEventListener('mouseenter', () => {
+        svg.classList.add('hovering');
+        svg.querySelectorAll('.lnk').forEach(l => l.classList.toggle('on', l.dataset.n === g.dataset.n));
+      });
+      g.addEventListener('mouseleave', () => svg.classList.remove('hovering'));
+    });
+    // phone version: simple list
+    document.getElementById('webList').innerHTML = needs.map((n, i) => `
+      <li class="${n.top ? 'top' : ''}"><div class="wl-h">${i + 1}. ${n.t.replace('&','&amp;')}<b>${n.p.length} places</b></div>
+      <div class="wl-q">${n.q}</div>
+      <div class="wl-p">${n.p.map(j => `<span>${places[j]}</span>`).join('')}</div></li>`).join('');
+  })();
 
-  // build the waffle: 100 squares, 35 international
-  const waffle = document.getElementById('waffle');
-  for (let i = 0; i < 100; i++){
-    const sq = document.createElement('i');
-    if (i < 35) sq.className = 'on';
-    sq.style.transitionDelay = (i * 8) + 'ms';
-    waffle.appendChild(sq);
-  }
+  // ---- student journey (feeling 1 = stuck … 5 = confident) ----
+  const steps = [
+    { t:'Admitted',            d:'Offer letter arrives.',                         p:['Grad College'],                 f:4.5 },
+    { t:'Search for funding',  d:'"Who decides funding? Does it cover tuition?"', p:['Grad College','Dept.','Catalog'], f:1.6, fix:'→ One funding hub' },
+    { t:'Land an assistantship', d:'A department offers a half-time RA.',         p:['Department'],                   f:4 },
+    { t:'Check work rules',    d:'"Can I also take a campus job?"',               p:['ISSO','CyHire'],                f:1.3, fix:'→ Work rules on funding pages' },
+    { t:'Paperwork',           d:'I-9 in Workday plus an ISSO appointment.',      p:['Workday','ISSO'],               f:2.2, fix:'→ Labeled forms' },
+    { t:'First paycheck',      d:'Settled and focused on research.',              p:['Department'],                   f:4.2 },
+  ];
+  (function drawJourney(){
+    const svg = document.getElementById('jrCurve');
+    const W = 600, H = 84, n = steps.length;
+    const x = i => (i + 0.5) * W / n;
+    const y = f => 12 + (5 - f) / 4 * (H - 24);
+    const pts = steps.map((s, i) => [x(i), y(s.f)]);
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let i = 1; i < pts.length; i++){
+      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], mx = (x0 + x1) / 2;
+      d += ` C${mx},${y0} ${mx},${y1} ${x1},${y1}`;
+    }
+    svg.innerHTML = `<defs><linearGradient id="jrGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1d1f" stop-opacity="0.08"/><stop offset="1" stop-color="#1d1d1f" stop-opacity="0"/></linearGradient></defs>
+      <line class="base" x1="0" x2="${W}" y1="${y(3)}" y2="${y(3)}"/>
+      <path class="area" d="${d} L${pts[n-1][0]},${H} L${pts[0][0]},${H} Z"/>
+      <path class="line" d="${d}"/>
+      ${pts.map((p, i) => `<circle class="pt ${steps[i].f < 2.5 ? 'lo' : 'hi'}" cx="${p[0]}" cy="${p[1]}" r="6.5" vector-effect="non-scaling-stroke"/>`).join('')}`;
+    document.getElementById('jrSteps').innerHTML = steps.map((s, i) => `
+      <div class="jstep${s.f < 2.5 ? ' low' : ''}">
+        <div class="js-n">Step ${i + 1}</div>
+        <div class="js-t">${s.t}</div>
+        <div class="js-d">${s.d}</div>
+        <div class="js-p">${s.p.map(t => `<span>${t}</span>`).join('')}</div>
+        ${s.fix ? `<div class="js-fix">${s.fix}</div>` : ''}
+      </div>`).join('');
+  })();
 
-  // fade sections in; charts animate when they come into view
+  // ---- ISU main navigation (f = funding, i = international, d = forms/deadlines/Workday) ----
+  const nav = [
+    ['Future Students',  [['Graduate Programs'],['Application Information'],['Graduate Research'],['Online Students'],['Funding Opportunities','f'],['International Students','i'],['Additional Resources'],['Apply Here']]],
+    ['Current Students', [['Important Deadlines','d'],['Academic Milestones'],['New Student'],['Degree Requirements'],['Graduate Financing','f'],['Graduate Awards'],['Student Forms','d'],['Thesis/Dissertation'],['You & Your Major Professor'],['Additional Resources']]],
+    ['Faculty & Staff',  [['Contact Lists'],['Guides for Faculty & Staff'],['Graduate Faculty Cabinet'],['Funding Resources','f'],['Recruiting Information'],['Professional Development'],['Program Review'],['Faculty Awards'],['Additional Resources']]],
+    ['Prof. Development',[['Communication'],['Research'],['Teaching'],['Career'],['Leadership'],['Events and Resources']]],
+    ['Resources',        [['About the College'],['A-Z Index'],['Graduate Awards'],['Graduate Events'],['Graduate Financing','f'],['Graduate News'],['Graduate Staff'],['Handbook'],['Graduate Programs'],['Workday Student','d']]],
+  ];
+  document.getElementById('navRows').innerHTML = nav.map(([menu, items]) => `
+    <div class="nrow"><div class="nrow-h">${menu.replace('&','&amp;')}<span>${items.length} links</span></div>
+    <div class="nrow-items">${items.map(([t, k]) => k
+      ? `<span class="npill ${k}">${t.replace('&','&amp;')}</span>`
+      : `<span class="ndot" data-tip="${t.replace('&','&amp;')}"></span>`).join('')}</div></div>`).join('');
+
+  // ---- peer benchmark (1 = yes, .5 = partly, 0 = no) ----
+  // A overview · B finder · C open roles · D plain terms · E int'l notes · F job board · G FAQ
+  // c = school's primary brand color, t = text color on it
+  // ab = the school's own abbreviation, c = primary brand color, t = text color,
+  // logo = optional file in assets/logos/ (if it exists it replaces the badge)
+  const schools = [
+    { name:'University of Illinois', ab:'UIUC', st:'Illinois',     logo:'uiuc',      c:'#FF5F05', t:'#fff',    f:[1,1,1,.5,.5,1,.5] },
+    { name:'University of Wisconsin',         ab:'UW',   st:'Wisconsin',    logo:'wisconsin', c:'#C5050C', t:'#fff',    f:[1,0,0,.5,1,1,0] },
+    { name:'University of Texas at Austin',           ab:'UT',   st:'Texas',        logo:'utaustin',  c:'#BF5700', t:'#fff',    f:[.5,0,0,0,0,0,0] },
+    { name:'Iowa State University',                   ab:'ISU',  st:'Iowa · today', logo:'iastate',   c:'#C8102E', t:'#F1BE48', isu:true, f:[1,0,0,.5,.5,1,0] },
+    { name:'Ohio State University',               ab:'OSU',  st:'Ohio',         logo:'osu',       c:'#BA0C2F', t:'#fff',    f:[.5,0,.5,1,0,1,0] },
+    { name:'Penn State University',                   ab:'PSU',  st:'Pennsylvania', logo:'psu',       c:'#001E44', t:'#fff',    f:[1,.5,0,0,0,0,1] },
+    { name:'University of Florida',                   ab:'UF',   st:'Florida',      logo:'uf',        c:'#0021A5', t:'#FA4616', f:[1,.5,0,1,0,0,0] },
+    { name:'UC Berkeley',      ab:'Cal',  st:'California',   logo:'berkeley',  c:'#002676', t:'#FDB515', f:[1,0,0,.5,0,0,1] },
+    { name:'University of Colorado',          ab:'CU',   st:'Colorado',     logo:'cu',        c:'#CFB87C', t:'#000',    f:[.5,0,0,1,.5,.5,0] },
+    { name:'University of Michigan',                  ab:'U-M',  st:'Michigan',     logo:'umich',     c:'#00274C', t:'#FFCB05', f:[.5,0,0,.5,.5,0,.5] },
+    { name:'University of Minnesota',                 ab:'UMN',  st:'Minnesota',    logo:'umn',       c:'#7A0019', t:'#FFCC33', f:[.5,0,0,0,0,0,0] },
+  ];
+  const feat = ['Overview','Finder','Open roles','Plain terms',"Int'l notes",'Job board','FAQ'];
+  const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12.5 10 17 19 7"/></svg>';
+  schools.forEach(s => s.score = s.f.reduce((a,b) => a + b, 0));
+  schools.sort((a,b) => (b.score - a.score) || ((b.isu ? 1 : 0) - (a.isu ? 1 : 0)));
+  document.getElementById('benchRows').outerHTML = schools.map(s => `
+    <div class="brw${s.isu ? ' isu' : ''}" role="row">
+      <div class="school" role="cell"><span class="badge" style="background:${s.c};color:${s.t}"><img src="assets/logos/${s.logo}.png" alt="" onerror="this.remove()" onload="this.parentNode.classList.add('has-logo')">${s.ab}</span><span class="sname">${s.name}${s.isu ? ' <em>· today</em>' : ''}</span></div>
+      ${s.f.map((v,i) => `<div class="mkc" role="cell"><span class="mk ${v === 1 ? 'y' : v ? 'p' : 'n'}" data-tip="${feat[i]}: ${v === 1 ? 'yes' : v ? 'partly' : 'no'}">${v === 1 ? check : ''}</span></div>`).join('')}
+      <div class="score" role="cell"><div class="score-track"><div class="score-fill" style="--v:${s.score / 7 * 100}%;background:${s.c}"></div></div><b>${s.score % 1 ? s.score.toFixed(1) : s.score}</b></div>
+    </div>`).join('') + `
+    <div class="brw foot" role="row">
+      <div class="school" role="cell">Peers with a full yes<small>out of 10</small></div>
+      ${feat.map((_, i) => { const n = schools.filter(x => !x.isu && x.f[i] === 1).length; return `<div class="mkc" role="cell"><span class="cnt${n <= 1 ? ' lo' : ''}">${n}</span></div>`; }).join('')}
+      <div role="cell"></div>
+    </div>`;
+
+  // ---- reveal + chart animation ----
   const io = new IntersectionObserver((entries) => {
     entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal, .viz').forEach(el => io.observe(el));
 
-  // mini bar: show once the big title scrolls off; blue line shows reading progress
+  // ---- mini bar ----
   const miniBar = document.getElementById('miniBar');
   const miniBack = miniBar.querySelector('a');
   new IntersectionObserver(([en]) => {
@@ -1101,7 +1042,7 @@
     miniBack.tabIndex = show ? 0 : -1;
   }).observe(document.querySelector('.page-title'));
 
-  // sidebar: highlight the section being read
+  // ---- sidebar highlight + reading progress ----
   const tocLinks = Array.from(document.querySelectorAll('#toc a'));
   const tocTargets = tocLinks.map(a => document.querySelector(a.getAttribute('href')));
   function onScroll(){
@@ -1115,24 +1056,6 @@
   window.addEventListener('scroll', onScroll, { passive:true });
   window.addEventListener('resize', onScroll);
   onScroll();
-
-  // click a screenshot to zoom
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightboxImg');
-  function closeLightbox(){ lightbox.classList.remove('open'); document.body.style.overflow = ''; }
-  document.querySelectorAll('.shot').forEach(shot => {
-    shot.addEventListener('click', () => {
-      const im = shot.querySelector('img');
-      if (!im) return;
-      lightboxImg.src = im.src;
-      lightboxImg.alt = im.alt;
-      lightbox.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    });
-  });
-  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 </script>
 
 </body>
