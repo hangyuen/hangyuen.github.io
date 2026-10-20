@@ -63,7 +63,7 @@
 
   /* ===== LAYOUT ===== */
   .layout{ padding:0 calc(var(--page-gutter) / var(--z, 1)); display:grid; grid-template-columns:clamp(220px, 19vw, 280px) minmax(0, 1fr); column-gap:clamp(48px, 6vw, 104px); align-items:stretch; }
-  .main{ min-width:0; width:100%; max-width:960px; margin:0 auto; padding-bottom:18vh; }
+  .main{ min-width:0; width:100%; max-width:960px; margin:0 auto; padding-bottom:64px; }
   @media (min-width:1760px){ .main{ max-width:1040px; } }
   .side{ min-width:0; }
   .side-sticky{ position:sticky; top:80px; }
@@ -300,12 +300,53 @@
   .l-k{ font-size:11.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--dim); margin-bottom:6px; }
   .l-t{ font-size:14.5px; font-weight:700; color:#111; line-height:1.3; }
   .l-d{ font-size:12.5px; line-height:1.45; color:#555; margin-top:5px; }
-  .next{ margin-top:14px; border-radius:18px; padding:22px 24px; border:1px solid var(--hairline); }
-  .next-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); margin-bottom:10px; }
+  .next{ margin-top:14px; border-radius:22px; padding:26px 26px 22px; background:#1d1d1f; color:#fff; }
+  .next-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#a1a1a6; margin-bottom:8px; }
+  .next-t{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:clamp(19px, 1.8vw, 22px); font-weight:600; letter-spacing:-0.015em; line-height:1.35; max-width:760px; }
+  .next-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-top:20px; }
+  .nx{ border-radius:16px; padding:16px 16px 14px; background:#2c2c2e; display:flex; flex-direction:column; }
+  .nx.ai{ background:linear-gradient(160deg, #10325f 0%, #1d1d1f 100%); box-shadow:inset 0 0 0 1px rgba(108,178,255,0.35); }
+  .nx-ic{ width:34px; height:34px; border-radius:10px; background:rgba(255,255,255,0.1); color:#fff; display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+  .nx.ai .nx-ic{ background:rgba(108,178,255,0.18); color:#6cb2ff; }
+  .nx-ic svg{ width:18px; height:18px; }
+  .nx-tag{ font-size:10.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#6cb2ff; margin-bottom:4px; }
+  .nx-tag.g{ color:#a1a1a6; }
+  .nx-t{ font-size:15px; font-weight:700; letter-spacing:-0.012em; line-height:1.3; color:#fff; }
+  .nx-d{ font-size:13px; line-height:1.5; color:rgba(255,255,255,0.7); margin-top:6px; }
   .next-list{ list-style:none; counter-reset:n; display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
   .next-list li{ counter-increment:n; font-size:14px; line-height:1.5; color:#333; position:relative; padding-top:30px; }
   .next-list li::before{ content:counter(n); position:absolute; top:0; left:0; width:22px; height:22px; border-radius:50%; background:var(--blue); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
   .next-list b{ color:#111; }
+
+  /* ===== BEYOND FUNDING ===== */
+  .life{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:18px; }
+  .area{ background:var(--soft); border-radius:16px; padding:16px 16px 14px; display:flex; flex-direction:column; }
+  .area.hi{ background:var(--blue-soft); }
+  .area-k{ font-size:11.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--dim); }
+  .area-n{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:28px; font-weight:700; letter-spacing:-0.025em; color:#111; margin-top:6px; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .area-n small{ font-size:15px; font-weight:600; color:var(--dim); letter-spacing:0; }
+  .area.hi .area-n{ color:var(--blue); }
+  .area-d{ font-size:13px; line-height:1.45; color:#444; margin-top:6px; flex:1; }
+  .area-w{ font-size:12px; color:var(--dim); margin-top:10px; line-height:1.4; }
+  .cov{ align-self:flex-start; margin-top:8px; font-size:11.5px; font-weight:600; border-radius:999px; padding:3px 9px; }
+  .cov.y{ background:#1d1d1f; color:#fff; }
+  .cov.p{ background:#fff; color:#1d1d1f; box-shadow:inset 0 0 0 1.5px #1d1d1f; }
+  .cov.n{ background:#fff; color:var(--dim); box-shadow:inset 0 0 0 1px #d2d2d7; }
+  .money{ margin-top:18px; }
+  .mrow{ display:grid; grid-template-columns:minmax(180px, 1fr) minmax(0, 2fr) 70px; gap:16px; align-items:center; padding:10px 0; border-top:1px solid var(--hairline); }
+  .mrow:first-child{ border-top:none; }
+  .m-l{ font-size:14px; font-weight:600; color:#111; line-height:1.3; }
+  .m-l small{ display:block; font-size:12px; font-weight:400; color:var(--dim); margin-top:2px; }
+  .m-bar{ height:14px; background:var(--track); border-radius:5px; overflow:hidden; }
+  .m-fill{ height:100%; width:0; border-radius:5px; background:#8e8e93; transition:width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+  .m-fill.inc{ background:var(--blue); }
+  .m-fill.rent{ background:#3a3a3c; }
+  .viz.in .m-fill{ width:var(--v); }
+  .m-v{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:18px; font-weight:700; color:#111; text-align:right; font-variant-numeric:tabular-nums; }
+  .summer{ display:flex; gap:14px; align-items:center; margin-top:10px; padding:12px 14px; border-radius:12px; border:1px dashed #a1a1a6; }
+  .summer-k{ flex:none; font-size:11.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#fff; background:#1d1d1f; border-radius:999px; padding:4px 10px; }
+  .summer-d{ font-size:13.5px; line-height:1.45; color:#333; }
+  .summer-d b{ color:#111; }
 
   /* ===== NATIONAL ===== */
   .nat{ display:grid; grid-template-columns:repeat(3, 1fr); margin-top:24px; border-bottom:1px solid var(--hairline); padding-bottom:22px; }
@@ -463,7 +504,7 @@
     .metrics{ margin-top:12px; }
     .metric{ padding:12px 14px; }
     .limits{ margin-top:18px; }
-    .next{ padding:18px 22px; }
+    .next{ padding:22px 24px 20px; }
   }
   /* shorter laptop screens: shrink the tallest diagram a bit more */
   @media (min-width:1101px) and (max-height:860px){
@@ -488,6 +529,8 @@
     .mstep:nth-child(n+3){ border-top:1px solid var(--hairline); }
     .ideas{ grid-template-columns:1fr; }
     .limits, .metrics{ grid-template-columns:1fr 1fr; }
+    .life{ grid-template-columns:1fr 1fr; }
+    .next-grid{ grid-template-columns:1fr 1fr; }
     .frow{ grid-template-columns:28px minmax(0, 1fr) 50px 96px; row-gap:10px; }
     .frow .segs{ grid-column:2 / -1; grid-row:2; }
     .frow.h .hseg{ display:none; }
@@ -523,7 +566,10 @@
     .swipe{ display:block !important; }
     .web-list{ display:block; }
     .nrow{ grid-template-columns:1fr; gap:8px; }
-    .quotes, .limits, .next-list, .metrics{ grid-template-columns:1fr; }
+    .quotes, .limits, .next-list, .metrics, .life, .next-grid{ grid-template-columns:1fr; }
+    .mrow{ grid-template-columns:1fr 64px; row-gap:8px; }
+    .m-bar{ grid-column:1 / -1; grid-row:2; }
+    .summer{ flex-direction:column; align-items:flex-start; }
     .quote blockquote{ font-size:16.5px; }
     .task{ grid-template-columns:28px minmax(0, 1fr); row-gap:6px; }
     .task > div:nth-child(3), .task > div:nth-child(4){ grid-column:2; }
@@ -566,6 +612,7 @@
       <li><a href="#needs">What students ask</a></li>
       <li><a href="#voices">In their words</a></li>
       <li><a href="#journey">Student journey</a></li>
+      <li><a href="#life">Beyond funding</a></li>
       <li><a href="#sitemap">Inside the ISU site</a></li>
       <li><a href="#beyond">Beyond ISU</a></li>
       <li><a href="#peers">Peer benchmark</a></li>
@@ -702,6 +749,92 @@
       <div class="takeaway"><span>The two lowest points, <b>understanding the offer</b> and <b>checking work rules</b>, are exactly where the answer was split across offices. That's where the design work focused.</span></div>
       <p class="source">Composite journey based on my research; not a single real student.</p>
     </div>
+  </section>
+
+  <!-- BEYOND FUNDING -->
+  <section id="life" class="section reveal">
+    <div class="eyebrow">Beyond funding</div>
+    <h2 class="section-heading"><span class="hl">Funding is one piece.</span> Grad students are also choosing a lab, a home and a city.</h2>
+    <p class="lead">Funding led the questions I logged, but a grad student's first year also depends on research fit, housing, money and daily life. I looked at what ISU and Ames offer in each area, and whether the Graduate College site helps a student find it.</p>
+
+    <div class="viz" id="vizLife">
+      <div class="viz-title">Six parts of a grad student's life at ISU</div>
+      <div class="viz-sub">A key fact for each, where the answer lives, and whether the Graduate College site points to it</div>
+      <div class="life">
+        <div class="area">
+          <div class="area-k">Research direction</div>
+          <div class="area-n">$330M</div>
+          <div class="area-d">in ISU research funding, FY2025. Choosing a lab and major professor shapes everything else.</div>
+          <div class="area-w">Grad College: "Graduate Research", "You &amp; Your Major Professor"</div>
+          <span class="cov y">On Grad College site</span>
+        </div>
+        <div class="area hi">
+          <div class="area-k">Funding</div>
+          <div class="area-n">$13K <small>vs</small> $34K</div>
+          <div class="area-d">tuition &amp; fees for an international grad student with vs. without an assistantship, 2026–27.</div>
+          <div class="area-w">Offer letter, department, Grad College, ISSO</div>
+          <span class="cov y">On Grad College site</span>
+        </div>
+        <div class="area">
+          <div class="area-k">Cost of living</div>
+          <div class="area-n">$17,332</div>
+          <div class="area-d">estimated living expenses for a 9-month academic year, about $1,930 a month.</div>
+          <div class="area-w">ISSO expense estimate</div>
+          <span class="cov p">Partly</span>
+        </div>
+        <div class="area">
+          <div class="area-k">Housing</div>
+          <div class="area-n">$1,023<small>/mo</small></div>
+          <div class="area-d">median rent in Ames. Campus apartments: $5,430–$7,383 per academic year.</div>
+          <div class="area-w">ISU Housing, private landlords</div>
+          <span class="cov n">Not on Grad College site</span>
+        </div>
+        <div class="area">
+          <div class="area-k">Campus life</div>
+          <div class="area-n">800+</div>
+          <div class="area-d">student organizations, plus the Graduate &amp; Professional Student Senate.</div>
+          <div class="area-w">Student Engagement, GPSS</div>
+          <span class="cov p">Partly</span>
+        </div>
+        <div class="area">
+          <div class="area-k">City life</div>
+          <div class="area-n">68K</div>
+          <div class="area-d">people in Ames, a college town about 30 miles north of Des Moines.</div>
+          <div class="area-w">City of Ames, Grad College homepage</div>
+          <span class="cov p">Partly</span>
+        </div>
+      </div>
+      <p class="source">Sources: <a href="https://research.iastate.edu/2025/07/17/external-sponsored-funding-for-iowa-state-research-surpasses-300-million-for-third-straight-year/" target="_blank" rel="noopener">ISU Research</a>; <a href="https://isso.dso.iastate.edu/resources/students_scholars/expense-worksheet/graduate-expenses" target="_blank" rel="noopener">ISSO graduate expense estimate 2026–27</a>; <a href="https://www.housing.iastate.edu/rates" target="_blank" rel="noopener">ISU Housing rates 2026–27</a>; <a href="https://census.gov/quickfacts/fact/table/amescityiowa/INC110223" target="_blank" rel="noopener">U.S. Census QuickFacts, Ames</a>; <a href="https://studentengagement.iastate.edu/student-organization-database" target="_blank" rel="noopener">ISU Student Engagement</a>.</p>
+    </div>
+
+    <div class="viz" id="vizMoney">
+      <div class="viz-title">The money math of a funded Ph.D. student</div>
+      <div class="viz-sub">Per month, during the 9-month academic year</div>
+      <div class="money">
+        <div class="mrow">
+          <div class="m-l">Assistantship stipend<small>example: one ISU Ph.D. program, 2025–26</small></div>
+          <div class="m-bar"><div class="m-fill inc" style="--v:100%"></div></div>
+          <div class="m-v">$2,324</div>
+        </div>
+        <div class="mrow">
+          <div class="m-l">Estimated living costs<small>ISSO estimate, international grad student</small></div>
+          <div class="m-bar"><div class="m-fill" style="--v:82.9%"></div></div>
+          <div class="m-v">$1,926</div>
+        </div>
+        <div class="mrow">
+          <div class="m-l">Typical rent in Ames<small>median gross rent, all renters</small></div>
+          <div class="m-bar"><div class="m-fill rent" style="--v:44%"></div></div>
+          <div class="m-v">$1,023</div>
+        </div>
+        <div class="summer">
+          <div class="summer-k">Summer</div>
+          <div class="summer-d">The stipend covers 9 months. Rent doesn't stop in May: <b>3 summer months</b> are about <b>$3,070</b> in rent alone if summer funding isn't confirmed.</div>
+        </div>
+      </div>
+      <div class="takeaway"><span>The budget works during the year but is tight, and rent alone is about half of it. That's why <b>"does it cover summer?"</b> matters so much, and why a clear funding guide does too.</span></div>
+      <p class="source">Stipend: <a href="https://apling.engl.iastate.edu/?p=26283" target="_blank" rel="noopener">ISU Applied Linguistics Ph.D., 2025–26</a> ($20,912 for fall + spring); stipends vary by department. Living costs: <a href="https://isso.dso.iastate.edu/resources/students_scholars/expense-worksheet/graduate-expenses" target="_blank" rel="noopener">ISSO 2026–27</a> ($17,332 / 9). Rent: <a href="https://census.gov/quickfacts/fact/table/amescityiowa/INC110223" target="_blank" rel="noopener">Census 2020–24</a>.</p>
+    </div>
+    <div class="takeaway out"><span>Next opportunity: the Grad College site covers research and funding well, but <b>housing and cost of living</b> live elsewhere. A short "Your first year in Ames" page could link them together.</span></div>
   </section>
 
   <!-- SITE MAP -->
@@ -883,15 +1016,39 @@
       <div class="limit"><div class="l-k">Sample</div><div class="l-t">25 students shows patterns, not percentages</div><div class="l-d">Enough to find recurring themes; the ranking of needs is directional.</div></div>
       <div class="limit"><div class="l-k">Who I heard from</div><div class="l-t">Mostly students who reached out</div><div class="l-d">Students who never contacted the office may have different needs.</div></div>
       <div class="limit"><div class="l-k">Evidence</div><div class="l-t">No formal before/after metrics</div><div class="l-d">Impact is shown through what shipped, not measured change.</div></div>
-      <div class="limit"><div class="l-k">Benchmark</div><div class="l-t">Public pages, reviewed in 2026</div><div class="l-d">Peer scores reflect main funding pages only, as they appear today.</div></div>
+      <div class="limit"><div class="l-k">Desk research</div><div class="l-t">Benchmark &amp; life data added in 2026</div><div class="l-d">Peer scores, costs and housing come from public sources reviewed for this case study.</div></div>
     </div>
     <div class="next">
-      <div class="next-k">Next time, I would</div>
-      <ol class="next-list">
-        <li><b>Recruit wider</b> with a short survey to all grad students, not just those who came to the office.</li>
-        <li><b>Set a baseline</b> by counting repeat emails and page views before launch.</li>
-        <li><b>Test early</b> with 5 students on a prototype, then again after launch.</li>
-      </ol>
+      <div class="next-head">
+        <div class="next-k">If I did it again</div>
+        <div class="next-t">The inbox was my best research tool. Next time I'd treat it like one, with AI as a research partner.</div>
+      </div>
+      <div class="next-grid">
+        <div class="nx">
+          <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></div>
+          <div class="nx-tag g">Research ops</div>
+          <div class="nx-t">Turn the inbox into a live dataset</div>
+          <div class="nx-d">Tag every student email from day one, so the ranking of needs is counted, not remembered.</div>
+        </div>
+        <div class="nx ai">
+          <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></div>
+          <div class="nx-tag">AI collaboration</div>
+          <div class="nx-t">Let AI do the first sort, I do the judging</div>
+          <div class="nx-d">Use an AI model to cluster hundreds of anonymized questions in minutes, then check every theme by hand before trusting it.</div>
+        </div>
+        <div class="nx ai">
+          <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 11h6M9 14h4"/></svg></div>
+          <div class="nx-tag">AI collaboration</div>
+          <div class="nx-t">Design an answer, not another page</div>
+          <div class="nx-d">Prototype an assistant that answers "does my funding cover summer?" from official policy, cites the page, and flags questions it can't answer back to staff.</div>
+        </div>
+        <div class="nx">
+          <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 11.5a3 3 0 1 0 0-6M18 19a5 5 0 0 0-2.5-4.3"/></svg></div>
+          <div class="nx-tag g">Recruiting</div>
+          <div class="nx-t">Find the students who never write in</div>
+          <div class="nx-d">The quietest students may be the most lost. Reach them through orientation, departments and a 2-minute survey.</div>
+        </div>
+      </div>
     </div>
   </section>
 
