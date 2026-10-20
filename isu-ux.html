@@ -63,7 +63,7 @@
 
   /* ===== LAYOUT ===== */
   .layout{ padding:0 calc(var(--page-gutter) / var(--z, 1)); display:grid; grid-template-columns:clamp(220px, 19vw, 280px) minmax(0, 1fr); column-gap:clamp(48px, 6vw, 104px); align-items:stretch; }
-  .main{ min-width:0; width:100%; max-width:960px; margin:0 auto; }
+  .main{ min-width:0; width:100%; max-width:960px; margin:0 auto; padding-bottom:18vh; }
   @media (min-width:1760px){ .main{ max-width:1040px; } }
   .side{ min-width:0; }
   .side-sticky{ position:sticky; top:80px; }
@@ -1045,10 +1045,20 @@
   // ---- sidebar highlight + reading progress ----
   const tocLinks = Array.from(document.querySelectorAll('#toc a'));
   const tocTargets = tocLinks.map(a => document.querySelector(a.getAttribute('href')));
+  // when a menu item is clicked, keep it highlighted until the smooth scroll settles
+  let clicked = null, clickTimer;
+  tocLinks.forEach((a, i) => a.addEventListener('click', () => {
+    clicked = i; onScroll();
+    clearTimeout(clickTimer);
+    clickTimer = setTimeout(() => { clicked = null; }, 900);
+  }));
   function onScroll(){
     const line = window.innerHeight * 0.3;
     let current = 0;
     tocTargets.forEach((sec, i) => { if (sec && sec.getBoundingClientRect().top <= line) current = i; });
+    // at the very bottom, the last section can't reach the top, so light it up anyway
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = tocLinks.length - 1;
+    if (clicked !== null){ current = clicked; }
     tocLinks.forEach((a, i) => a.classList.toggle('active', i === current));
     const max = document.documentElement.scrollHeight - window.innerHeight;
     miniBar.style.setProperty('--read', (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + '%');
