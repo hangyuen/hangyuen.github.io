@@ -396,9 +396,19 @@
   .lesson-k{ font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#a1a1a6; margin-bottom:10px; }
   .lesson-q{ font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-size:clamp(20px, 2vw, 24px); font-weight:600; letter-spacing:-0.015em; line-height:1.4; }
   .lesson-q .g{ color:#a1a1a6; }
-  .visit{ display:inline-flex; align-items:center; gap:8px; margin-top:22px; font-size:14.5px; font-weight:600; color:#fff; background:var(--blue); border-radius:980px; padding:11px 20px; transition:transform 0.15s ease, gap 0.15s ease, background 0.15s ease; }
-  .visit:hover{ transform:translateY(-2px); gap:11px; background:#0077ed; }
-  .visit svg{ width:15px; height:15px; }
+  /* ISU-branded button: Iowa State cardinal with a gold arrow */
+  .visit{ display:inline-flex; align-items:center; gap:12px; margin-top:22px; font-size:15px; font-weight:600; letter-spacing:-0.01em; color:#fff; background:#C8102E; border-radius:980px; padding:7px 7px 7px 20px; box-shadow:0 6px 18px rgba(200,16,46,0.35); transition:transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease; }
+  .visit-ic{ width:32px; height:32px; border-radius:50%; background:#F1BE48; color:#7c0a1c; display:inline-flex; align-items:center; justify-content:center; transition:transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .visit svg{ width:16px; height:16px; }
+  .visit:hover{ transform:translateY(-2px); background:#a50d26; box-shadow:0 10px 24px rgba(200,16,46,0.45); }
+  .visit:hover .visit-ic{ transform:translateX(4px) rotate(-45deg); }
+  .visit small{ font-size:12px; font-weight:500; color:rgba(255,255,255,0.75); margin-left:-4px; }
+  .visit{ white-space:nowrap; }
+  .visit-ic{ flex:none; }
+  @media (max-width:560px){
+    .visit small{ display:none; }
+    .visit{ font-size:14.5px; padding-left:18px; }
+  }
 
   /* ===== reveal ===== */
   .reveal{ opacity:0; transform:translateY(18px); transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -565,8 +575,8 @@
     </ul>
     <div class="glance">
       <div class="glance-title">At a glance</div>
-      <div class="glance-row"><div class="glance-num b">#1</div><div class="glance-text">Top need: <b>scholarships &amp; research funding</b></div></div>
-      <div class="glance-row"><div class="glance-num">~25</div><div class="glance-text">graduate students <b>talked to</b></div></div>
+      <div class="glance-row"><div class="glance-num b">#1</div><div class="glance-text">Top need: <b>understanding funding</b></div></div>
+      <div class="glance-row"><div class="glance-num">25</div><div class="glance-text">graduate students <b>talked to</b></div></div>
       <div class="glance-row"><div class="glance-num">10 schools</div><div class="glance-text">one per state, scored on <b>7 funding-page features</b></div></div>
     </div>
   </div>
@@ -577,7 +587,7 @@
   <div class="meta reveal">
     <div><div class="meta-label">Role</div><div class="meta-value">Graduate Administrative Assistant</div></div>
     <div><div class="meta-label">Focus</div><div class="meta-value">User research, web design &amp; development</div></div>
-    <div><div class="meta-label">Participants</div><div class="meta-value">~25 graduate students</div></div>
+    <div><div class="meta-label">Participants</div><div class="meta-value">25 graduate students</div></div>
     <div><div class="meta-label">Timeline</div><div class="meta-value">2023 – 2024</div></div>
   </div>
 
@@ -632,9 +642,9 @@
   <!-- METHOD -->
   <section id="method" class="section reveal">
     <div class="eyebrow">Method</div>
-    <h2 class="section-heading"><span class="hl">About 25 students.</span> I listened where the questions already happened.</h2>
+    <h2 class="section-heading"><span class="hl">25 students.</span> I listened where the questions already happened.</h2>
     <div class="method-strip">
-      <div class="mstep"><div class="mstep-n">01 · Collect</div><div class="mstep-t">~25 student conversations</div><div class="mstep-d">Plus the questions students emailed or asked in person, and where they looked first.</div><div class="mstep-o">Output: <b>raw questions</b></div></div>
+      <div class="mstep"><div class="mstep-n">01 · Collect</div><div class="mstep-t">25 student conversations</div><div class="mstep-d">Plus the questions students emailed or asked in person, and where they looked first.</div><div class="mstep-o">Output: <b>raw questions</b></div></div>
       <div class="mstep"><div class="mstep-n">02 · Tag</div><div class="mstep-t">Code every question</div><div class="mstep-d">By topic, student type, and which page should have answered it.</div><div class="mstep-o">Output: <b>tagged log</b></div></div>
       <div class="mstep"><div class="mstep-n">03 · Map</div><div class="mstep-t">Affinity map + site audit</div><div class="mstep-d">Clustered needs, then traced where each answer actually lived.</div><div class="mstep-o">Output: <b>4 core needs</b></div></div>
       <div class="mstep"><div class="mstep-n">04 · Validate</div><div class="mstep-t">Check against data</div><div class="mstep-d">ISU enrollment, national surveys, and peer schools' sites.</div><div class="mstep-o">Output: <b>4 insights</b></div></div>
@@ -644,8 +654,8 @@
   <!-- NEEDS -->
   <section id="needs" class="section reveal">
     <div class="eyebrow">What students ask</div>
-    <h2 class="section-heading"><span class="hl">The top question:</span> "How do I pay for it?" Its answer lived in four places.</h2>
-    <p class="lead">Each line is a trip a student had to make for one answer. <strong>More lines, harder journey.</strong></p>
+    <h2 class="section-heading"><span class="hl">The top question:</span> "What does my funding actually cover?" Its answer lived in four places.</h2>
+    <p class="lead">Most Ph.D. students arrive with an assistantship in their offer letter, so the question wasn't where to find funding, but what it covers. Each line below is a trip a student had to make for that answer. <strong>More lines, harder journey.</strong></p>
 
     <div class="viz" id="vizFrag">
       <div class="viz-title">One question, many places to look</div>
@@ -664,22 +674,22 @@
     <div class="eyebrow">In their words</div>
     <h2 class="section-heading"><span class="hl">What students told me.</span> Four themes came up again and again.</h2>
     <div class="quotes">
-      <figure class="quote"><div class="q-tag">Funding</div><blockquote>"I got admitted, but I still don't understand how funding works here or who decides it."</blockquote></figure>
+      <figure class="quote"><div class="q-tag">Funding</div><blockquote>"My offer letter says assistantship, but does it cover summer?"</blockquote></figure>
       <figure class="quote"><div class="q-tag">Part-time jobs</div><blockquote>"I need a job on campus. Can I even work more than my assistantship?"</blockquote></figure>
       <figure class="quote"><div class="q-tag">Visa &amp; work rules</div><blockquote>"Every answer sends me to another office. I'm scared of doing something wrong with my visa."</blockquote></figure>
       <figure class="quote"><div class="q-tag">Forms</div><blockquote>"There are so many forms. I don't know which one I need or where it goes."</blockquote></figure>
     </div>
-    <p class="source">Paraphrased from my conversations with ~25 graduate students; representative of recurring themes, not verbatim quotes.</p>
+    <p class="source">Paraphrased from my conversations with 25 graduate students; representative of recurring themes, not verbatim quotes.</p>
   </section>
 
   <!-- JOURNEY -->
   <section id="journey" class="section reveal">
     <div class="eyebrow">Student journey</div>
     <h2 class="section-heading"><span class="hl">Admitted to first paycheck.</span> The low points are where students emailed the office.</h2>
-    <p class="lead">A composite of international Ph.D. students trying to get funded.</p>
+    <p class="lead">A composite of international Ph.D. students, who usually arrive with funding in their offer letter.</p>
 
     <div class="viz" id="vizJourney">
-      <div class="viz-title">Getting funded as an international Ph.D. student</div>
+      <div class="viz-title">From offer letter to first paycheck, as an international Ph.D. student</div>
       <div class="viz-sub">How confident the student feels at each step, and where the answer lived</div>
       <div class="swipe">Swipe to follow all 6 steps →</div>
       <div class="jr-scroll">
@@ -689,7 +699,7 @@
         </div>
       </div>
       <div class="jr-legend"><span><i class="jr-dot hi"></i>Confident</span><span><i class="jr-dot lo"></i>Stuck, likely to email the office</span></div>
-      <div class="takeaway"><span>The two lowest points, <b>searching for funding</b> and <b>checking work rules</b>, are exactly where the answer was split across offices. That's where the design work focused.</span></div>
+      <div class="takeaway"><span>The two lowest points, <b>understanding the offer</b> and <b>checking work rules</b>, are exactly where the answer was split across offices. That's where the design work focused.</span></div>
       <p class="source">Composite journey based on my research; not a single real student.</p>
     </div>
   </section>
@@ -826,10 +836,11 @@
 
     <div class="lesson">
       <div class="lesson-k">The biggest lesson</div>
-      <div class="lesson-q"><span class="g">Students rarely say "I can't find the page."</span> They say "Is there funding for me?" The problem wasn't search. It was how the information was split up.</div>
+      <div class="lesson-q"><span class="g">Students rarely say "I can't find the page."</span> They say "What does my funding cover?" The problem wasn't search. It was how the information was split up.</div>
       <a class="visit" href="https://www.grad-college.iastate.edu/" target="_blank" rel="noopener">
         Visit the Graduate College site
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <small>grad-college.iastate.edu</small>
+        <span class="visit-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
       </a>
     </div>
   </section>
@@ -848,7 +859,7 @@
       </div>
       <div class="tasks">
         <div class="task t-h"><div>#</div><div>Task</div><div>Tests insight</div><div>Success looks like</div></div>
-        <div class="task"><div class="tn">1</div><div class="tt">Find out whether a half-time assistantship covers your tuition</div><div><span class="ti">01 · Funding</span></div><div class="ts">4 of 5 in under 2 min</div></div>
+        <div class="task"><div class="tn">1</div><div class="tt">Find out whether your assistantship continues over the summer</div><div><span class="ti">01 · Funding</span></div><div class="ts">4 of 5 in under 2 min</div></div>
         <div class="task"><div class="tn">2</div><div class="tt">As an F-1 student, find how many hours you can work on campus</div><div><span class="ti">02 · International</span></div><div class="ts">4 of 5, no ISSO email</div></div>
         <div class="task"><div class="tn">3</div><div class="tt">Find an open on-campus job and where to apply</div><div><span class="ti">01 · Funding</span></div><div class="ts">Reaches CyHire in ≤ 3 clicks</div></div>
         <div class="task"><div class="tn">4</div><div class="tt">Find the form for your Ph.D. preliminary exam and where to submit it</div><div><span class="ti">03 · Forms</span></div><div class="ts">Picks Workday correctly</div></div>
@@ -869,7 +880,7 @@
     <div class="eyebrow">Limitations &amp; reflection</div>
     <h2 class="section-heading"><span class="hl">What this research can and can't say.</span> And what I'd do differently.</h2>
     <div class="limits">
-      <div class="limit"><div class="l-k">Sample</div><div class="l-t">~25 students shows patterns, not percentages</div><div class="l-d">Enough to find recurring themes; the ranking of needs is directional.</div></div>
+      <div class="limit"><div class="l-k">Sample</div><div class="l-t">25 students shows patterns, not percentages</div><div class="l-d">Enough to find recurring themes; the ranking of needs is directional.</div></div>
       <div class="limit"><div class="l-k">Who I heard from</div><div class="l-t">Mostly students who reached out</div><div class="l-d">Students who never contacted the office may have different needs.</div></div>
       <div class="limit"><div class="l-k">Evidence</div><div class="l-t">No formal before/after metrics</div><div class="l-d">Impact is shown through what shipped, not measured change.</div></div>
       <div class="limit"><div class="l-k">Benchmark</div><div class="l-t">Public pages, reviewed in 2026</div><div class="l-d">Peer scores reflect main funding pages only, as they appear today.</div></div>
@@ -891,7 +902,7 @@
   // ---- need → place web ----
   const places = ['Grad College site','Department pages','Graduate Catalog','ISSO (international office)','Workday','CyHire job board'];
   const needs = [
-    { t:'Scholarships & research funding', q:'"Does an assistantship cover my tuition?"', p:[0,1,2,3], top:true },
+    { t:'Funding & what it covers',        q:'"Am I funded over the summer?"', p:[0,1,2,3], top:true },
     { t:'On-campus part-time jobs',        q:'"How many hours can I work?"',             p:[0,3,5] },
     { t:'Visa & work authorization',       q:'"What do I need before day one?"',         p:[0,3,4] },
     { t:'Forms & deadlines',               q:'"Is it in Workday or a PDF?"',             p:[0,4] },
@@ -945,9 +956,9 @@
 
   // ---- student journey (feeling 1 = stuck … 5 = confident) ----
   const steps = [
-    { t:'Admitted',            d:'Offer letter arrives.',                         p:['Grad College'],                 f:4.5 },
-    { t:'Search for funding',  d:'"Who decides funding? Does it cover tuition?"', p:['Grad College','Dept.','Catalog'], f:1.6, fix:'→ One funding hub' },
-    { t:'Land an assistantship', d:'A department offers a half-time RA.',         p:['Department'],                   f:4 },
+    { t:'Offer letter',        d:'Funding offered by the department or a professor.', p:['Department'],              f:4.6 },
+    { t:'Decode the offer',    d:'"My letter covers fall and spring. What about summer?"', p:['Grad College','Catalog','Dept.'], f:1.7, fix:'→ Plain-language funding guide' },
+    { t:'Arrive & start',      d:'The assistantship begins in the department.',   p:['Department'],                   f:3.9 },
     { t:'Check work rules',    d:'"Can I also take a campus job?"',               p:['ISSO','CyHire'],                f:1.3, fix:'→ Work rules on funding pages' },
     { t:'Paperwork',           d:'I-9 in Workday plus an ISSO appointment.',      p:['Workday','ISSO'],               f:2.2, fix:'→ Labeled forms' },
     { t:'First paycheck',      d:'Settled and focused on research.',              p:['Department'],                   f:4.2 },
