@@ -96,12 +96,13 @@
   .tl.s .tl-t{ color:rgba(255,255,255,0.78); }
 
   /* ===== CHAPTERS (Apple-style big numbers) ===== */
-  .chapter{ padding-top:128px; }
+  .chapter{ padding-top:58px; }
+  .tldr + .chapter{ padding-top:76px; }
   .ch-head{ display:flex; align-items:center; gap:16px; padding-top:22px; border-top:1px solid var(--hairline); margin-bottom:22px; }
   .ch-num{ font-family:var(--display); font-size:clamp(44px, 4.6vw, 64px); font-weight:700; letter-spacing:-0.045em; line-height:0.9; color:var(--blue); font-variant-numeric:tabular-nums; }
   .ch-name{ font-size:13px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--ink); }
   .ch-name span{ display:block; margin-top:3px; font-weight:600; letter-spacing:0.02em; text-transform:none; color:var(--dim); font-size:13px; }
-  .sub{ padding-top:72px; }
+  .sub{ padding-top:48px; }
   .eyebrow{ font-size:12.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); margin-bottom:10px; }
   .eyebrow b{ color:var(--blue); font-weight:700; margin-right:6px; }
 
@@ -389,8 +390,8 @@
 
   /* ===== 13"/14" laptops and up: every chart card fits one screen ===== */
   @media (min-width:1101px){
-    .chapter{ padding-top:104px; }
-    .sub{ padding-top:60px; }
+    .chapter{ padding-top:58px; }
+    .sub{ padding-top:48px; }
     .lead{ font-size:16px; }
     .viz{ margin-top:20px; padding:22px 26px 18px; }
     .takeaway{ margin-top:14px; padding:10px 14px; font-size:13.5px; }
@@ -446,10 +447,11 @@
     .back-link{ margin-bottom:39px; }
     .mini-bar{ height:50px; gap:14px; }
     .mini-title{ font-size:16px; }
-    .chapter{ padding-top:88px; }
+    .chapter{ padding-top:42px; }
+    .tldr + .chapter{ padding-top:60px; }
     .section-heading{ font-size:23px; letter-spacing:-0.022em; text-wrap:balance; }
     .sub-heading{ font-size:18.5px; text-wrap:balance; }
-    .sub{ padding-top:52px; }
+    .sub{ padding-top:40px; }
     .ch-head{ gap:12px; margin-bottom:18px; }
     .lead{ font-size:16.5px; }
     .viz{ padding:20px 18px 18px; border-radius:18px; }
@@ -543,8 +545,8 @@
     <div class="glance">
       <div class="glance-title">At a glance</div>
       <div class="glance-row"><div class="glance-num b">#1</div><div class="glance-text">Top need: <b>understanding funding</b></div></div>
-      <div class="glance-row"><div class="glance-num">25</div><div class="glance-text">graduate students <b>talked to</b></div></div>
-      <div class="glance-row"><div class="glance-num">4</div><div class="glance-text">site areas <b>designed and shipped</b></div></div>
+      <div class="glance-row"><div class="glance-num">1 in 3</div><div class="glance-text">ISU grad students are <b>international</b></div></div>
+      <div class="glance-row"><div class="glance-num">10</div><div class="glance-text">peer schools <b>benchmarked</b></div></div>
     </div>
   </div>
 </aside>
@@ -564,7 +566,7 @@
     <div class="tldr-grid">
       <div class="tl p"><div class="tl-k">The problem</div><div class="tl-n">4<small>places</small></div><div class="tl-t">to answer "What does my funding cover?" So students emailed the office instead.</div></div>
       <div class="tl"><div class="tl-k">What I did</div><div class="tl-n">25<small>students</small></div><div class="tl-t">talked to, every question logged, and the site checked against 10 peer schools.</div></div>
-      <div class="tl s"><div class="tl-k">What shipped</div><div class="tl-n">4<small>areas live</small></div><div class="tl-t">A funding hub, an international path, labeled forms and keyboard-friendly menus.</div></div>
+      <div class="tl s"><div class="tl-k">What shipped</div><div class="tl-n">Live<small>site-wide</small></div><div class="tl-t">I designed and built pages across the site, led by a new funding hub, an international path and labeled forms.</div></div>
     </div>
   </div>
 
@@ -771,7 +773,7 @@
     <div class="reveal">
       <div class="ch-head"><span class="ch-num">05</span><span class="ch-name">What I shipped</span></div>
       <h2 class="section-heading"><span class="hl">From what I heard.</span> To what went live.</h2>
-      <p class="lead">I designed and developed all four areas, with my supervisor guiding priorities and reviewing changes before launch.</p>
+      <p class="lead">As the site's designer and developer, I built pages across the Graduate College website. These four changes came straight from this research. My supervisor guided priorities and reviewed changes before launch.</p>
       <div class="flow">
         <div class="flow-h"><div>Insight</div><div></div><div>Design move</div><div></div><div>Shipped</div></div>
         <div class="flow-row">
