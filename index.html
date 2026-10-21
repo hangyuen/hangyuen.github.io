@@ -23,14 +23,14 @@
     --stage-bg-image: url('assets/bg.jpg');
     --icon-label-color: #f5f5f5;
     --icon-label-shadow: 0 1px 3px rgba(0,0,0,0.45);
-    --dock-grad-1: rgba(255,255,255,0.38);
-    --dock-grad-2: rgba(205,205,212,0.22);
-    --dock-border: rgba(255,255,255,0.55);
-    --dock-shadow: 0 12px 28px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -1px 0 rgba(0,0,0,0.05);
-    --dock-divider: rgba(255,255,255,0.16);
-    --dock-active-veil: rgba(0,0,0,0.35);
-    --theme-switch-bg: rgba(255,255,255,0.38);
-    --theme-switch-border: rgba(255,255,255,0.55);
+    --dock-grad-1: rgba(64,64,68,0.62);
+    --dock-grad-2: rgba(34,34,38,0.62);
+    --dock-border: rgba(255,255,255,0.16);
+    --dock-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.20);
+    --dock-divider: rgba(255,255,255,0.12);
+    --dock-active-veil: rgba(255,255,255,0.12);
+    --theme-switch-bg: rgba(50,50,54,0.62);
+    --theme-switch-border: rgba(255,255,255,0.16);
     --avatar-frame-bg: rgba(0,0,0,0.18);
     --icon-box-grad-1: #4a4a4d;
     --icon-box-grad-2: #333335;
@@ -44,9 +44,9 @@
     --stage-bg-image: none;
     --icon-label-color: #1d1d1f;
     --icon-label-shadow: 0 1px 2px rgba(255,255,255,0.5);
-    --dock-grad-1: rgba(232,232,237,0.80);
-    --dock-grad-2: rgba(214,214,220,0.72);
-    --dock-border: rgba(0,0,0,0.08);
+    --dock-grad-1: rgba(222,222,227,0.88);
+    --dock-grad-2: rgba(200,200,206,0.82);
+    --dock-border: rgba(0,0,0,0.10);
     --dock-shadow: 0 12px 30px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
     --dock-divider: rgba(0,0,0,0.08);
     --dock-active-veil: rgba(0,0,0,0.12);
@@ -1493,6 +1493,7 @@
   :root{
     --story-backdrop: rgba(0,0,0,0.55);
     --story-sheet: #101012;
+    --story-card: #1c1c1e;
     --story-title: #f5f5f7;
     --story-gray: #86868b;
     --story-body: #c7c7cc;
@@ -1506,13 +1507,14 @@
     --story-edge: rgba(255,255,255,0.22);
     --story-highlight: rgba(255,255,255,0.14);
     --story-track: rgba(255,255,255,0.14);
-    --story-fill-a: rgba(245,245,247,0.55);
-    --story-fill-b: #f5f5f7;
-    --story-shine: rgba(0,0,0,0.28);
+    --story-fill-a: rgba(10,132,255,0.55);
+    --story-fill-b: #0a84ff;
+    --story-shine: rgba(255,255,255,0.75);
   }
   html[data-theme="white"]{
     --story-backdrop: rgba(245,245,247,0.55);
-    --story-sheet: #f5f5f7;
+    --story-sheet: #fbfbfd;
+    --story-card: #f2f2f4;
     --story-title: #1d1d1f;
     --story-gray: #6e6e73;
     --story-body: #3a3a3c;
@@ -1526,9 +1528,9 @@
     --story-edge: rgba(0,0,0,0.14);
     --story-highlight: rgba(255,255,255,0.9);
     --story-track: rgba(0,0,0,0.10);
-    --story-fill-a: rgba(29,29,31,0.50);
-    --story-fill-b: #1d1d1f;
-    --story-shine: rgba(255,255,255,0.55);
+    --story-fill-a: rgba(0,113,227,0.50);
+    --story-fill-b: #0071e3;
+    --story-shine: rgba(255,255,255,0.70);
   }
   html[data-theme="grey"]{
     --story-backdrop: rgba(120,120,125,0.45);
@@ -1647,8 +1649,8 @@
   .story-pub-meta{ font-size:14px; font-weight:500; color:var(--story-gray); }
   .story-pub h2{
     margin:0;
-    font-size:clamp(21px, 3.3cqw, 32px);
-    line-height:1.22;
+    font-size:clamp(22px, 1.9vw, 27px);
+    line-height:1.25;
     font-weight:700;
     letter-spacing:-0.02em;
   }
@@ -1723,6 +1725,19 @@
     50%     { transform:scaleY(0.55) translateY(1px); }
   }
   .story-progress.is-hidden{ display:none; }
+
+  /* a few springy hops when a story opens, like a water drop bouncing,
+     so people notice there's more to scroll; stops on the first scroll */
+  .story-progress.hint{ animation:storyHop 1.1s cubic-bezier(.3,1.5,.5,1) 0.7s 3 both; }
+  .story-progress.hint .story-progress-fill::before{ animation-duration:0.55s; }
+  @keyframes storyHop{
+    0%   { transform:translateY(0) scaleY(1); }
+    28%  { transform:translateY(-9px) scaleY(1.07); }
+    52%  { transform:translateY(0) scaleY(0.93); }
+    72%  { transform:translateY(-3px) scaleY(1.02); }
+    100% { transform:translateY(0) scaleY(1); }
+  }
+  @media (prefers-reduced-motion: reduce){ .story-progress.hint{ animation:none; } }
   @media (prefers-reduced-motion: reduce){
     .story-progress-fill::after, .story-progress-fill::before{ animation:none; }
   }
@@ -1732,6 +1747,8 @@
   .dock, .theme-switcher{ transition:opacity 0.3s ease, background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
   body.story-open .dock, body.story-open .theme-switcher{ opacity:0.5; }
   body.story-open .dock:hover, body.story-open .theme-switcher:hover{ opacity:1; }
+  html[data-theme="white"] body.story-open .dock,
+  html[data-theme="white"] body.story-open .theme-switcher{ opacity:0.85; }
 
   .story-frame{ position:relative; }
   /* close button: a separate glass button just outside the window's
@@ -1769,25 +1786,27 @@
     flex-direction:column;
     align-items:flex-start;
     text-align:left;
-    gap:8px;
+    gap:10px;
   }
   .story-eyebrow{
-    font-size:clamp(15px, 2.15cqw, 20px);
-    font-weight:500;
+    font-size:12.5px;
+    font-weight:700;
     color:var(--story-gray);
+    letter-spacing:0.06em;
+    text-transform:uppercase;
   }
   .story-hero h1{
     margin:0;
-    font-size:clamp(34px, 6.6cqw, 70px);
+    font-size:clamp(34px, 5vw, 56px);   /* same as Digital Works and 1982 Benz page titles */
     line-height:1.05;
     font-weight:700;
-    letter-spacing:-0.035em;
+    letter-spacing:-0.02em;
   }
   .story-tagline{
     margin:0;
     max-width:none;
-    font-size:clamp(17px, 2.5cqw, 25px);
-    line-height:1.35;
+    font-size:19px;
+    line-height:1.45;
     font-weight:400;
     letter-spacing:-0.005em;
     color:var(--story-gray);
@@ -1811,25 +1830,25 @@
   .story-media iframe{ width:100%; height:100%; border:0; display:block; border-radius:inherit; background:transparent; }
 
   .story-section{
-    margin-top:clamp(40px, 8.1cqw, 90px);
+    margin-top:clamp(48px, 5vw, 72px);
     display:flex;
     flex-direction:column;
     gap:14px;
   }
   .story-section h2{
     margin:0;
-    font-size:clamp(28px, 5.05cqw, 54px);
-    line-height:1.08;
+    font-size:clamp(28px, 2.6vw, 38px);
+    line-height:1.15;
     font-weight:700;
-    letter-spacing:-0.03em;
+    letter-spacing:-0.025em;
   }
   .story-lead{
     margin:0;
     max-width:none;
-    font-size:clamp(16px, 2.4cqw, 22px);
+    font-size:17px;
     line-height:1.6;
     font-weight:400;
-    letter-spacing:0;
+    letter-spacing:-0.006em;
     color:var(--story-body);
   }
   /* plain, even reading text: no white or bold lead-in */
@@ -1840,11 +1859,11 @@
     display:grid;
     grid-template-columns:repeat(3, max-content);
     gap:28px 56px;
-    column-gap:clamp(32px, 7cqw, 64px);
-    row-gap:clamp(20px, 3.5cqw, 32px);
+    column-gap:clamp(32px, 4vw, 56px);
+    row-gap:24px;
   }
   .story-tool-label{
-    font-size:clamp(13px, 1.9cqw, 17px);
+    font-size:13px;
     font-weight:400;
     color:var(--story-gray);
   }
@@ -1860,23 +1879,24 @@
     color:var(--story-gray);
   }
   .story-tool-name{
-    font-size:clamp(26px, 4.3cqw, 44px);
+    font-size:clamp(26px, 2.4vw, 32px);
     font-weight:700;
-    letter-spacing:-0.025em;
+    letter-spacing:-0.03em;
+    line-height:1.1;
   }
 
   .story-statement{
     margin:0;
     max-width:none;
-    font-size:clamp(24px, 4.3cqw, 44px);
-    line-height:1.15;
+    font-size:clamp(24px, 2.3vw, 32px);
+    line-height:1.2;
     font-weight:700;
     letter-spacing:-0.025em;
   }
   .story-note{
     margin:0;
     max-width:none;
-    font-size:clamp(15px, 2.15cqw, 19px);
+    font-size:15px;
     line-height:1.5;
     font-weight:400;
     color:var(--story-gray);
@@ -1906,6 +1926,79 @@
     .story-progress{ display:none; }
     .story-gallery{ grid-template-columns:1fr; }
     .story-credits{ grid-template-columns:1fr; }
+  }
+
+  /* UTILITY WINDOWS (About, Journey, Let's Connect, Heading out?) follow the
+     theme like the project popups, and use the same round close button,
+     outside the window's top-left corner (above it on phones). */
+  .about-window{
+    position:relative;
+    overflow:visible;
+    background:var(--story-sheet);
+    color:var(--story-title);
+    border:1px solid var(--story-edge);
+    box-shadow:inset 0 1px 0 var(--story-highlight), 0 20px 50px rgba(0,0,0,0.25), 0 4px 14px rgba(0,0,0,0.10);
+  }
+  #leavingWindow{
+    background:var(--story-sheet);
+    border:1px solid var(--story-edge);
+  }
+  .about-titlebar, #leavingWindow .about-titlebar{
+    border-bottom:none;
+    padding:10px 20px 0;
+    min-height:10px;
+  }
+  .about-scroll{ border-radius:0 0 18px 18px; }
+  .about-dot.red{
+    position:absolute;
+    top:0;
+    right:calc(100% + 14px);
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:var(--story-close);
+    border:1px solid var(--story-close-border);
+    box-shadow:0 4px 14px rgba(0,0,0,0.18);
+    filter:none;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .about-dot.red::before, .about-dot.red::after{
+    opacity:1;
+    width:16px;
+    height:2.6px;
+    margin-top:-1.3px;
+    margin-left:-8px;
+    border-radius:2px;
+    background:var(--story-x);
+  }
+  .about-dot.red:hover{ filter:none; transform:scale(1.06); background:var(--story-close-hover); }
+  .about-dot.red:focus-visible{ outline:2px solid #0a84ff; outline-offset:3px; }
+
+  .about-field{ border-bottom-color:var(--story-edge); }
+  .about-label{ color:var(--story-title); }
+  .about-value{ color:var(--story-gray); }
+  .about-value.about-link{ color:#2997ff; }
+  html[data-theme="white"] .about-value.about-link{ color:#0066cc; }
+  .about-bio{ background:var(--story-card); }
+  .about-bio p{ color:var(--story-body); }
+  .contact-intro{ color:var(--story-body); }
+  .contact-field label, .contact-hint, .contact-status{ color:var(--story-gray); }
+  .contact-field input, .contact-field textarea{ background:var(--story-card); color:var(--story-title); }
+  .contact-field input:hover, .contact-field textarea:hover{ background:var(--story-card); filter:brightness(1.06); }
+  .contact-field input:focus, .contact-field textarea:focus{ background:var(--story-sheet); filter:none; }
+  .contact-field input::placeholder, .contact-field textarea::placeholder{ color:var(--story-gray); opacity:0.8; }
+  .journey-label{ color:var(--story-gray); }
+  .journey-text{ color:var(--story-body); }
+  .leaving-body{ color:var(--story-body); }
+  .leaving-cancel{ background:var(--story-card); color:var(--story-title); }
+  .leaving-cancel:hover{ background:var(--story-card); filter:brightness(1.08); }
+
+  @media (max-width:640px){
+    .about-dot.red{ top:-50px; right:auto; left:0; width:38px; height:38px; }
+    .about-dot.red::before, .about-dot.red::after{ width:14px; margin-left:-7px; }
+    .about-value{ color:var(--story-title); }
+    .about-label{ color:var(--story-gray); }
+    .about-overlay{ padding-top:64px; }
   }
 
 </style>
@@ -2292,7 +2385,7 @@
     <div class="story-section">
       <div class="story-eyebrow">Recognition</div>
       <p class="story-statement">Awards at regional and national film festivals.</p>
-      <p class="story-lead"><strong>Built in Maya, Nuke, and Adobe Premiere, the film went on to win several regional and national film festival awards.</strong> Autodesk Flow Production Tracking kept every stage of the pipeline running smoothly.</p>
+      <p class="story-lead">Autodesk Flow Production Tracking kept every stage of the pipeline running smoothly.</p>
     </div>
   </div>
   </div>
@@ -3211,6 +3304,8 @@
     const scroller = el.querySelector('.story-scroll');
     scroller.scrollTop = 0;
     el.setAttribute('aria-hidden', 'false');
+    const bar = el.querySelector('.story-progress');
+    bar.classList.remove('hint'); void bar.offsetWidth; bar.classList.add('hint');
     document.body.classList.add('story-open');
     storyOpen = el;
     requestAnimationFrame(() => {
@@ -3250,6 +3345,7 @@
       bar.style.setProperty('--p', (10 + p * 90).toFixed(1) + '%');
     };
     scroller.addEventListener('scroll', el._updateProgress, { passive: true });
+    scroller.addEventListener('scroll', () => { if (scroller.scrollTop > 20) bar.classList.remove('hint'); }, { passive: true });
     bar.addEventListener('click', (e) => {
       const r = bar.getBoundingClientRect();
       const f = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
