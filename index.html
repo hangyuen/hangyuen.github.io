@@ -1485,6 +1485,410 @@
     }
   }
 
+  /* STORY SHEET — Howl's Moving Castle (AR). The site behind goes frosted and
+     a fixed-size sheet floats in the middle, like the popups on apple.com.
+     The sheet never grows past 1080px, so big monitors just show more of the
+     frosted background. On phones the sheet fills the screen. The close
+     button sits outside the scrolling layer, so it never scrolls away. */
+  :root{
+    --story-backdrop: rgba(0,0,0,0.55);
+    --story-sheet: #101012;
+    --story-title: #f5f5f7;
+    --story-gray: #86868b;
+    --story-body: #c7c7cc;
+    --story-media: #1c1c1e;
+    --story-close: rgba(255,255,255,0.24);
+    --story-close-hover: rgba(255,255,255,0.34);
+    --story-close-border: rgba(255,255,255,0.32);
+    --story-x: #ffffff;
+    --story-accent: #ff9f4a;
+    --story-grad: linear-gradient(95deg, #ffd27a 0%, #ff9a5a 38%, #ff5f8f 72%, #b57bff 100%);
+    --story-edge: rgba(255,255,255,0.22);
+    --story-highlight: rgba(255,255,255,0.14);
+    --story-track: rgba(255,255,255,0.14);
+    --story-fill-a: rgba(245,245,247,0.55);
+    --story-fill-b: #f5f5f7;
+    --story-shine: rgba(0,0,0,0.28);
+  }
+  html[data-theme="white"]{
+    --story-backdrop: rgba(245,245,247,0.55);
+    --story-sheet: #f5f5f7;
+    --story-title: #1d1d1f;
+    --story-gray: #6e6e73;
+    --story-body: #3a3a3c;
+    --story-media: #1d1d1f;
+    --story-close: #1d1d1f;
+    --story-close-hover: #3a3a3c;
+    --story-close-border: rgba(0,0,0,0.20);
+    --story-x: #f5f5f7;
+    --story-accent: #c2410c;
+    --story-grad: linear-gradient(95deg, #d97706 0%, #ea580c 35%, #db2777 70%, #7c3aed 100%);
+    --story-edge: rgba(0,0,0,0.14);
+    --story-highlight: rgba(255,255,255,0.9);
+    --story-track: rgba(0,0,0,0.10);
+    --story-fill-a: rgba(29,29,31,0.50);
+    --story-fill-b: #1d1d1f;
+    --story-shine: rgba(255,255,255,0.55);
+  }
+  html[data-theme="grey"]{
+    --story-backdrop: rgba(120,120,125,0.45);
+    --story-sheet: #b8b8bd;
+    --story-title: #111113;
+    --story-gray: #333336;
+    --story-body: #1d1d1f;
+    --story-media: #1d1d1f;
+    --story-close: #ffffff;
+    --story-close-hover: #f5f5f7;
+    --story-close-border: rgba(0,0,0,0.12);
+    --story-x: #111113;
+    --story-accent: #b8410c;
+    --story-grad: linear-gradient(95deg, #c46a05 0%, #d9500f 35%, #c81e6a 70%, #6d28d9 100%);
+    --story-edge: rgba(0,0,0,0.16);
+    --story-highlight: rgba(255,255,255,0.45);
+    --story-track: rgba(0,0,0,0.12);
+    --story-fill-a: rgba(17,17,19,0.55);
+    --story-fill-b: #111113;
+    --story-shine: rgba(255,255,255,0.50);
+  }
+
+  /* sits under the dock (z 100) and theme switcher (z 110), so both stay
+     visible and usable; no dark backdrop, the landing page stays in view */
+  .story-overlay{
+    position:fixed;
+    inset:0;
+    z-index:90;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 24px 124px;   /* bottom: the dock (34px + ~76px) + gap */
+    box-sizing:border-box;
+    background:transparent;
+    --sheet-h: min(680px, calc(100vh - 148px));
+    color:var(--story-title);
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", 'Inter', sans-serif;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.3s ease, visibility 0s linear 0.3s;
+  }
+  .story-overlay.open{
+    opacity:1;
+    visibility:visible;
+    transition:opacity 0.3s ease;
+  }
+  body.story-open{ overflow:hidden; }
+
+  .story-sheet{
+    position:relative;
+    /* same size as the original project window */
+    width:min(900px, calc((var(--sheet-h) - 272px) * 16 / 9 + 114px), 100vw - 48px);
+    min-width:340px;
+    height:var(--sheet-h);
+    min-height:340px;
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid var(--story-edge);
+    background:var(--story-sheet);
+    box-shadow:inset 0 1px 0 var(--story-highlight), 0 20px 50px rgba(0,0,0,0.25), 0 4px 14px rgba(0,0,0,0.10);
+    transform:translateY(24px) scale(0.98);
+    transition:transform 0.35s ease;
+  }
+  .story-overlay.open .story-sheet{ transform:none; }
+
+  .story-scroll{
+    position:absolute;
+    inset:0;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    scrollbar-width:none;
+  }
+  .story-scroll::-webkit-scrollbar{ display:none; }
+
+  /* credits row at the end of a story, like film credits */
+  .story-credits{
+    margin-top:clamp(48px, 6vw, 72px);
+    padding-top:24px;
+    border-top:1px solid var(--story-edge);
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:16px 32px;
+  }
+  .story-credits-label{ font-size:13px; color:var(--story-gray); }
+  .story-credits-value{ margin-top:4px; font-size:16px; font-weight:500; color:var(--story-title); line-height:1.35; }
+
+  .story-gallery{
+    margin-top:32px;
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:12px;
+  }
+  .story-gallery img{
+    width:100%;
+    aspect-ratio:16 / 9;
+    object-fit:cover;
+    border-radius:14px;
+    background:var(--story-media);
+    display:block;
+  }
+
+  .story-pubs{ margin-top:40px; }
+  .story-pub{
+    padding:28px 0;
+    border-top:1px solid var(--story-edge);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .story-pub:last-child{ padding-bottom:0; }
+  .story-pub-meta{ font-size:14px; font-weight:500; color:var(--story-gray); }
+  .story-pub h2{
+    margin:0;
+    font-size:clamp(21px, 2.2vw, 26px);
+    line-height:1.22;
+    font-weight:700;
+    letter-spacing:-0.02em;
+  }
+  .story-pub-authors{ margin:0; font-size:16px; font-weight:600; color:var(--story-title); }
+  .story-pub-venue{ margin:0; max-width:640px; font-size:15px; line-height:1.5; color:var(--story-gray); }
+  .story-pub-link{
+    margin-top:4px;
+    align-self:flex-start;
+    font-size:16px;
+    font-weight:500;
+    color:#2997ff;
+  }
+  html[data-theme="white"] .story-pub-link{ color:#0066cc; }
+  html[data-theme="grey"] .story-pub-link{ color:#003f8f; }
+  .story-pub-link:hover{ text-decoration:underline; }
+
+  /* progress tube on the right: fills with "liquid" as you scroll, with a
+     light ripple flowing through it. Click anywhere on it to jump there. */
+  .story-progress{
+    position:absolute;
+    right:18px;
+    top:50%;
+    width:6px;
+    height:150px;
+    margin-top:-75px;
+    z-index:2;
+    border-radius:3px;
+    background:var(--story-track);
+    overflow:hidden;
+    cursor:pointer;
+  }
+  .story-progress::before{           /* wider invisible hit area */
+    content:'';
+    position:absolute;
+    inset:-6px -10px;
+  }
+  .story-progress-fill{
+    position:absolute;
+    top:0; left:0; right:0;
+    height:var(--p, 10%);
+    border-radius:3px;
+    background:linear-gradient(180deg, var(--story-fill-a), var(--story-fill-b));
+    overflow:hidden;
+    transition:height 0.18s ease-out;
+  }
+  .story-progress-fill::after{       /* the flowing ripple */
+    content:'';
+    position:absolute;
+    left:0; right:0;
+    height:28px;
+    top:-28px;
+    background:linear-gradient(180deg, transparent, var(--story-shine), transparent);
+    opacity:0.7;
+    animation:storyFlow 2.6s ease-in-out infinite;
+  }
+  .story-progress-fill::before{      /* rounded "meniscus" at the liquid's edge */
+    content:'';
+    position:absolute;
+    left:-1px; right:-1px;
+    bottom:-2px;
+    height:6px;
+    border-radius:50%;
+    background:var(--story-fill-b);
+    animation:storyWobble 1.8s ease-in-out infinite;
+  }
+  @keyframes storyFlow{
+    0%   { transform:translateY(0); }
+    100% { transform:translateY(190px); }
+  }
+  @keyframes storyWobble{
+    0%,100% { transform:scaleY(1); }
+    50%     { transform:scaleY(0.55) translateY(1px); }
+  }
+  .story-progress.is-hidden{ display:none; }
+  @media (prefers-reduced-motion: reduce){
+    .story-progress-fill::after, .story-progress-fill::before{ animation:none; }
+  }
+
+  /* while the story is open, the dock and theme switcher step back a little
+     (full again on hover), so their bright glass edges don't compete */
+  .dock, .theme-switcher{ transition:opacity 0.3s ease, background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
+  body.story-open .dock, body.story-open .theme-switcher{ opacity:0.5; }
+  body.story-open .dock:hover, body.story-open .theme-switcher:hover{ opacity:1; }
+
+  .story-frame{ position:relative; }
+  /* close button: a separate glass button just outside the window's
+     top-left corner (moves inside on narrow screens) */
+  .story-close{
+    position:absolute;
+    top:0;
+    right:calc(100% + 14px);
+    z-index:3;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:1px solid var(--story-close-border);
+    padding:0;
+    background:var(--story-close);
+    backdrop-filter:blur(20px) saturate(160%);
+    -webkit-backdrop-filter:blur(20px) saturate(160%);
+    box-shadow:0 4px 14px rgba(0,0,0,0.18);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:transform 0.15s ease;
+  }
+  .story-close:hover{ transform:scale(1.06); background:var(--story-close-hover); }
+  .story-close:focus-visible{ outline:2px solid #0a84ff; outline-offset:3px; }
+  .story-close svg{ width:16px; height:16px; stroke:var(--story-x); stroke-width:3; stroke-linecap:round; }
+
+  .story-content{
+    padding:56px 56px 80px;
+  }
+
+  .story-hero{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+    gap:8px;
+  }
+  .story-eyebrow{
+    font-size:17px;
+    font-weight:500;
+    color:var(--story-gray);
+  }
+  .story-hero h1{
+    margin:0;
+    font-size:clamp(34px, 4.4vw, 52px);
+    line-height:1.05;
+    font-weight:700;
+    letter-spacing:-0.035em;
+  }
+  .story-tagline{
+    margin:0;
+    max-width:none;
+    font-size:clamp(17px, 1.6vw, 20px);
+    line-height:1.35;
+    font-weight:400;
+    letter-spacing:-0.005em;
+    color:var(--story-gray);
+  }
+
+  .story-media{
+    width:100%;
+    aspect-ratio:16 / 9;
+    border-radius:18px;
+    overflow:hidden;
+    background:var(--story-media);
+    margin-top:48px;
+  }
+  .story-media.video{
+    width:100%;
+    margin:28px 0 0;
+  }
+  .story-media.model{ aspect-ratio:16 / 9; margin-top:32px; }
+  .story-media iframe{ width:100%; height:100%; border:0; display:block; }
+
+  .story-section{
+    margin-top:clamp(40px, 4.5vw, 64px);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .story-section h2{
+    margin:0;
+    font-size:clamp(28px, 3.2vw, 40px);
+    line-height:1.08;
+    font-weight:700;
+    letter-spacing:-0.03em;
+  }
+  .story-lead{
+    margin:0;
+    max-width:640px;
+    font-size:clamp(16px, 1.4vw, 19px);
+    line-height:1.6;
+    font-weight:400;
+    letter-spacing:0;
+    color:var(--story-body);
+  }
+  /* plain, even reading text: no white or bold lead-in */
+  .story-lead strong{ color:inherit; font-weight:inherit; }
+
+  .story-tools{
+    margin-top:32px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px 56px;
+  }
+  .story-tool-label{
+    font-size:15px;
+    font-weight:400;
+    color:var(--story-gray);
+  }
+  .story-tool-name{
+    font-size:clamp(28px, 2.8vw, 34px);
+    font-weight:700;
+    letter-spacing:-0.025em;
+  }
+
+  .story-statement{
+    margin:0;
+    max-width:680px;
+    font-size:clamp(24px, 2.8vw, 34px);
+    line-height:1.15;
+    font-weight:700;
+    letter-spacing:-0.025em;
+  }
+  .story-note{
+    margin:0;
+    max-width:600px;
+    font-size:clamp(15px, 1.3vw, 17px);
+    line-height:1.5;
+    font-weight:400;
+    color:var(--story-gray);
+  }
+
+  /* narrow screens: no room beside the window, so the close button sits
+     above it at the top-left, still outside the box and always visible */
+  @media (max-width:1040px){
+    .story-overlay{ padding-top:76px; --sheet-h: min(680px, calc(100vh - 200px)); }
+    .story-close{ top:-54px; left:0; right:auto; }   /* same row as the theme switcher (top 22px, 44px tall) */
+  }
+  @media (max-width:900px){
+    .story-content{ padding:48px 32px 80px; }
+  }
+  @media (max-width:640px){
+    .story-overlay{ padding:66px 12px 92px; --sheet-h:100%; }
+    .story-sheet{ width:100%; min-width:0; border-radius:14px; }
+    .story-frame{ width:100%; height:100%; }
+    /* phones: same size and row as the theme switcher pill (top 14px, 38px tall) */
+    .story-close{ top:-52px; left:2px; right:auto; width:38px; height:38px; }
+    .story-close svg{ width:14px; height:14px; }
+    .story-content{ padding:36px 20px 72px; }
+    .story-media.video{ width:100%; margin-top:24px; }
+    .story-sheet{ height:100%; }
+    .story-media{ border-radius:14px; margin-top:32px; }
+    .story-tools{ flex-direction:column; }
+    .story-progress{ display:none; }
+    .story-gallery{ grid-template-columns:1fr; }
+    .story-credits{ grid-template-columns:1fr; }
+  }
+
 </style>
 </head>
 <body>
@@ -1726,6 +2130,216 @@
 </div>
 
 <!-- PROJECT WINDOW TEMPLATE — cloned once per opened project, so several can be open at once -->
+<!-- STORY OVERLAY — Howl's Moving Castle (AR). The iframes get their src
+     only when the overlay opens, and lose it on close so the video stops. -->
+<div class="story-overlay" id="arStory" role="dialog" aria-modal="true" aria-label="Howl's Moving Castle (AR)" aria-hidden="true">
+  <div class="story-frame">
+  <button class="story-close" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="story-sheet">
+  <div class="story-progress" aria-hidden="true"><div class="story-progress-fill"></div></div>
+
+  <div class="story-scroll">
+  <div class="story-content">
+    <div class="story-hero" data-part="0">
+      <div class="story-eyebrow">Augmented Reality</div>
+      <h1>Howl's Moving Castle</h1>
+      <p class="story-tagline">The walking castle from the Studio Ghibli film, standing in your own room.</p>
+    </div>
+
+    <div class="story-media video">
+      <iframe data-src="https://www.youtube.com/embed/pIK76hhme4I" title="Howl's Moving Castle (AR) video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+
+    <div class="story-section" data-part="1">
+      <h2>Step around it.</h2>
+      <p class="story-lead"><strong>This augmented reality experience brings the walking castle from Studio Ghibli's Howl's Moving Castle (Hayao Miyazaki, 2004) into the viewer's own space.</strong> Once the app recognizes an image target, the castle appears in the room and can be explored from any angle: clouds drift past, smoke curls from its chimneys, and fire flickers beneath it as it strides forward.</p>
+    </div>
+    <div class="story-media model">
+      <iframe data-src="https://sketchfab.com/models/c77dced0571944fbac9ec956a35fd2c5/embed?ui_hint=2" title="Howl's Moving Castle 3D model" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+    </div>
+
+    <div class="story-section" data-part="2">
+      <h2>From 2D film<br>to real-time 3D.</h2>
+      <p class="story-lead"><strong>I translated the film's 2D design into a fully modeled 3D asset in Autodesk Maya, textured it with Substance Designer and Substance Painter, and built the experience in Unity.</strong> Because people could walk around the castle and lean in close, every surface and mechanical detail had to hold up from any viewing angle while still running smoothly in real time.</p>
+    </div>
+    <div class="story-tools">
+      <div><div class="story-tool-label">Modeled in</div><div class="story-tool-name">Maya</div></div>
+      <div><div class="story-tool-label">Textured in</div><div class="story-tool-name">Substance</div></div>
+      <div><div class="story-tool-label">Built in</div><div class="story-tool-name">Unity</div></div>
+    </div>
+
+    <div class="story-section" data-part="3">
+      <div class="story-eyebrow">Tested in the wild</div>
+      <p class="story-statement">Many visitors described it as unexpectedly moving.</p>
+      <p class="story-lead"><strong>Exhibited at Lockwood Cafe in Ames, the piece doubled as an in-the-wild test.</strong> Watching visitors and listening to their feedback, a clear pattern emerged: people moved freely around the castle, assigned their own meaning to the space, and built a clearer sense of spatial relationships simply through their own exploration. Many described it as unexpectedly moving. The takeaway is that AR's intuitive visual cues have real potential for spatial learning, and for reshaping how people move through and interact with the spaces around them.</p>
+    </div>
+    <div class="story-credits">
+      <div><div class="story-credits-label">Role</div><div class="story-credits-value">Designer, 3D Artist &amp; Developer</div></div>
+      <div><div class="story-credits-label">Type</div><div class="story-credits-value">Augmented Reality</div></div>
+      <div><div class="story-credits-label">Year</div><div class="story-credits-value">2024</div></div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<div class="story-overlay" id="vrStory" role="dialog" aria-modal="true" aria-label="A Thousand Li (VR)" aria-hidden="true">
+  <div class="story-frame">
+  <button class="story-close" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="story-sheet">
+  <div class="story-progress" aria-hidden="true"><div class="story-progress-fill"></div></div>
+
+  <div class="story-scroll">
+  <div class="story-content">
+    <div class="story-hero">
+      <div class="story-eyebrow">Virtual Reality</div>
+      <h1>A Thousand Li</h1>
+      <p class="story-tagline">Step inside a Northern Song landscape painting.</p>
+    </div>
+
+    <div class="story-media video">
+      <iframe data-src="https://www.youtube.com/embed/3py4b7UjFq0" title="A Thousand Li (VR) video 1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+
+    <div class="story-section">
+      <h2>Vast landscapes,<br>tiny people.</h2>
+      <p class="story-lead"><strong>Northern Song dynasty (960&ndash;1127) "Shan Shui" painters like Fan Kuan and Guo Xi placed tiny human figures within vast landscapes to express humility and a respectful relationship with nature.</strong> Today, most people meet these works as flat images in a textbook or behind museum glass, where that sense of scale is hard to actually feel.</p>
+    </div>
+    <div class="story-media">
+      <iframe data-src="https://www.youtube.com/embed/KMH2qO_f-rQ" title="A Thousand Li (VR) video 2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+
+    <div class="story-section">
+      <h2>Step inside<br>the painting.</h2>
+      <p class="story-lead"><strong>A Thousand Li is a VR learning experience designed to close that gap.</strong> Developed as my MFA &amp; MS in Human-Computer Interaction thesis, it reconstructs a historic landscape painting as a space people can step inside, and explores how immersive interaction can make art history and environmental education more engaging and accessible.</p>
+    </div>
+    <div class="story-tools">
+      <div><div class="story-tool-label">Thesis</div><div class="story-tool-name">MFA &amp; MS</div></div>
+      <div><div class="story-tool-label">School</div><div class="story-tool-name">Iowa State</div></div>
+      <div><div class="story-tool-label">Built in</div><div class="story-tool-name">Unity</div></div>
+    </div>
+
+    <div class="story-section">
+      <h2>Play first,<br>learn on demand.</h2>
+      <p class="story-lead"><strong>The core design principle was play first, learn on demand.</strong> Users pilot a boat across the painting, watch petals drift on the wind, follow fish weaving through the water, and climb a path toward a mountain temple. I designed and built each mechanic, from particle systems driving the petals to scripted fish behavior, so the painting invites action instead of passive viewing. Optional info points let curious users dig into the art history of the era without interrupting those who just want to explore, and reframe an 11th-century way of seeing nature through a contemporary lens on our place in the environment.</p>
+    </div>
+    <div class="story-gallery">
+      <img src="assets/VR01.jpg" alt="A Thousand Li, still 1" loading="lazy">
+      <img src="assets/VR02.jpg" alt="A Thousand Li, still 2" loading="lazy">
+      <img src="assets/VR03.jpg" alt="A Thousand Li, still 3" loading="lazy">
+      <img src="assets/VR04.jpg" alt="A Thousand Li, still 4" loading="lazy">
+    </div>
+    <div class="story-credits">
+      <div><div class="story-credits-label">Role</div><div class="story-credits-value">Designer &amp; Developer</div></div>
+      <div><div class="story-credits-label">Type</div><div class="story-credits-value">VR Learning Experience</div></div>
+      <div><div class="story-credits-label">Year</div><div class="story-credits-value">2024</div></div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<div class="story-overlay" id="vfxStory" role="dialog" aria-modal="true" aria-label="Papel (Animation &amp; VFX)" aria-hidden="true">
+  <div class="story-frame">
+  <button class="story-close" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="story-sheet">
+  <div class="story-progress" aria-hidden="true"><div class="story-progress-fill"></div></div>
+
+  <div class="story-scroll">
+  <div class="story-content">
+    <div class="story-hero">
+      <div class="story-eyebrow">Animation &amp; VFX</div>
+      <h1>Papel</h1>
+      <p class="story-tagline">A 3D animated short about a lonely axolotl child and the family they draw.</p>
+    </div>
+
+    <div class="story-media video">
+      <iframe data-src="https://www.youtube.com/embed/IEuGfiyUUm8" title="Papel (Animation &amp; VFX) video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+
+    <div class="story-section">
+      <h2>A story told<br>in drawings.</h2>
+      <p class="story-lead"><strong>In 2021, a team of artists from diverse backgrounds came together to create Papel (2022), a 3D animated short film directed by Nancey Fang.</strong> The story follows a lonely axolotl child who draws pictures of their absent parents and dreams of happier days. Through their art, they find that a loving family may not be as far away as they think.</p>
+    </div>
+
+    <div class="story-section">
+      <h2>Producer, and hands-on.</h2>
+      <p class="story-lead"><strong>The producer role oversaw the production pipeline end-to-end and coordinated cross-departmental workflows, with hands-on contributions across animation, visual effects, environment modeling, surfacing and texturing, compositing, and sound design.</strong> This combination of production leadership and creative execution shaped the film's visual and narrative cohesion, from early planning through final delivery.</p>
+    </div>
+    <div class="story-tools">
+      <div><div class="story-tool-label">Animated in</div><div class="story-tool-name">Maya</div></div>
+      <div><div class="story-tool-label">Composited in</div><div class="story-tool-name">Nuke</div></div>
+      <div><div class="story-tool-label">Edited in</div><div class="story-tool-name">Premiere</div></div>
+    </div>
+
+    <div class="story-section">
+      <div class="story-eyebrow">Recognition</div>
+      <p class="story-statement">Awards at regional and national film festivals.</p>
+      <p class="story-lead"><strong>Built in Maya, Nuke, and Adobe Premiere, the film went on to win several regional and national film festival awards.</strong> Autodesk Flow Production Tracking kept every stage of the pipeline running smoothly.</p>
+    </div>
+    <div class="story-credits">
+      <div><div class="story-credits-label">Director</div><div class="story-credits-value">Nancey Fang</div></div>
+      <div><div class="story-credits-label">My role</div><div class="story-credits-value">Producer, Animation &amp; VFX</div></div>
+      <div><div class="story-credits-label">Year</div><div class="story-credits-value">2022</div></div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<div class="story-overlay" id="pubStory" role="dialog" aria-modal="true" aria-label="Publications" aria-hidden="true">
+  <div class="story-frame">
+  <button class="story-close" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="story-sheet">
+  <div class="story-progress" aria-hidden="true"><div class="story-progress-fill"></div></div>
+
+  <div class="story-scroll">
+  <div class="story-content">
+    <div class="story-hero">
+      <div class="story-eyebrow">Research</div>
+      <h1>Publications</h1>
+    </div>
+
+    <div class="story-pubs">
+      <article class="story-pub">
+        <div class="story-pub-meta">2026 · CSCW Companion '26</div>
+        <h2>Impression, Sunrise: What Monet Teaches Game Design Teams About Feeling Before Knowing</h2>
+        <p class="story-pub-authors">Yuan, H., &amp; Yang, Z.</p>
+        <p class="story-pub-venue">Companion of the Computer-Supported Cooperative Work and Social Computing, October 10–14, 2026, Salt Lake City, UT, USA. ACM.</p>
+        <a class="story-pub-link" href="https://doi.org/10.1145/3785651.3831536" target="_blank" rel="noopener">Read the paper <span aria-hidden="true">›</span></a>
+      </article>
+      <article class="story-pub">
+        <div class="story-pub-meta">2026 · HCI International Posters</div>
+        <h2>Character.exe: Exploring Agency Through Narrative Choices</h2>
+        <p class="story-pub-authors">Yuan, H., &amp; Gude, R.</p>
+        <p class="story-pub-venue">HCI International 2026 Posters (Communications in Computer and Information Science, Vol. 3048, pp. 394–403). Springer, Cham.</p>
+        <a class="story-pub-link" href="https://doi.org/10.1007/978-3-032-30816-0_39" target="_blank" rel="noopener">Read the paper <span aria-hidden="true">›</span></a>
+      </article>
+      <article class="story-pub">
+        <div class="story-pub-meta">2024 · MFA/MS Thesis</div>
+        <h2>Unveiling an Interactive and Immersive Virtual Reality (VR) Experience through Digital Construction of a Historical Landscape Painting</h2>
+        <p class="story-pub-authors">Yuan, H.</p>
+        <p class="story-pub-venue">Advisors: Johnny DiBlasi, Kimberly Zarecor, Ritwik Banerji, Emily Morgan, Austin Stewart. Graduate Theses and Dissertations, Iowa State University.</p>
+        <a class="story-pub-link" href="https://doi.org/10.31274/td-20240617-84" target="_blank" rel="noopener">Read the paper <span aria-hidden="true">›</span></a>
+      </article>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+
 <template id="projectWindowTemplate">
   <div class="project-window" role="dialog" aria-modal="false">
     <div class="project-titlebar">
@@ -2534,7 +3148,79 @@
     bringOverlayToFront(win);
   }
 
+  // STORY OVERLAYS — AR, VR, animation and publications open as a floating
+  // sheet that scrolls top to bottom; close with the button, a click outside,
+  // or the Escape key. Embeds load on open and are dropped on close.
+  const storyMap = { ar: 'arStory', vr: 'vrStory', vfx: 'vfxStory', publications: 'pubStory' };
+  let storyOpen = null;
+  let storyLastFocus = null;
+
+  function openStory(key){
+    const el = document.getElementById(storyMap[key]);
+    if (!el || el.classList.contains('open')) return;
+    if (storyOpen) closeStory(true);
+    storyLastFocus = document.activeElement;
+    el.querySelectorAll('iframe[data-src]').forEach(f => { f.src = f.dataset.src; });
+    const scroller = el.querySelector('.story-scroll');
+    scroller.scrollTop = 0;
+    el.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('story-open');
+    storyOpen = el;
+    requestAnimationFrame(() => {
+      el.classList.add('open');
+      el._updateProgress && el._updateProgress();
+    });
+    el.querySelector('.story-close').focus({ preventScroll: true });
+  }
+
+  function closeStory(keepBodyState){
+    const el = storyOpen;
+    if (!el) return;
+    el.classList.remove('open');
+    el.setAttribute('aria-hidden', 'true');
+    storyOpen = null;
+    if (!keepBodyState) {
+      document.body.classList.remove('story-open');
+      document.querySelectorAll('.icon.selected').forEach(i => i.classList.remove('selected'));
+    }
+    setTimeout(() => {
+      if (!el.classList.contains('open')) {
+        el.querySelectorAll('iframe[data-src]').forEach(f => { f.removeAttribute('src'); });
+      }
+    }, 320);
+    if (!keepBodyState && storyLastFocus && storyLastFocus.focus) storyLastFocus.focus({ preventScroll: true });
+  }
+
+  document.querySelectorAll('.story-overlay').forEach(el => {
+    el.querySelector('.story-close').addEventListener('click', () => closeStory());
+    el.addEventListener('click', (e) => { if (e.target === el) closeStory(); });
+    const scroller = el.querySelector('.story-scroll');
+    const bar = el.querySelector('.story-progress');
+    el._updateProgress = () => {
+      const max = scroller.scrollHeight - scroller.clientHeight;
+      bar.classList.toggle('is-hidden', max <= 8);
+      const p = max > 0 ? scroller.scrollTop / max : 1;
+      bar.style.setProperty('--p', (10 + p * 90).toFixed(1) + '%');
+    };
+    scroller.addEventListener('scroll', el._updateProgress, { passive: true });
+    bar.addEventListener('click', (e) => {
+      const r = bar.getBoundingClientRect();
+      const f = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+      scroller.scrollTo({ top: f * (scroller.scrollHeight - scroller.clientHeight), behavior: 'smooth' });
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && storyOpen) closeStory();
+  });
+  window.addEventListener('resize', () => { storyOpen && storyOpen._updateProgress(); });
+
   function openProject(key){
+    // AR, VR, animation and publications open the story sheet
+    if (storyMap[key]) {
+      openStory(key);
+      return;
+    }
+
     // Digital Arts lives on its own dedicated gallery page, not a popup window
     if (key === 'digital-art') {
       window.location.href = 'digital-works.html';
@@ -2849,7 +3535,7 @@
   // icon closes the topmost (most recently focused) project window, like
   // tapping outside a native app's sheet to dismiss it.
   document.addEventListener('pointerdown', (e) => {
-    const ignoreSelector = '.project-window, .dock, .theme-switcher, .onboard-tip, .about-overlay, .icon';
+    const ignoreSelector = '.project-window, .dock, .theme-switcher, .onboard-tip, .about-overlay, .icon, .story-overlay';
     if (e.target.closest(ignoreSelector)) return;
 
     const keys = Object.keys(openProjectWindows);
