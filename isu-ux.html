@@ -109,7 +109,7 @@
   .section-heading{ font-family:var(--display); font-size:clamp(28px, 2.6vw, 38px); font-weight:700; letter-spacing:-0.025em; line-height:1.15; color:#111; margin-bottom:14px; text-wrap:pretty; }
   .section-heading .hl, .sub-heading .hl{ display:block; color:var(--mute); }
   .sub-heading{ font-family:var(--display); font-size:clamp(22px, 1.9vw, 27px); font-weight:700; letter-spacing:-0.02em; line-height:1.25; color:#111; margin-bottom:10px; text-wrap:pretty; }
-  .lead{ font-size:17px; line-height:1.6; letter-spacing:-0.006em; color:var(--body); max-width:720px; text-wrap:pretty; }
+  .lead{ font-size:17px; line-height:1.6; letter-spacing:-0.006em; color:var(--body); text-wrap:pretty; }
   .lead strong{ color:#111; font-weight:600; }
   .source{ font-size:12.5px; line-height:1.5; color:var(--dim); margin-top:16px; }
   .source a{ text-decoration:underline; text-underline-offset:2px; }
@@ -161,6 +161,28 @@
   .mstep-d{ font-size:13.5px; line-height:1.5; color:#555; text-wrap:pretty; }
   .mstep-o{ margin-top:12px; font-size:12px; color:var(--dim); }
   .mstep-o b{ color:#111; font-weight:600; }
+
+  /* ===== LIFECYCLE ===== */
+  .life-track{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; margin-top:22px; position:relative; }
+  .lc{ min-width:0; position:relative; border-radius:16px; padding:34px 16px 16px; background:var(--soft); display:flex; flex-direction:column; }
+  .lc::before{ content:''; position:absolute; top:16px; left:16px; width:10px; height:10px; border-radius:50%; background:#1d1d1f; box-shadow:0 0 0 4px #fff; z-index:1; }
+  .lc + .lc::after{ content:''; position:absolute; top:20px; left:-12px; width:28px; height:2px; background:#d2d2d7; }
+  .lc-k{ font-size:11.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--dim); }
+  .lc-t{ font-size:16px; font-weight:700; letter-spacing:-0.012em; color:#111; margin-top:3px; }
+  .lc-q{ font-size:13.5px; line-height:1.45; color:#333; font-style:italic; margin-top:10px; text-wrap:pretty; }
+  .lc-h{ font-size:11px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--dim); margin-top:14px; }
+  .lc-p{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+  .lc-p span{ font-size:11.5px; font-weight:600; color:#333; background:#fff; border-radius:999px; padding:3px 9px; }
+  .lc-m{ margin-top:auto; padding-top:14px; font-size:12.5px; line-height:1.4; color:var(--body); }
+  .lc-m b{ color:#111; font-weight:600; }
+  .lc-src{ display:inline-block; margin-top:8px; font-size:11px; font-weight:600; color:var(--dim); }
+  .lc.hot{ background:var(--blue-soft); box-shadow:inset 0 0 0 1.5px var(--blue); }
+  .lc.hot::before{ background:var(--blue); }
+  .lc.hot .lc-p span{ color:#0b4ea2; }
+  .lc.gap{ background:#fff; box-shadow:inset 0 0 0 1.5px #c7c7cc; border:none; }
+  .lc.gap::before{ background:#fff; box-shadow:0 0 0 4px #fff, inset 0 0 0 2px #1d1d1f; }
+  .lc.gap .lc-p span{ background:var(--soft); }
+  .lc.gap .lc-m b{ color:#c8102e; }
 
   /* ===== NEED → PLACE WEB ===== */
   .web-wrap{ margin-top:18px; }
@@ -243,7 +265,7 @@
   .js-p{ display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
   .js-p span{ font-size:10.5px; font-weight:600; color:#333; background:#fff; border-radius:999px; padding:2px 7px; }
   .js-fix{ margin-top:8px; font-size:11.5px; font-weight:600; color:#0b4ea2; }
-  .jr-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:14px; font-size:12.5px; color:var(--dim); }
+  .jr-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:4px; font-size:12.5px; color:var(--dim); }
   .jr-legend span{ display:inline-flex; align-items:center; gap:7px; }
   .jr-dot{ width:10px; height:10px; border-radius:50%; }
   .jr-dot.hi{ background:#1d1d1f; }
@@ -277,7 +299,8 @@
   .school{ font-size:14px; font-weight:600; color:#111; padding-left:10px !important; display:flex; align-items:center; gap:10px; }
   .badge{ flex:none; position:relative; width:38px; height:38px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; letter-spacing:0.01em; overflow:hidden; }
   .badge img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; padding:3px; }
-  .badge.has-logo{ box-shadow:inset 0 0 0 1px var(--hairline); }
+  .badge:not(.has-logo){ width:6px !important; height:28px !important; border-radius:3px !important; }
+  .badge.has-logo{ background:#fff !important; box-shadow:inset 0 0 0 1px var(--hairline); }
   .sname{ line-height:1.25; font-size:13.5px; white-space:nowrap; }
   .sname em{ font-style:normal; font-weight:500; color:var(--dim); }
   .brw.foot .school{ display:block; }
@@ -312,7 +335,7 @@
   /* ===== SHIPPED ===== */
   .flow{ margin-top:26px; }
   .flow-h, .flow-row{ display:grid; grid-template-columns:1fr 28px 1fr 28px 1fr; align-items:stretch; }
-  .flow-h div{ font-size:11.5px; font-weight:600; color:var(--dim); text-transform:uppercase; letter-spacing:0.05em; padding:0 4px 10px; }
+  .flow-h div{ font-size:11.5px; font-weight:600; color:var(--dim); text-transform:uppercase; letter-spacing:0.05em; padding:0 0 10px; }
   .flow-row + .flow-row{ margin-top:10px; }
   .fcell{ border-radius:16px; padding:16px 16px 14px; background:var(--soft); }
   .fcell.ship{ background:#1d1d1f; }
@@ -420,6 +443,27 @@
     .metric{ padding:12px 14px; }
     .next{ padding:22px 24px 20px; }
   }
+  /* laptop: keep every chart card within one screen */
+  @media (min-width:1101px){
+    .life-track{ gap:10px; margin-top:16px; }
+    .lc{ padding:30px 14px 14px; }
+    .lc-q{ font-size:13px; margin-top:8px; }
+    .lc-h{ margin-top:10px; }
+    .lc-m{ font-size:12px; padding-top:10px; }
+    .jr-steps{ margin-top:4px; }
+    .money-note{ margin-top:10px; padding:9px 12px; }
+    .money-note-d{ font-size:13px; }
+    .brw > div{ padding:3px 4px; }
+    .brw.h > div{ padding-bottom:6px; }
+    .badge:not(.has-logo){ height:18px !important; }
+    .badge.has-logo{ width:26px; height:26px; }
+    .mk{ width:18px; height:18px; }
+    .bench-legend{ margin-top:0; }
+    #vizBench .takeaway{ margin-top:10px; }
+    .flow-row + .flow-row{ margin-top:6px; }
+    .fcell{ padding:11px 14px 10px; }
+    .fcell .d{ margin-top:2px; }
+  }
   @media (min-width:1101px) and (max-height:860px){
     .web-wrap{ max-width:720px; }
     .glance-row:last-child{ display:none; }
@@ -486,10 +530,13 @@
      big screens: 4 across · 13"/14" and tablets: 2×2 · phones: 1 column */
   @container main (max-width:940px){
     .limits, .next-grid, .metrics, .method-strip{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+
     .method-strip .mstep:nth-child(3){ border-left:none; }
     .method-strip .mstep:nth-child(n+3){ border-top:1px solid var(--hairline); }
   }
   @container main (max-width:640px){
+    .life-track{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    .lc:nth-child(3)::after{ display:none; }
     .tldr-grid{ grid-template-columns:1fr; gap:10px; }
     .tl{ display:grid; grid-template-columns:auto minmax(0, 1fr); column-gap:16px; align-items:center; padding:18px; }
     .tl-k{ grid-column:1 / -1; }
@@ -502,6 +549,9 @@
   }
   @container main (max-width:520px){
     .limits, .next-grid, .metrics, .method-strip{ grid-template-columns:1fr; }
+    .life-track{ grid-template-columns:1fr; gap:10px; }
+    .lc + .lc::after{ display:block; top:-12px; left:20px; width:2px; height:14px; }
+    .lc:nth-child(3)::after{ display:block; }
     .method-strip .mstep + .mstep{ border-left:none; border-top:1px solid var(--hairline); }
     .next{ padding:22px 18px 18px; border-radius:18px; }
     .next-t{ font-size:19px; }
@@ -650,11 +700,56 @@
     <div class="reveal">
       <div class="ch-head"><span class="ch-num">03</span><span class="ch-name">What I found</span></div>
       <h2 class="section-heading"><span class="hl">Students weren't lost.</span> The answers were split up.</h2>
-      <p class="lead">Three findings, from my question log, a student journey map and a site audit.</p>
+      <p class="lead">Four findings, from my question log, a student journey map and a site audit. Funding was the deepest problem, but the same pattern showed up at every stage.</p>
+    </div>
+
+    <div class="sub reveal" id="lifecycle">
+      <div class="eyebrow"><b>3.1</b>Student lifecycle</div>
+      <h3 class="sub-heading"><span class="hl">From applicant to alumni.</span> Every stage sends students elsewhere.</h3>
+      <div class="viz" id="vizLife">
+        <div class="viz-title">What students need, before, during and after ISU</div>
+        <div class="viz-sub">A typical question at each stage, where its answer lives, and whether the Graduate College menus lead there</div>
+        <div class="life-track">
+          <div class="lc">
+            <div class="lc-k">Stage 1</div><div class="lc-t">Before ISU</div>
+            <div class="lc-q">"When is my application due?"</div>
+            <div class="lc-h">Answer lives in</div>
+            <div class="lc-p"><span>Department pages</span><span>Grad College</span></div>
+            <div class="lc-m">Menu: <b>Future Students</b>. Deadlines vary by program.</div>
+            <span class="lc-src">Heard in emails</span>
+          </div>
+          <div class="lc hot">
+            <div class="lc-k">Stage 2</div><div class="lc-t">At ISU</div>
+            <div class="lc-q">"What does my funding cover?"</div>
+            <div class="lc-h">Answer lives in</div>
+            <div class="lc-p"><span>Grad College</span><span>Department</span><span>Catalog</span><span>ISSO</span></div>
+            <div class="lc-m">Menu: <b>Current Students</b>. The #1 need, and the focus of this project.</div>
+            <span class="lc-src">Heard most often</span>
+          </div>
+          <div class="lc">
+            <div class="lc-k">Stage 3</div><div class="lc-t">Graduating</div>
+            <div class="lc-q">"What's the deadline to apply for graduation?"</div>
+            <div class="lc-h">Answer lives in</div>
+            <div class="lc-p"><span>Graduation site</span><span>Workday</span><span>Registrar</span></div>
+            <div class="lc-m">Menu: <b>Important Deadlines</b>. Apply in Workday, pick up the diploma at the Registrar.</div>
+            <span class="lc-src">Heard in emails</span>
+          </div>
+          <div class="lc gap">
+            <div class="lc-k">Stage 4</div><div class="lc-t">After graduation</div>
+            <div class="lc-q">"How do I order my transcript?"</div>
+            <div class="lc-h">Answer lives in</div>
+            <div class="lc-p"><span>Registrar</span><span>Parchment</span></div>
+            <div class="lc-m">Menu: <b>none</b>. No path for graduates on the Grad College site.</div>
+            <span class="lc-src">From site audit</span>
+          </div>
+        </div>
+        <div class="takeaway"><span>The site has menus for <b>future</b> and <b>current</b> students, but none for <b>graduates</b>. At every stage, the answer lived in another office, so students emailed the one they knew.</span></div>
+        <p class="source">Sources: my question log and site audit; <a href="https://www.graduation.iastate.edu/node/16" target="_blank" rel="noopener">ISU Graduate College graduation steps</a>; <a href="https://www.registrar.iastate.edu/students/order-an-official-transcript" target="_blank" rel="noopener">ISU Registrar, official transcripts</a> (ordered through Parchment, free).</p>
+      </div>
     </div>
 
     <div class="sub reveal" id="needs">
-      <div class="eyebrow"><b>3.1</b>Where answers live</div>
+      <div class="eyebrow"><b>3.2</b>Where answers live</div>
       <h3 class="sub-heading"><span class="hl">One question, four places.</span> "What does my funding cover?"</h3>
       <div class="viz" id="vizFrag">
         <div class="viz-title">One question, many places to look</div>
@@ -669,20 +764,22 @@
     </div>
 
     <div class="sub reveal" id="journey">
-      <div class="eyebrow"><b>3.2</b>Student journey</div>
+      <div class="eyebrow"><b>3.3</b>Student journey</div>
       <h3 class="sub-heading"><span class="hl">Admitted to first paycheck.</span> Every low point became an email.</h3>
       <div class="viz" id="vizJourney">
-        <div class="viz-title">From offer letter to first paycheck, as an international Ph.D. student</div>
-        <div class="viz-sub">How confident the student feels at each step, and where the answer lived</div>
+        <div class="viz-head">
+          <div><div class="viz-title">From offer letter to first paycheck</div>
+          <div class="viz-sub">An international Ph.D. student's confidence at each step</div></div>
+          <div class="jr-legend"><span><i class="jr-dot hi"></i>Confident</span><span><i class="jr-dot lo"></i>Stuck, likely to email the office</span></div>
+        </div>
         <div class="swipe">Swipe to follow all 6 steps →</div>
         <div class="jr-scroll">
           <div class="jr">
-            <svg class="jr-curve" id="jrCurve" viewBox="0 0 600 84" aria-hidden="true"></svg>
+            <svg class="jr-curve" id="jrCurve" viewBox="0 0 600 64" aria-hidden="true"></svg>
             <div class="jr-steps" id="jrSteps"></div>
           </div>
         </div>
-        <div class="jr-legend"><span><i class="jr-dot hi"></i>Confident</span><span><i class="jr-dot lo"></i>Stuck, likely to email the office</span></div>
-        <div class="takeaway"><span>The two lowest points, <b>understanding the offer</b> and <b>checking work rules</b>, are exactly where the answer was split across offices. That's where the design work focused.</span></div>
+        <div class="takeaway"><span>The two lowest points, <b>decoding the offer</b> and <b>checking work rules</b>, are where answers were split across offices.</span></div>
         <div class="money-note">
           <div class="money-note-k">Why summer matters</div>
           <div class="money-note-d">A typical stipend (about <b>$2,324/mo</b>) covers 9 months, and Ames rent (about <b>$1,023/mo</b>) is nearly half of it. Three unfunded summer months cost about <b>$3,070</b> in rent alone.</div>
@@ -692,7 +789,7 @@
     </div>
 
     <div class="sub reveal" id="sitemap">
-      <div class="eyebrow"><b>3.3</b>Inside the ISU site</div>
+      <div class="eyebrow"><b>3.4</b>Inside the ISU site</div>
       <h3 class="sub-heading"><span class="hl">43 links, 5 menus.</span> Funding has three names.</h3>
       <div class="viz" id="vizMap">
         <div class="viz-title">Graduate College main navigation</div>
@@ -960,7 +1057,7 @@
   ];
   (function drawJourney(){
     const svg = document.getElementById('jrCurve');
-    const W = 600, H = 84, n = steps.length;
+    const W = 600, H = 64, n = steps.length;
     const x = i => (i + 0.5) * W / n;
     const y = f => 12 + (5 - f) / 4 * (H - 24);
     const pts = steps.map((s, i) => [x(i), y(s.f)]);
@@ -1020,7 +1117,7 @@
   schools.sort((a,b) => (b.score - a.score) || ((b.isu ? 1 : 0) - (a.isu ? 1 : 0)));
   document.getElementById('benchRows').outerHTML = schools.map(s => `
     <div class="brw${s.isu ? ' isu' : ''}" role="row">
-      <div class="school" role="cell"><span class="badge" style="background:${s.c};color:${s.t}"><img src="assets/logos/${s.logo}.png" alt="" onerror="this.remove()" onload="this.parentNode.classList.add('has-logo')">${s.ab}</span><span class="sname">${s.name}${s.isu ? ' <em>· today</em>' : ''}</span></div>
+      <div class="school" role="cell"><span class="badge" style="background:${s.c}"><img src="assets/logos/${s.logo}.png" alt="${s.name} logo" onerror="this.remove()" onload="this.parentNode.classList.add('has-logo')"></span><span class="sname">${s.name}${s.isu ? ' <em>· today</em>' : ''}</span></div>
       ${s.f.map((v,i) => `<div class="mkc" role="cell"><span class="mk ${v === 1 ? 'y' : v ? 'p' : 'n'}" data-tip="${feat[i]}: ${v === 1 ? 'yes' : v ? 'partly' : 'no'}">${v === 1 ? check : ''}</span></div>`).join('')}
       <div class="score" role="cell"><div class="score-track"><div class="score-fill" style="--v:${s.score / 7 * 100}%;background:${s.c}"></div></div><b>${s.score % 1 ? s.score.toFixed(1) : s.score}</b></div>
     </div>`).join('') + `
