@@ -2001,6 +2001,22 @@
     .about-overlay{ padding-top:64px; }
   }
 
+  /* FOCUS DIM — when any window or project story is open, the landing page
+     steps back (brightness only, no color tint) so the eye goes straight to
+     the window. The dock stays bright so you can see where it came from. */
+  .stage{ transition:filter 0.35s ease, background-color 0.35s ease; }
+  body.is-focused .stage{ filter:brightness(0.55); }
+  html[data-theme="white"] body.is-focused .stage{ filter:brightness(0.9); }
+
+  /* windows opened from the dock rise up out of it */
+  .about-window{ transform-origin:50% 100%; }
+  .about-overlay .about-window{ transform:translateY(60px) scale(0.9); transition:transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+  .about-overlay.open .about-window{ transform:translateY(0) scale(1); }
+  @media (prefers-reduced-motion: reduce){
+    .stage{ transition:none; }
+    .about-overlay .about-window{ transform:none; transition:none; }
+  }
+
 </style>
 </head>
 <body>
@@ -3837,6 +3853,18 @@
       icon.addEventListener('pointerleave', () => icon.classList.remove('hovering'));
       inlineFace(icon);
     });
+  })();
+  // FOCUS DIM — watch every window and story; while any is open, the
+  // landing page dims (see .is-focused in the CSS)
+  (function(){
+    const panes = document.querySelectorAll('.about-overlay, .story-overlay');
+    const update = () => {
+      const anyOpen = [...panes].some(p => p.classList.contains('open'));
+      document.body.classList.toggle('is-focused', anyOpen);
+    };
+    const mo = new MutationObserver(update);
+    panes.forEach(p => mo.observe(p, { attributes:true, attributeFilter:['class'] }));
+    update();
   })();
 </script>
 
