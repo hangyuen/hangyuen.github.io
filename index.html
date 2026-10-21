@@ -44,9 +44,9 @@
     --stage-bg-image: none;
     --icon-label-color: #1d1d1f;
     --icon-label-shadow: 0 1px 2px rgba(255,255,255,0.5);
-    --dock-grad-1: rgba(255,255,255,0.72);
-    --dock-grad-2: rgba(255,255,255,0.55);
-    --dock-border: rgba(255,255,255,0.9);
+    --dock-grad-1: rgba(232,232,237,0.80);
+    --dock-grad-2: rgba(214,214,220,0.72);
+    --dock-border: rgba(0,0,0,0.08);
     --dock-shadow: 0 12px 30px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
     --dock-divider: rgba(0,0,0,0.08);
     --dock-active-veil: rgba(0,0,0,0.12);
@@ -1497,10 +1497,10 @@
     --story-gray: #86868b;
     --story-body: #c7c7cc;
     --story-media: #1c1c1e;
-    --story-close: rgba(255,255,255,0.24);
-    --story-close-hover: rgba(255,255,255,0.34);
-    --story-close-border: rgba(255,255,255,0.32);
-    --story-x: #ffffff;
+    --story-close: #f5f5f7;
+    --story-close-hover: #ffffff;
+    --story-close-border: rgba(255,255,255,0.30);
+    --story-x: #1d1d1f;
     --story-accent: #ff9f4a;
     --story-grad: linear-gradient(95deg, #ffd27a 0%, #ff9a5a 38%, #ff5f8f 72%, #b57bff 100%);
     --story-edge: rgba(255,255,255,0.22);
@@ -1563,7 +1563,9 @@
     padding:24px 24px 124px;   /* bottom: the dock (34px + ~76px) + gap */
     box-sizing:border-box;
     background:transparent;
-    --sheet-h: min(680px, calc(100vh - 148px));
+    --sheet-h: min(1000px, calc(100vh - 148px));
+    --sheet-max-w: clamp(900px, 64vw, 1420px);
+    --pad-x: clamp(56px, 3.9vw, 72px);
     color:var(--story-title);
     font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", 'Inter', sans-serif;
     opacity:0;
@@ -1580,7 +1582,7 @@
   .story-sheet{
     position:relative;
     /* same size as the original project window */
-    width:min(900px, calc((var(--sheet-h) - 272px) * 16 / 9 + 114px), 100vw - 48px);
+    width:min(var(--sheet-max-w, 900px), calc((var(--sheet-h) - var(--head-h, 272px)) * 16 / 9 + var(--pad-x, 56px) * 2 + 2px), 100vw - 48px);
     min-width:340px;
     height:var(--sheet-h);
     min-height:340px;
@@ -1591,6 +1593,8 @@
     box-shadow:inset 0 1px 0 var(--story-highlight), 0 20px 50px rgba(0,0,0,0.25), 0 4px 14px rgba(0,0,0,0.10);
     transform:translateY(24px) scale(0.98);
     transition:transform 0.35s ease;
+    container-type:inline-size;
+    max-height:1000px;
   }
   .story-overlay.open .story-sheet{ transform:none; }
 
@@ -1643,13 +1647,13 @@
   .story-pub-meta{ font-size:14px; font-weight:500; color:var(--story-gray); }
   .story-pub h2{
     margin:0;
-    font-size:clamp(21px, 2.2vw, 26px);
+    font-size:clamp(21px, 3.3cqw, 32px);
     line-height:1.22;
     font-weight:700;
     letter-spacing:-0.02em;
   }
   .story-pub-authors{ margin:0; font-size:16px; font-weight:600; color:var(--story-title); }
-  .story-pub-venue{ margin:0; max-width:640px; font-size:15px; line-height:1.5; color:var(--story-gray); }
+  .story-pub-venue{ margin:0; font-size:15px; line-height:1.5; color:var(--story-gray); }
   .story-pub-link{
     margin-top:4px;
     align-self:flex-start;
@@ -1757,7 +1761,7 @@
   .story-close svg{ width:16px; height:16px; stroke:var(--story-x); stroke-width:3; stroke-linecap:round; }
 
   .story-content{
-    padding:56px 56px 80px;
+    padding:56px var(--pad-x, 56px) 80px;
   }
 
   .story-hero{
@@ -1768,13 +1772,13 @@
     gap:8px;
   }
   .story-eyebrow{
-    font-size:17px;
+    font-size:clamp(15px, 2.15cqw, 20px);
     font-weight:500;
     color:var(--story-gray);
   }
   .story-hero h1{
     margin:0;
-    font-size:clamp(34px, 4.4vw, 52px);
+    font-size:clamp(34px, 6.6cqw, 70px);
     line-height:1.05;
     font-weight:700;
     letter-spacing:-0.035em;
@@ -1782,7 +1786,7 @@
   .story-tagline{
     margin:0;
     max-width:none;
-    font-size:clamp(17px, 1.6vw, 20px);
+    font-size:clamp(17px, 2.5cqw, 25px);
     line-height:1.35;
     font-weight:400;
     letter-spacing:-0.005em;
@@ -1794,33 +1798,35 @@
     aspect-ratio:16 / 9;
     border-radius:18px;
     overflow:hidden;
-    background:var(--story-media);
+    background:transparent;
+    isolation:isolate;
     margin-top:48px;
   }
   .story-media.video{
     width:100%;
     margin:28px 0 0;
   }
+
   .story-media.model{ aspect-ratio:16 / 9; margin-top:32px; }
-  .story-media iframe{ width:100%; height:100%; border:0; display:block; }
+  .story-media iframe{ width:100%; height:100%; border:0; display:block; border-radius:inherit; background:transparent; }
 
   .story-section{
-    margin-top:clamp(40px, 4.5vw, 64px);
+    margin-top:clamp(40px, 8.1cqw, 90px);
     display:flex;
     flex-direction:column;
     gap:14px;
   }
   .story-section h2{
     margin:0;
-    font-size:clamp(28px, 3.2vw, 40px);
+    font-size:clamp(28px, 5.05cqw, 54px);
     line-height:1.08;
     font-weight:700;
     letter-spacing:-0.03em;
   }
   .story-lead{
     margin:0;
-    max-width:640px;
-    font-size:clamp(16px, 1.4vw, 19px);
+    max-width:none;
+    font-size:clamp(16px, 2.4cqw, 22px);
     line-height:1.6;
     font-weight:400;
     letter-spacing:0;
@@ -1831,33 +1837,46 @@
 
   .story-tools{
     margin-top:32px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:14px 56px;
+    display:grid;
+    grid-template-columns:repeat(3, max-content);
+    gap:28px 56px;
+    column-gap:clamp(32px, 7cqw, 64px);
+    row-gap:clamp(20px, 3.5cqw, 32px);
   }
   .story-tool-label{
-    font-size:15px;
+    font-size:clamp(13px, 1.9cqw, 17px);
     font-weight:400;
     color:var(--story-gray);
   }
+  .story-tools.five{ grid-template-columns:repeat(3, max-content); }
+  @container (min-width:1080px){
+    .story-tools.five{ grid-template-columns:repeat(5, max-content); }
+  }
+  .story-tool-more{
+    margin:8px 0 0;
+    max-width:240px;
+    font-size:14px;
+    line-height:1.5;
+    color:var(--story-gray);
+  }
   .story-tool-name{
-    font-size:clamp(28px, 2.8vw, 34px);
+    font-size:clamp(26px, 4.3cqw, 44px);
     font-weight:700;
     letter-spacing:-0.025em;
   }
 
   .story-statement{
     margin:0;
-    max-width:680px;
-    font-size:clamp(24px, 2.8vw, 34px);
+    max-width:none;
+    font-size:clamp(24px, 4.3cqw, 44px);
     line-height:1.15;
     font-weight:700;
     letter-spacing:-0.025em;
   }
   .story-note{
     margin:0;
-    max-width:600px;
-    font-size:clamp(15px, 1.3vw, 17px);
+    max-width:none;
+    font-size:clamp(15px, 2.15cqw, 19px);
     line-height:1.5;
     font-weight:400;
     color:var(--story-gray);
@@ -1883,7 +1902,7 @@
     .story-media.video{ width:100%; margin-top:24px; }
     .story-sheet{ height:100%; }
     .story-media{ border-radius:14px; margin-top:32px; }
-    .story-tools{ flex-direction:column; }
+    .story-tools{ grid-template-columns:repeat(2, minmax(0, 1fr)) !important; gap:20px 24px; }
     .story-progress{ display:none; }
     .story-gallery{ grid-template-columns:1fr; }
     .story-credits{ grid-template-columns:1fr; }
@@ -1893,12 +1912,9 @@
 </head>
 <body>
 
-<!-- THEME SWITCHER — off (dark, default) / white / grey -->
+<!-- THEME SWITCHER — off (dark, default) / white -->
 <div class="theme-switcher" role="group" aria-label="Theme">
   <button type="button" class="theme-swatch is-active" id="themeOff" data-theme-option="off" aria-label="Dark theme" aria-pressed="true">
-    <span class="theme-swatch-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
-  </button>
-  <button type="button" class="theme-swatch" id="themeGrey" data-theme-option="grey" aria-label="Grey theme" aria-pressed="false">
     <span class="theme-swatch-check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12 10 18 20 6"></polyline></svg></span>
   </button>
   <button type="button" class="theme-swatch" id="themeWhite" data-theme-option="white" aria-label="White theme" aria-pressed="false">
@@ -2164,21 +2180,17 @@
       <h2>From 2D film<br>to real-time 3D.</h2>
       <p class="story-lead"><strong>I translated the film's 2D design into a fully modeled 3D asset in Autodesk Maya, textured it with Substance Designer and Substance Painter, and built the experience in Unity.</strong> Because people could walk around the castle and lean in close, every surface and mechanical detail had to hold up from any viewing angle while still running smoothly in real time.</p>
     </div>
-    <div class="story-tools">
+    <div class="story-tools" style="grid-template-columns:repeat(4, max-content)">
       <div><div class="story-tool-label">Modeled in</div><div class="story-tool-name">Maya</div></div>
       <div><div class="story-tool-label">Textured in</div><div class="story-tool-name">Substance</div></div>
       <div><div class="story-tool-label">Built in</div><div class="story-tool-name">Unity</div></div>
+      <div><div class="story-tool-label">Year</div><div class="story-tool-name">2024</div></div>
     </div>
 
     <div class="story-section" data-part="3">
       <div class="story-eyebrow">Tested in the wild</div>
       <p class="story-statement">Many visitors described it as unexpectedly moving.</p>
       <p class="story-lead"><strong>Exhibited at Lockwood Cafe in Ames, the piece doubled as an in-the-wild test.</strong> Watching visitors and listening to their feedback, a clear pattern emerged: people moved freely around the castle, assigned their own meaning to the space, and built a clearer sense of spatial relationships simply through their own exploration. Many described it as unexpectedly moving. The takeaway is that AR's intuitive visual cues have real potential for spatial learning, and for reshaping how people move through and interact with the spaces around them.</p>
-    </div>
-    <div class="story-credits">
-      <div><div class="story-credits-label">Role</div><div class="story-credits-value">Designer, 3D Artist &amp; Developer</div></div>
-      <div><div class="story-credits-label">Type</div><div class="story-credits-value">Augmented Reality</div></div>
-      <div><div class="story-credits-label">Year</div><div class="story-credits-value">2024</div></div>
     </div>
   </div>
   </div>
@@ -2234,11 +2246,6 @@
       <img src="assets/VR03.jpg" alt="A Thousand Li, still 3" loading="lazy">
       <img src="assets/VR04.jpg" alt="A Thousand Li, still 4" loading="lazy">
     </div>
-    <div class="story-credits">
-      <div><div class="story-credits-label">Role</div><div class="story-credits-value">Designer &amp; Developer</div></div>
-      <div><div class="story-credits-label">Type</div><div class="story-credits-value">VR Learning Experience</div></div>
-      <div><div class="story-credits-label">Year</div><div class="story-credits-value">2024</div></div>
-    </div>
   </div>
   </div>
   </div>
@@ -2274,21 +2281,18 @@
       <h2>Producer, and hands-on.</h2>
       <p class="story-lead"><strong>The producer role oversaw the production pipeline end-to-end and coordinated cross-departmental workflows, with hands-on contributions across animation, visual effects, environment modeling, surfacing and texturing, compositing, and sound design.</strong> This combination of production leadership and creative execution shaped the film's visual and narrative cohesion, from early planning through final delivery.</p>
     </div>
-    <div class="story-tools">
+    <div class="story-tools five">
       <div><div class="story-tool-label">Animated in</div><div class="story-tool-name">Maya</div></div>
       <div><div class="story-tool-label">Composited in</div><div class="story-tool-name">Nuke</div></div>
       <div><div class="story-tool-label">Edited in</div><div class="story-tool-name">Premiere</div></div>
+      <div><div class="story-tool-label">Directed by</div><div class="story-tool-name">Nancey Fang</div></div>
+      <div><div class="story-tool-label">Year</div><div class="story-tool-name">2022</div></div>
     </div>
 
     <div class="story-section">
       <div class="story-eyebrow">Recognition</div>
       <p class="story-statement">Awards at regional and national film festivals.</p>
       <p class="story-lead"><strong>Built in Maya, Nuke, and Adobe Premiere, the film went on to win several regional and national film festival awards.</strong> Autodesk Flow Production Tracking kept every stage of the pipeline running smoothly.</p>
-    </div>
-    <div class="story-credits">
-      <div><div class="story-credits-label">Director</div><div class="story-credits-value">Nancey Fang</div></div>
-      <div><div class="story-credits-label">My role</div><div class="story-credits-value">Producer, Animation &amp; VFX</div></div>
-      <div><div class="story-credits-label">Year</div><div class="story-credits-value">2022</div></div>
     </div>
   </div>
   </div>
@@ -2340,6 +2344,27 @@
   </div>
 </div>
 
+<div class="story-overlay" id="gameStory" role="dialog" aria-modal="true" aria-label="Game Design" aria-hidden="true">
+  <div class="story-frame">
+  <button class="story-close" type="button" aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="story-sheet">
+  <div class="story-progress" aria-hidden="true"><div class="story-progress-fill"></div></div>
+
+  <div class="story-scroll">
+  <div class="story-content">
+    <div class="story-hero">
+      <div class="story-eyebrow">Game Design</div>
+      <h1>Game Design</h1>
+      <p class="story-tagline">Project coming soon.</p>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+
 <template id="projectWindowTemplate">
   <div class="project-window" role="dialog" aria-modal="false">
     <div class="project-titlebar">
@@ -2363,7 +2388,7 @@
 </template>
 
 <script>
-  // THEME SWITCHER — off (dark, default) / white / grey.
+  // THEME SWITCHER — off (dark, default) / white, like Apple's Dark and Light.
   // Applies data-theme on <html> so every CSS variable above repoints at
   // once, and remembers the visitor's choice for next time.
   (function(){
@@ -2371,8 +2396,7 @@
     const STORAGE_KEY = 'site-theme';
     const swatches = {
       off: document.getElementById('themeOff'),
-      white: document.getElementById('themeWhite'),
-      grey: document.getElementById('themeGrey')
+      white: document.getElementById('themeWhite')
     };
 
     function applyTheme(theme){
@@ -2387,16 +2411,39 @@
         btn.classList.toggle('is-active', active);
         btn.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
-      try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) { /* ignore */ }
     }
 
-    let saved = 'off';
-    try { saved = localStorage.getItem(STORAGE_KEY) || 'off'; } catch (e) { /* ignore */ }
-    applyTheme(saved);
+    // AUTO — until the visitor picks a swatch, follow their system's
+    // Light/Dark appearance (and switch live if it changes). A click saves
+    // their choice, which then wins from then on.
+    const systemLight = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+    const systemTheme = () => (systemLight && systemLight.matches ? 'white' : 'off');
+
+    let saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+    // visitors who picked the old grey theme go back to Auto
+    if (saved && !swatches[saved]) {
+      saved = null;
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+    }
+    applyTheme(saved || systemTheme());
+
+    if (systemLight) {
+      const follow = () => {
+        let pinned = null;
+        try { pinned = localStorage.getItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+        if (!pinned) applyTheme(systemTheme());
+      };
+      if (systemLight.addEventListener) systemLight.addEventListener('change', follow);
+      else if (systemLight.addListener) systemLight.addListener(follow);
+    }
 
     Object.entries(swatches).forEach(([key, btn]) => {
       if (!btn) return;
-      btn.addEventListener('click', () => applyTheme(key));
+      btn.addEventListener('click', () => {
+        applyTheme(key);
+        try { localStorage.setItem(STORAGE_KEY, key); } catch (e) { /* ignore */ }
+      });
     });
   })();
 
@@ -2427,7 +2474,7 @@
     const steps = [
       { title: "Hey, I'm Hang!", desc: "Thanks for stopping by, let's take a quick look around.", avatar: true, intro: true },
       { title: 'Those floating icons? Poke them.', desc: 'Each one is a project waiting to show off. Click and it pops open.' },
-      { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.', aside: 'Oh, and the swatches up top let you pick your vibe: <strong>black</strong>, <strong>grey</strong>, or <strong>white</strong>.' }
+      { title: 'The dock has your back', desc: 'About, Voyage, Contact, plus social links, all parked down below.', aside: 'Oh, and the swatches up top let you pick your vibe: <strong>black</strong> or <strong>white</strong>.' }
     ];
     const totalRealSteps = steps.length - 1;
     let step = 0;
@@ -3151,7 +3198,7 @@
   // STORY OVERLAYS — AR, VR, animation and publications open as a floating
   // sheet that scrolls top to bottom; close with the button, a click outside,
   // or the Escape key. Embeds load on open and are dropped on close.
-  const storyMap = { ar: 'arStory', vr: 'vrStory', vfx: 'vfxStory', publications: 'pubStory' };
+  const storyMap = { ar: 'arStory', vr: 'vrStory', vfx: 'vfxStory', publications: 'pubStory', game: 'gameStory' };
   let storyOpen = null;
   let storyLastFocus = null;
 
