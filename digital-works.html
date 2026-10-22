@@ -9,9 +9,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script>
+  // THEME — follows the main page: the same saved choice ("off" = dark,
+  // "white" = light), or the system appearance if nothing is saved yet.
+  (function(){
+    var saved = null;
+    try { saved = localStorage.getItem('site-theme'); } catch (e) {}
+    var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+    function apply(){
+      var t = saved === 'white' || saved === 'off' ? saved : (mq && mq.matches ? 'white' : 'off');
+      if (t === 'off') document.documentElement.setAttribute('data-theme', 'dark');
+      else document.documentElement.removeAttribute('data-theme');
+    }
+    apply();
+    if (mq && !saved){
+      if (mq.addEventListener) mq.addEventListener('change', apply);
+      else if (mq.addListener) mq.addListener(apply);
+    }
+  })();
+</script>
 <style>
   :root{
-    --bg: #ffffff;
+    --bg: #f5f5f7;   /* light grey, same as the homepage's white theme */
     --ink: #1d1d1f;
     --dim: #6e6e73;
     --accent: #0071e3;
@@ -46,26 +65,6 @@
 
   @media (prefers-reduced-motion: reduce){
     *{ transition-duration:0.01ms !important; scroll-behavior:auto !important; animation-duration:0.01ms !important; animation-iteration-count:1 !important; }
-  }
-
-  @keyframes arrowAttention{
-    0%, 100% {
-      box-shadow:
-        0 10px 30px rgba(0,0,0,0.14),
-        0 2px 6px rgba(0,0,0,0.08),
-        inset 0 1px 1px rgba(255,255,255,0.9),
-        inset 0 -1px 1px rgba(0,0,0,0.04),
-        0 0 0 0 rgba(0,113,227,0);
-    }
-    50% {
-      box-shadow:
-        0 10px 30px rgba(0,0,0,0.14),
-        0 2px 6px rgba(0,0,0,0.08),
-        inset 0 1px 1px rgba(255,255,255,0.9),
-        inset 0 -1px 1px rgba(0,0,0,0.04),
-        0 0 0 12px rgba(0,113,227,0.32),
-        0 0 22px 4px rgba(0,113,227,0.35);
-    }
   }
 
   /* PAGE HEADER */
@@ -261,7 +260,12 @@
     scroll-behavior:smooth;
     scroll-padding-inline:var(--page-gutter);
     -webkit-overflow-scrolling:touch;
-    padding:0 var(--page-gutter);
+    /* a little breathing room above the cards: a scrolling row clips
+       anything that pokes out of it, so without this the top edge of a
+       hovered card got cut off. The negative margin keeps the layout
+       exactly where it was. */
+    padding:20px var(--page-gutter) 0;
+    margin-top:-20px;
     scrollbar-width:none;
     -ms-overflow-style:none;
   }
@@ -306,8 +310,8 @@
     aspect-ratio:3/2;
     overflow:hidden;
     border-radius:18px;
-    background-color:#f0f0f0;
-    transition:transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    background-color:#e8e8ed;
+    transition:transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .art-frame img{
     position:absolute;
@@ -316,13 +320,20 @@
     height:100%;
     object-fit:cover;
   }
-  /* mouse hover only (not touch): slight lift and the rounded corners
-     straighten into a sharp rectangle */
+  /* HOVER (mouse only) — calm, gallery-like: the frame keeps its rounded
+     corners, lifts a few pixels onto a soft shadow, and the artwork inside
+     drifts slightly closer. The title underlines itself thinly. Videos and
+     3D models just lift, since you interact with them directly. */
+  .art-frame{ box-shadow:0 0 0 0 rgba(0,0,0,0); isolation:isolate; }
+  .art-frame > img{ transition:transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+  .art-caption .art-title{ align-self:flex-start; }
   @media (hover:hover){
     .art-item:hover .art-frame{
-      transform:scale(1.012);
-      border-radius:0;
+      transform:translateY(-3px) scale(1.015);
+      box-shadow:0 18px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
     }
+    .art-item:hover .art-frame > img{ transform:scale(1.03); }
+    .art-item:hover .art-title{ font-style:italic; }
   }
 
   /* video facade */
@@ -444,22 +455,19 @@
     cursor:pointer;
     z-index:5;
     transition:background 0.2s ease, opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    animation:arrowAttention 2.2s ease-in-out 3;
   }
+  /* hover: a little bigger and more solid, the chevron nudges the way
+     it will go. No color, no glow. */
   .carousel-arrow:hover{
-    background:linear-gradient(155deg, rgba(255,255,255,0.96), rgba(255,255,255,0.75));
-    border-color:rgba(0,113,227,0.35);
-    transform:translateY(-50%) scale(1.08);
+    background:linear-gradient(155deg, rgba(255,255,255,0.98), rgba(255,255,255,0.82));
+    transform:translateY(-50%) scale(1.06);
     box-shadow:
       0 14px 34px rgba(0,0,0,0.18),
       0 3px 8px rgba(0,0,0,0.1),
-      inset 0 1px 1px rgba(255,255,255,0.95),
-      0 0 0 5px rgba(0,113,227,0.14);
+      inset 0 1px 1px rgba(255,255,255,0.95);
   }
-  .carousel-arrow:hover svg{
-    color:var(--accent);
-    transition:color 0.2s ease, transform 0.2s ease;
-  }
+  .carousel-arrow:active{ transform:translateY(-50%) scale(0.97); }
+  .carousel-arrow svg{ transition:transform 0.2s ease; }
   .carousel-arrow.prev:hover svg{ transform:translateX(-2px); }
   .carousel-arrow.next:hover svg{ transform:translateX(2px); }
   .carousel-arrow.prev{ left:calc(var(--page-gutter) + 20px); }
@@ -489,8 +497,8 @@
   }
   .carousel-dot:hover{ background:rgba(0,0,0,0.32); }
   .carousel-dot.active{
-    background:var(--accent);
-    transform:scale(1.25);
+    background:rgba(0,0,0,0.72);
+    transform:scale(1.15);
   }
 
   /* Tall screens (iMac, large monitors): there's enough height to fit
@@ -499,6 +507,19 @@
     .art-item{
       --card-w: clamp(320px, min(52vw, calc((100svh - 590px) * 16 / 9)), 1120px);
     }
+  }
+
+  /* SHORT LAPTOP SCREENS (13"/14" with browser bars, under ~900px tall):
+     tighten the spacing around the title and dots, not the title itself,
+     so the whole card and the dots fit on one screen */
+  @media (min-width:901px) and (max-height:900px){
+    .page-header{ padding-top:32px; }
+    .back-link{ margin-bottom:24px; }
+    .page-title{ margin-bottom:28px; }
+    .carousel-dots{ padding-top:16px; }
+    body{ padding-bottom:32px; }   /* same as the space above Back */
+    .art-caption{ padding-top:12px; }
+    .art-description{ margin-top:8px; }
   }
 
   @media (min-width:1800px) and (min-height:1000px){
@@ -520,7 +541,8 @@
     .carousel-track{ align-items:flex-start; }
     .art-exhibition{ margin-top:0; }
     /* no hover-lift on touch screens */
-    .art-item:hover .art-frame{ transform:none; }
+    .art-item:hover .art-frame{ transform:none; box-shadow:none; }
+    .art-item:hover .art-frame > img{ transform:none; }
   }
   /* phones: same top spacing as 1982mb.html (Back at 32px, title at 98px) */
   @media (max-width:480px){
@@ -558,7 +580,7 @@
     }
     .carousel-dot:hover{ background:transparent; }
     .carousel-dot.active{ background:transparent; transform:none; }
-    .carousel-dot.active::before{ background:var(--accent); transform:scale(1.25); }
+    .carousel-dot.active::before{ background:rgba(0,0,0,0.72); transform:scale(1.15); }
     /* close button easier to hit on phones */
     .lightbox-close{ top:16px; right:16px; }
   }
@@ -602,10 +624,9 @@
     box-shadow:
       0 14px 32px rgba(0,0,0,0.2),
       0 3px 8px rgba(0,0,0,0.1),
-      inset 0 1px 1px rgba(255,255,255,1),
-      0 0 0 5px rgba(0,113,227,0.14);
+      inset 0 1px 1px rgba(255,255,255,1);
+    transform:translate(-50%, -50%) scale(1.06);
   }
-  .zoom-trigger:hover svg{ color:var(--accent); }
   @media (hover:none){
     .zoom-trigger{ opacity:1; pointer-events:auto; transform:translate(-50%, -50%) scale(1); }
   }
@@ -716,6 +737,74 @@
     font-size:13px;
     font-variant-numeric:tabular-nums;
   }
+
+  /* DARK VERSION — used when the main page is on black (or the system is
+     in dark mode and no choice was saved). Same layout, same title size. */
+  html[data-theme="dark"]{
+    --bg:#101012;
+    --ink:#f5f5f7;
+    --dim:#98989d;
+    --accent:#2997ff;
+    --hairline:rgba(255,255,255,0.10);
+    color-scheme:dark;
+  }
+  html[data-theme="dark"] .page-title,
+  html[data-theme="dark"] .art-title{ color:#f5f5f7; }
+  html[data-theme="dark"] .art-description{ color:#c7c7cc; }
+  html[data-theme="dark"] .art-description strong{ color:#f5f5f7; }
+  html[data-theme="dark"] .art-frame{ background-color:#1c1c1e; }
+  html[data-theme="dark"] .back-link:hover{ color:#f5f5f7; }
+
+  html[data-theme="dark"] .carousel-arrow{
+    background:linear-gradient(155deg, rgba(58,58,62,0.82), rgba(36,36,40,0.72));
+    border-color:rgba(255,255,255,0.12);
+    box-shadow:0 10px 30px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.10);
+  }
+  html[data-theme="dark"] .carousel-arrow:hover{
+    background:linear-gradient(155deg, rgba(72,72,76,0.92), rgba(48,48,52,0.84));
+    box-shadow:0 14px 34px rgba(0,0,0,0.5), 0 3px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.14);
+  }
+  html[data-theme="dark"] .carousel-arrow svg{ color:#f5f5f7; }
+  html[data-theme="dark"] .zoom-trigger{
+    background:linear-gradient(155deg, rgba(58,58,62,0.82), rgba(36,36,40,0.72));
+    border-color:rgba(255,255,255,0.12);
+    box-shadow:0 10px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.10);
+  }
+  html[data-theme="dark"] .zoom-trigger svg{ color:#f5f5f7; }
+  html[data-theme="dark"] .zoom-trigger:hover{
+    background:linear-gradient(155deg, rgba(72,72,76,0.92), rgba(48,48,52,0.84));
+    box-shadow:0 14px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.14);
+  }
+  @media (hover:hover){
+    html[data-theme="dark"] .art-item:hover .art-frame{
+      box-shadow:0 18px 44px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
+    }
+  }
+
+  html[data-theme="dark"] .carousel-dot{ background:rgba(255,255,255,0.22); }
+  html[data-theme="dark"] .carousel-dot:hover{ background:rgba(255,255,255,0.4); }
+  html[data-theme="dark"] .carousel-dot.active{ background:rgba(255,255,255,0.88); }
+  @media (hover:none){
+    html[data-theme="dark"] .carousel-dot,
+    html[data-theme="dark"] .carousel-dot:hover,
+    html[data-theme="dark"] .carousel-dot.active{ background:transparent; }
+    html[data-theme="dark"] .carousel-dot::before{ background:rgba(255,255,255,0.22); }
+    html[data-theme="dark"] .carousel-dot.active::before{ background:rgba(255,255,255,0.88); }
+  }
+
+  html[data-theme="dark"] .intro-toast{
+    background:rgba(30,30,32,0.92);
+    border-color:rgba(255,255,255,0.12);
+    box-shadow:0 24px 56px rgba(0,0,0,0.5), 0 4px 14px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  html[data-theme="dark"] .intro-toast-label{ color:#2997ff; }
+  html[data-theme="dark"] .intro-toast-title{ color:#f5f5f7; }
+  html[data-theme="dark"] .intro-toast-text{ color:#c7c7cc; }
+  html[data-theme="dark"] .intro-toast-text strong{ color:#ffffff; }
+  html[data-theme="dark"] .intro-toast-track{ background:rgba(255,255,255,0.14); }
+  html[data-theme="dark"] .intro-toast-close{ background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6); }
+  html[data-theme="dark"] .intro-toast-close:hover{ background:rgba(255,255,255,0.16); color:#ffffff; }
+  html[data-theme="dark"] .lightbox{ background:rgba(10,10,12,0.94); }
 </style>
 </head>
 <body>
@@ -1041,10 +1130,11 @@
     const maxW = Math.min(window.innerWidth * 0.7, window.innerWidth - gutter - 200);
     // never shrink the art below ~40% of the screen width; on a very short
     // laptop screen a little scrolling beats a postage-stamp painting
-    const minW = Math.max(560, window.innerWidth * 0.4);
+    const minW = Math.max(460, window.innerWidth * 0.34);
+    const bottomGap = parseFloat(getComputedStyle(document.body).paddingBottom) || 56;
     let w = items[0].getBoundingClientRect().width;
     for (let k = 0; k < 12; k++){
-      const bottom = dotsWrap.getBoundingClientRect().bottom + window.scrollY + 56;
+      const bottom = dotsWrap.getBoundingClientRect().bottom + window.scrollY + bottomGap;
       const extra = window.innerHeight - bottom;
       if (extra >= 0 && extra < 2) break;
       const next = Math.max(minW, Math.min(maxW, w + extra * 16 / 9));
