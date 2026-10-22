@@ -264,16 +264,24 @@
     .icon-label{ font-size:11px; max-width:min(140px, 36vw); }
   }
 
-  /* DOCK */
+  /* DOCK — macOS-style magnification. Every icon's size is
+     var(--dock-size) × var(--mag); the script near the bottom of the page
+     sets --mag per icon from the cursor's distance, so the icon under the
+     pointer swells and its neighbours rise with it in a smooth wave. The
+     glass bar keeps its height and the icons grow up out of it, like the
+     real dock. Phones and touch screens keep the plain dock. */
   .dock{
+    --dock-size:52px;
+    --dock-pad:12px;
     position:fixed;
     left:50%; bottom:34px;
     transform:translateX(-50%);
     z-index:100;
     display:flex;
-    align-items:center;
+    align-items:flex-end;
     gap:14px;
-    padding:12px 16px;
+    height:calc(var(--dock-size) + var(--dock-pad) * 2 + 2px);
+    padding:var(--dock-pad) 16px;
     background:linear-gradient(180deg, var(--dock-grad-1), var(--dock-grad-2));
     border:1px solid var(--dock-border);
     border-radius:26px;
@@ -283,14 +291,21 @@
     transition:background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
   }
   .dock-item{
-    width:52px;
-    height:52px;
-    border-radius:14px;
+    --mag:1;
+    flex-shrink:0;
+    width:calc(var(--dock-size) * var(--mag));
+    height:calc(var(--dock-size) * var(--mag));
+    border-radius:27%;
     display:flex;
     align-items:center;
     justify-content:center;
-    transition:transform 0.15s ease;
+    transform-origin:50% 100%;
+    transition:width 0.14s ease-out, height 0.14s ease-out, transform 0.15s ease;
     position:relative;
+  }
+  /* when the pointer leaves, settle back a little slower, like macOS */
+  .dock:not(.magnifying) .dock-item{
+    transition:width 0.32s cubic-bezier(0.22, 1, 0.36, 1), height 0.32s cubic-bezier(0.22, 1, 0.36, 1), transform 0.15s ease;
   }
   .dock-item::before{
     content:'';
@@ -300,12 +315,13 @@
     background:rgba(255,255,255,0);
     transition:background 0.12s ease;
     pointer-events:none;
+    z-index:1;
   }
   .dock-item:active::before{
     background:var(--dock-active-veil);
   }
   .dock-item:active{
-    transform:translateY(-6px) scale(1.05);
+    transform:scale(0.94);
   }
   button.dock-item{
     font:inherit;
@@ -318,52 +334,126 @@
   }
   button.dock-item:hover,
   button.dock-item:focus,
-  button.dock-item:focus-visible,
   button.dock-item:active{
     border:none;
     outline:none;
   }
-  .dock-item[data-tip]::after{
-    content:attr(data-tip);
+  button.dock-item:focus-visible{
+    outline:2px solid #0a84ff;
+    outline-offset:3px;
+  }
+
+  /* DOCK LABEL — a liquid drop. One shared label floats above whichever
+     icon is hovered. The bubble and the little drop under it are drawn on a
+     "gooey" layer (blur + alpha threshold, see the #dockGoo filter), so the
+     drop melts into the bubble like water instead of being a hard triangle:
+     it drips down and settles when the label appears, and when you slide
+     along the dock it lags behind, stretches, then snaps back into place.
+     The text sits on its own layer above, so it stays perfectly crisp. */
+  :root{
+    --tip-bg: #3a3a3d;
+    --tip-text: #f5f5f7;
+    --tip-shadow: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+  }
+  html[data-theme="white"]{
+    --tip-bg: #fcfcfd;
+    --tip-text: #1d1d1f;
+    --tip-shadow: drop-shadow(0 4px 12px rgba(0,0,0,0.12)) drop-shadow(0 0 0.6px rgba(0,0,0,0.28));
+  }
+  .dock-tip{
     position:absolute;
-    bottom:calc(100% + 14px);
+    left:0; top:0;
+    width:80px;
+    height:30px;
+    transform:translateX(-50%);
+    pointer-events:none;
+    z-index:3;
+    opacity:0;
+    transition:opacity 0.16s ease, left 0.22s ease-out, width 0.26s cubic-bezier(0.3, 1.3, 0.5, 1);
+  }
+  .dock-tip.snap{ transition:opacity 0.16s ease; }
+  .dock-tip.show{ opacity:1; }
+  .dock-tip-goo{
+    position:absolute;
+    inset:-24px;
+    filter:url(#dockGoo) var(--tip-shadow);
+  }
+  .dock-tip-blob{
+    position:absolute;
+    inset:24px;
+    border-radius:11px;
+    background:var(--tip-bg);
+    transform-origin:50% 100%;
+  }
+  .dock-tip-drop{
+    position:absolute;
     left:50%;
-    transform:translate(-50%, 4px);
-    background:rgba(235,235,235,0.55);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    color:#1d1d1f;
+    top:calc(24px + 30px - 8px);
+    width:14px;
+    height:14px;
+    margin-left:-7px;
+    border-radius:50%;
+    background:var(--tip-bg);
+    translate:0 0;
+  }
+  .dock-tip.show .dock-tip-blob{ animation:tipPop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1); }
+  .dock-tip.show .dock-tip-drop{ animation:tipDrip 0.95s ease-in-out; }
+  @keyframes tipPop{
+    0%   { transform:scale(0.55, 0.35); }
+    60%  { transform:scale(1.04, 1.07); }
+    100% { transform:scale(1, 1); }
+  }
+  /* the drop forms inside the bubble, sinks and stretches like a drip
+     about to fall, then springs back up into a little rounded tail */
+  @keyframes tipDrip{
+    0%   { transform:translateY(-12px) scale(0.5); }
+    35%  { transform:translateY(7px) scale(0.85, 1.15); }
+    55%  { transform:translateY(11px) scale(0.72, 1.3); }
+    75%  { transform:translateY(-2px) scale(1.08, 0.92); }
+    100% { transform:translateY(0) scale(1); }
+  }
+  .dock-tip-text,
+  .dock-tip-measure{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', sans-serif;
     font-size:13px;
     font-weight:500;
-    padding:6px 14px;
-    border-radius:999px;
+    letter-spacing:-0.005em;
     white-space:nowrap;
-    box-shadow:0 4px 14px rgba(0,0,0,0.25);
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.15s ease, transform 0.15s ease;
   }
-  .dock-item[data-tip]:hover::after{
-    opacity:1;
-    transform:translate(-50%, 0);
+  .dock-tip-text{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--tip-text);
   }
-  .dock-item:hover{ transform:translateY(-6px) scale(1.1); }
+  .dock-tip-measure{
+    position:absolute;
+    visibility:hidden;
+    left:0; top:0;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .dock-tip.show .dock-tip-blob,
+    .dock-tip.show .dock-tip-drop{ animation:none; }
+  }
   .dock-item.avatar{
     background:var(--avatar-frame-bg);
-    border-radius:16px;
     border:none;
     font-weight:700;
     font-size:16px;
     padding:0;
-    transition:background 0.35s ease;
+    transition:width 0.14s ease-out, height 0.14s ease-out, transform 0.15s ease, background 0.35s ease;
   }
-  .dock-item.avatar img{
+  .dock-item.avatar img,
+  .dock-item.brand img{
     width:100%;
     height:100%;
     object-fit:cover;
-    border-radius:16px;
+    border-radius:27%;
     box-shadow:0 3px 8px rgba(0,0,0,0.18);
     display:block;
+    -webkit-user-drag:none;
   }
   .dock-item svg{ width:26px; height:26px; }
   .dock-item.brand{
@@ -371,21 +461,13 @@
     border:none;
     padding:0;
   }
-  .dock-item.brand img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    border-radius:16px;
-    box-shadow:0 3px 8px rgba(0,0,0,0.18);
-    display:block;
-  }
   /* subtle glossy highlight across the top half of each icon, like a real app
      icon — a real element rather than ::after, since ::after is already used
      by the tooltip on these same items */
   .icon-gloss{
     position:absolute;
     inset:0;
-    border-radius:16px;
+    border-radius:27%;
     background:linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0) 55%);
     pointer-events:none;
   }
@@ -1255,8 +1337,7 @@
   }
 
   @media (max-width:640px){
-    .dock{ gap:8px; padding:8px 10px; bottom:20px; }
-    .dock-item{ width:42px; height:42px; }
+    .dock{ --dock-size:42px; --dock-pad:8px; gap:8px; padding:8px 10px; bottom:20px; }
     .about-overlay{ padding:20px; }
     .about-content{ padding:22px 20px 26px; }
     .about-content h1{ font-size:24px; }
@@ -2221,7 +2302,23 @@
   <button type="button" class="dock-item brand" id="linkedinTrigger" data-tip="LinkedIn" data-leaving-url="https://www.linkedin.com/in/-hangyuan-" data-leaving-platform="LinkedIn">
     <img src="assets/LinkedIn.png" alt="LinkedIn"><span class="icon-gloss"></span>
   </button>
+  <!-- liquid hover label, shared by all dock icons -->
+  <div class="dock-tip" aria-hidden="true">
+    <div class="dock-tip-goo"><span class="dock-tip-blob"></span><span class="dock-tip-drop"></span></div>
+    <span class="dock-tip-text"></span>
+    <span class="dock-tip-measure"></span>
+  </div>
 </div>
+
+<!-- "gooey" filter: blurs the label's bubble and drop together, then sharpens
+     the edge again, so the two melt into one liquid shape -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="dockGoo" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10" result="goo"/>
+    <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+  </filter>
+</svg>
 
 <!-- ABOUT ME MODAL -->
 <div class="about-overlay" id="aboutOverlay" aria-hidden="true">
@@ -3957,6 +4054,129 @@
       inlineFace(icon);
     });
   })();
+  // DOCK MAGNIFICATION — like macOS. Each icon grows by how close the
+  // pointer is (a smooth cosine falloff), so the icon under the cursor is
+  // biggest and its neighbours rise with it. Mouse/trackpad only; phones and
+  // touch screens, and visitors who prefer reduced motion, keep a still dock.
+  (function(){
+    const dock = document.querySelector('.dock');
+    if (!dock) return;
+    const items = [...dock.querySelectorAll('.dock-item')];
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const narrow = window.matchMedia('(max-width:640px)');
+    const MAX = 1.65;   // biggest icon is 1.65x its normal size
+    const RANGE = 150;  // how far (px) the wave reaches on each side
+    let pointerX = null, frame = null;
+
+    const enabled = () => fine.matches && !reduce.matches && !narrow.matches;
+
+    function render(){
+      frame = null;
+      if (pointerX === null) return;
+      items.forEach(item => {
+        const r = item.getBoundingClientRect();
+        const d = Math.abs(pointerX - (r.left + r.width / 2));
+        const t = Math.min(d / RANGE, 1);
+        const mag = 1 + (MAX - 1) * Math.cos(t * Math.PI / 2);
+        item.style.setProperty('--mag', mag.toFixed(3));
+      });
+    }
+    function reset(){
+      pointerX = null;
+      dock.classList.remove('magnifying');
+      items.forEach(item => item.style.setProperty('--mag', '1'));
+    }
+
+    dock.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || !enabled()) return;
+      pointerX = e.clientX;
+      dock.classList.add('magnifying');
+      if (!frame) frame = requestAnimationFrame(render);
+    });
+    dock.addEventListener('pointerleave', reset);
+    window.addEventListener('blur', reset);
+    narrow.addEventListener && narrow.addEventListener('change', reset);
+  })();
+
+  // DOCK LABEL — one shared liquid label (see .dock-tip in the CSS). It
+  // follows the hovered icon as it magnifies, and when you slide to the
+  // next icon the drop is left behind for a moment and stretches back.
+  (function(){
+    const dock = document.querySelector('.dock');
+    const tip = dock && dock.querySelector('.dock-tip');
+    if (!tip) return;
+    const textEl = tip.querySelector('.dock-tip-text');
+    const measure = tip.querySelector('.dock-tip-measure');
+    const drop = tip.querySelector('.dock-tip-drop');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const GAP = 14;      // space between the drop's tip and the icon
+    let active = null, frame = null, lastLeft = null;
+
+    function place(){
+      if (!active) { frame = null; return; }
+      const d = dock.getBoundingClientRect();
+      const r = active.getBoundingClientRect();
+      const left = r.left + r.width / 2 - d.left - dock.clientLeft;
+      const top = r.top - d.top - dock.clientTop - tip.offsetHeight - GAP;
+      tip.style.left = left.toFixed(1) + 'px';
+      tip.style.top = top.toFixed(1) + 'px';
+      lastLeft = left;
+      frame = requestAnimationFrame(place);   // keep tracking while icons grow
+    }
+
+    function show(item){
+      if (!item.dataset.tip || item === active) return;
+      const wasVisible = !!active;
+      const oldLeft = lastLeft;
+      active = item;
+      textEl.textContent = item.dataset.tip;
+      measure.textContent = item.dataset.tip;
+      tip.style.width = Math.ceil(measure.offsetWidth + 26) + 'px';
+
+      if (!wasVisible) {
+        // appear right where it belongs, then drip in
+        tip.classList.add('snap');
+        place();
+        void tip.offsetWidth;
+        tip.classList.remove('snap');
+        tip.classList.remove('show');
+        void tip.offsetWidth;
+        tip.classList.add('show');
+      } else if (!reduce.matches && oldLeft !== null) {
+        // slid to a neighbour: leave the drop behind, then let it catch up
+        const r = item.getBoundingClientRect();
+        const d = dock.getBoundingClientRect();
+        const dx = (r.left + r.width / 2 - d.left) - oldLeft;
+        const lag = Math.max(-34, Math.min(34, -dx));
+        drop.style.transition = 'none';
+        drop.style.translate = lag + 'px 0';
+        void drop.offsetWidth;
+        drop.style.transition = 'translate 0.6s cubic-bezier(0.3, 1.6, 0.45, 1)';
+        drop.style.translate = '0px 0';
+      }
+      if (!frame) frame = requestAnimationFrame(place);
+    }
+
+    function hide(){
+      active = null;
+      tip.classList.remove('show');
+    }
+
+    dock.querySelectorAll('.dock-item').forEach(item => {
+      item.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'mouse' || e.pointerType === 'pen') show(item);
+      });
+      item.addEventListener('focus', () => {
+        if (item.matches(':focus-visible')) show(item);
+      });
+      item.addEventListener('blur', () => { if (active === item) hide(); });
+      item.addEventListener('pointerdown', hide);   // clicking hides it, like macOS
+    });
+    dock.addEventListener('pointerleave', hide);
+    window.addEventListener('blur', hide);
+  })();
+
   // FOCUS DIM — watch every window and story; while any is open, the
   // landing page dims (see .is-focused in the CSS)
   (function(){
