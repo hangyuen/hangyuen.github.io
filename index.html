@@ -797,7 +797,8 @@
   /* About Me portrait: same tile as the floating character icons
      (same size, corner radius, background and shadow), so it matches
      them on every screen. The About window is a little wider to fit it. */
-  #aboutOverlay .about-window{ max-width:540px; }
+  #aboutOverlay .about-window{ max-width:452px; }
+  @media (min-width:641px){ .about-value.about-link{ white-space:nowrap; } }
   .about-photo.about-face{
     width:clamp(64px, 7vw, 140px);
     height:clamp(64px, 7vw, 140px);
@@ -809,13 +810,26 @@
     transition:background 0.35s ease, box-shadow 0.35s ease;
   }
   .about-face img,
-  .about-face svg{
+  .about-face svg,
+  .voyage-face svg{
     width:100%;
     height:100%;
     object-fit:cover;
     display:block;
   }
   .about-fields{ align-self:center; }
+  /* Voyage illustration: same size as the floating character icons
+     (7vw, 64–140px; 58px on phones), rounded only on top so it still
+     peeks up from the bottom edge of the window */
+  .voyage-face{
+    width:clamp(64px, 7vw, 140px);
+    height:clamp(64px, 7vw, 140px);
+    border-radius:clamp(14px, 1.6vw, 28px) clamp(14px, 1.6vw, 28px) 0 0;
+    overflow:hidden;
+  }
+  @media (max-width:640px){
+    .voyage-face{ width:58px; height:58px; border-radius:14px 14px 0 0; }
+  }
 
   .about-fields{ flex:1; min-width:0; }
 
@@ -2851,7 +2865,7 @@
         </div>
 
         <div class="journey-section" style="display:flex; justify-content:center; margin-top:28px; margin-bottom:-40px;">
-          <img src="assets/hy1.PNG" alt="Hang Yuan illustrated portrait" style="width:116px; height:116px; object-fit:cover; border-radius:14px 14px 0 0; display:block;">
+          <div class="voyage-face"><img src="assets/faces/hy.svg" alt="Hang Yuan illustrated portrait" data-live-face style="width:100%; height:100%; object-fit:cover; display:block;"></div>
         </div>
       </div>
     </div>
@@ -5200,18 +5214,20 @@
     }).observe(story, { attributes:true, attributeFilter:['class'] });
   })();
 
-  // ABOUT ME FACE — the illustrated portrait in the About Me window is
+  // LIVE PORTRAIT — the illustrated portrait (About Me and Voyage) is
   // inlined like the landing-page characters, so its pupils follow the
-  // mouse (or finger) while the window is open, and relax back to the
+  // mouse (or finger) while its window is open, and relax back to the
   // drawn pose when the pointer leaves. Same data-hx/hy/hw/hh/r/cx/cy
   // attributes as the icon faces. If inlining fails (e.g. opened straight
   // from disk) the plain <img> stays and simply looks static.
   (function(){
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const overlay = document.getElementById('aboutOverlay');
-    let face = null, pointer = null, releaseTimer = null, running = false;
+    const faces = [];
+    let pointer = null, releaseTimer = null, running = false;
+    const isOpen = f => !f.overlay || f.overlay.classList.contains('open');
 
     async function inline(img){
+      const overlay = img.closest('.about-overlay');
       try {
         const res = await fetch(img.getAttribute('src'));
         if (!res.ok) throw new Error('fetch failed');
@@ -5236,16 +5252,19 @@
           };
         });
         if (!eyes.length) return;
-        face = {
-          svg, eyes, ux: 0, uy: 0, hasDir: false,
+        faces.push({
+          svg, eyes, overlay, ux: 0, uy: 0, hasDir: false,
           cx: eyes.reduce((s, e) => s + e.hx, 0) / eyes.length,
           cy: eyes.reduce((s, e) => s + e.hy, 0) / eyes.length
-        };
+        });
+        if (overlay) new MutationObserver(start).observe(overlay, { attributes: true, attributeFilter: ['class'] });
       } catch (err) { /* keep the static image */ }
     }
 
     function tick(){
-      if (!face || !overlay.classList.contains('open')) { running = false; return; }
+      const live = faces.filter(isOpen);
+      if (!live.length) { running = false; return; }
+      live.forEach(face => {
       if (pointer) {
         const ctm = face.svg.getScreenCTM();
         if (ctm) {
@@ -5268,10 +5287,11 @@
         eye.y += (ty - eye.y) * ease;
         eye.pupil.setAttribute('transform', `translate(${eye.x.toFixed(2)} ${eye.y.toFixed(2)})`);
       });
+      });
       requestAnimationFrame(tick);
     }
     function start(){
-      if (running || !face) return;
+      if (running || !faces.some(isOpen)) return;
       running = true;
       requestAnimationFrame(tick);
     }
@@ -5291,9 +5311,6 @@
     window.addEventListener('pointercancel', touchRelease, { passive: true });
     // the mouse leaving the browser window: drift back to the drawn pose
     document.addEventListener('mouseleave', () => { pointer = null; });
-
-    // only animate while About Me is open
-    new MutationObserver(start).observe(overlay, { attributes: true, attributeFilter: ['class'] });
 
     document.querySelectorAll('img[data-live-face]').forEach(inline);
   })();
