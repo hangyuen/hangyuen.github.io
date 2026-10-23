@@ -2,9 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>1982 Mercedes-Benz 190E</title>
+<title>1982 Mercedes-Benz 190E · Hang Yuan's Web</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="format-detection" content="address=no, telephone=no, email=no, date=no">
+<script>
+  // THEME — same as the homepage and Digital Works: the saved choice
+  // ("off" = dark, "white" = light), or the system appearance.
+  (function(){
+    var saved = null;
+    try { saved = localStorage.getItem('site-theme'); } catch (e) {}
+    var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+    function apply(){
+      var t = saved === 'white' || saved === 'off' ? saved : (mq && mq.matches ? 'white' : 'off');
+      if (t === 'white') document.documentElement.setAttribute('data-theme', 'light');
+      else document.documentElement.removeAttribute('data-theme');
+      document.dispatchEvent(new Event('themechange'));
+    }
+    apply();
+    if (mq && !saved){
+      if (mq.addEventListener) mq.addEventListener('change', apply);
+      else if (mq.addListener) mq.addListener(apply);
+    }
+  })();
+</script>
 <script type="module" src="model-viewer.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,7 +135,7 @@
     background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0) 100%);
   }
 
-  /* ============ TOP: Back + title, same pairing as digital-arts.html ============ */
+  /* ============ TOP: Back + title, same pairing as digital-works.html ============ */
   .back-link {
     position: absolute;
     top: 56px;
@@ -127,7 +148,7 @@
     font-weight: 500;
     line-height: 19px; /* locked so this box is always exactly 27px tall
                            (line-height 19px + padding 4px top/bottom),
-                           matching digital-arts.html's back-link exactly
+                           matching digital-works.html's back-link exactly
                            so the gap to the title below reads identically
                            on both pages regardless of font-metric drift */
     color: rgba(255,255,255,0.6);
@@ -135,7 +156,7 @@
     transition: color 0.15s ease, gap 0.15s ease;
   }
   .back-link:hover {
-    color: #0071e3;
+    color: rgba(255,255,255,0.95);
     gap: 9px;
   }
   .back-link svg {
@@ -146,17 +167,19 @@
   .title-block {
     position: absolute;
     /* back-link box is 56px (top) + 27px (its own height) = 83px, plus
-       the same 40px rhythm digital-arts.html uses between its back-link
+       the same 40px rhythm digital-works.html uses between its back-link
        and page-title = 123px. */
     top: 123px;
     left: var(--page-gutter, 24px);
     right: var(--page-gutter, 24px);
     z-index: 10;
-    max-width: 640px;
+    /* wide enough for the full name on one line, like the Digital Works
+       title; still wraps on narrow windows */
+    max-width: 900px;
   }
   .page-title {
     /* One uniform size and weight for the whole name, no separate
-       tiers for year/brand/model, matching how digital-arts.html's
+       tiers for year/brand/model, matching how digital-works.html's
        .page-title is a single plain line. Identical clamp(), so the
        two pages' titles are pixel-for-pixel the same size always. */
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
@@ -228,7 +251,8 @@
     .load-toast-spinner { animation: none; }
   }
 
-  .load-toast-label {
+  .load-toast-label { display: none; }
+  .load-toast-label-unused {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 600;
@@ -327,7 +351,7 @@
      text/controls directly on the model, no card backgrounds. ============ */
   .bottom-panel {
     position: absolute;
-    bottom: 40px;
+    bottom: 56px;   /* same as the space above Back */
     left: var(--page-gutter, 24px);
     right: var(--page-gutter, 24px);
     z-index: 10;
@@ -387,7 +411,7 @@
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .swatch:hover { transform: scale(1.08); }
-  .swatch.selected { box-shadow: 0 0 0 2px #0a0a0b, 0 0 0 4px #0071e3; }
+  .swatch.selected { box-shadow: 0 0 0 2px #0a0a0b, 0 0 0 4px rgba(255,255,255,0.92); }
 
   .footnote {
     font-size: 11px;
@@ -470,7 +494,7 @@
     .back-link { top: 32px; }
     .title-block { top: 98px; right: 20px; }
     .page-description { display: none; } /* keep the phone view uncluttered */
-    .bottom-panel { bottom: 28px; gap: 14px; }
+    .bottom-panel { bottom: 32px; gap: 14px; }
     .swatch { width: 38px; height: 38px; }
     .swatches-row { gap: 10px; }
     .hotspot { width: 36px; height: 36px; }
@@ -478,12 +502,80 @@
     .scrim-bottom { height: 280px; }
   }
 
-  /* ============ Short laptop screens: tighten the bottom stack a touch ============ */
+  /* ============ Short laptop screens (13"/14" with browser bars) ============
+     Same spacing as Digital Works on these screens: Back 32px from the top,
+     title 24px below it, and 32px under the bottom stack. */
+  @media (min-width: 481px) and (max-height: 900px) {
+    .back-link { top: 32px; }
+    .title-block { top: 83px; }
+    .bottom-panel { bottom: 32px; }
+  }
   @media (max-height: 700px) {
-    .bottom-panel { bottom: 24px; gap: 12px; }
+    .bottom-panel { gap: 12px; }
     .hero-hint { font-size: 11px; }
     .footnote { display: none; }
   }
+
+  /* ============ LIGHT VERSION ============
+     Used when the visitor picked white on the homepage (or their system is
+     light and they haven't picked). Same layout; a soft light-grey studio
+     instead of the dark one, dark text, and light cards. */
+  html[data-theme="light"], html[data-theme="light"] body { background: #f5f5f7; }
+  html[data-theme="light"] .hero {
+    background:
+      radial-gradient(ellipse 55% 42% at 50% 50%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.35) 45%, rgba(255,255,255,0) 72%),
+      radial-gradient(ellipse 60% 14% at 50% 74%, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0) 70%),
+      linear-gradient(to bottom, #f5f5f7 0%, #ececf0 45%, #dfdfe4 80%, #d6d6dc 100%);
+  }
+  html[data-theme="light"] .grain-overlay { opacity: 0.06; mix-blend-mode: multiply; }
+  html[data-theme="light"] .scrim-top { background: linear-gradient(to bottom, rgba(245,245,247,0.7) 0%, rgba(245,245,247,0.25) 55%, rgba(245,245,247,0) 100%); }
+  html[data-theme="light"] .scrim-bottom { background: linear-gradient(to top, rgba(232,232,237,0.85) 0%, rgba(232,232,237,0.35) 55%, rgba(232,232,237,0) 100%); }
+
+  html[data-theme="light"] .back-link { color: #6e6e73; }
+  html[data-theme="light"] .back-link:hover { color: #1d1d1f; }
+  html[data-theme="light"] .page-title { color: #111111; text-shadow: none; }
+  html[data-theme="light"] .page-description { color: #6e6e73; text-shadow: none; }
+
+  html[data-theme="light"] .hero-hint { color: rgba(0,0,0,0.45); text-shadow: none; }
+  html[data-theme="light"] .hint-divider { background: rgba(0,0,0,0.25); }
+  html[data-theme="light"] .color-selected-name { color: #1d1d1f; text-shadow: none; }
+  html[data-theme="light"] .color-selected-name .en { color: rgba(0,0,0,0.5); }
+  html[data-theme="light"] .color-selected-meta { color: rgba(0,0,0,0.5); text-shadow: none; }
+  html[data-theme="light"] .swatch { box-shadow: 0 0 0 1px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.12); }
+  html[data-theme="light"] .swatch.selected { box-shadow: 0 0 0 2px #f5f5f7, 0 0 0 4px #1d1d1f; }
+  html[data-theme="light"] .footnote { color: rgba(0,0,0,0.45); text-shadow: none; }
+  html[data-theme="light"] .footnote a { color: rgba(0,0,0,0.6); }
+  html[data-theme="light"] .footnote a:hover { color: #1d1d1f; }
+
+  html[data-theme="light"] .hotspot { border-color: rgba(0,0,0,0.25); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+  html[data-theme="light"] .hotspot { animation-name: hotspot-pulse-light; }
+  @keyframes hotspot-pulse-light {
+    0%   { box-shadow: 0 0 0 0 rgba(0,0,0,0.18); }
+    70%  { box-shadow: 0 0 0 16px rgba(0,0,0,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+  }
+  html[data-theme="light"] .detail-card {
+    background: rgba(251,251,253,0.92);
+    border-color: rgba(0,0,0,0.08);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+  }
+  html[data-theme="light"] .detail-card-title { color: #1d1d1f; }
+  html[data-theme="light"] .detail-card-body { color: #48484a; }
+  html[data-theme="light"] .detail-card-close { color: rgba(0,0,0,0.45); }
+  html[data-theme="light"] .detail-card-close:hover { color: #1d1d1f; background: rgba(0,0,0,0.06); }
+  html[data-theme="light"] .load-toast { background: rgba(251,251,253,0.96); }
+
+  /* loading card in the dark version: dark glass, like the homepage card */
+  html:not([data-theme="light"]) .load-toast {
+    background: rgba(30,30,32,0.92);
+    border-color: rgba(255,255,255,0.12);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 4px 14px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  html:not([data-theme="light"]) .load-toast-title { color: #f5f5f7; }
+  html:not([data-theme="light"]) .load-toast-text { color: #c7c7cc; }
+  html:not([data-theme="light"]) .load-toast-track { background: rgba(255,255,255,0.14); }
+  html:not([data-theme="light"]) .load-toast-dismiss { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+  html:not([data-theme="light"]) .load-toast-dismiss:hover { background: rgba(255,255,255,0.16); color: #ffffff; }
 </style>
 </head>
 <body>
@@ -512,7 +604,7 @@
       </button>
       <div class="load-toast-label" id="loadToastLabel">3D Model</div>
       <div class="load-toast-title" id="loadToastTitle">Loading the car&hellip;</div>
-      <div class="load-toast-text" id="loadToastText">It's a fairly large model, so this can take a few seconds depending on your connection and browser.</div>
+      <div class="load-toast-text" id="loadToastText">It's a fairly large model, so this can take a few seconds depending on your connection and device.</div>
       <div class="load-toast-track"><div class="load-toast-bar" id="loadToastBar"></div></div>
       <button type="button" class="load-toast-retry" id="loadToastRetry">Refresh</button>
     </div>
@@ -627,6 +719,17 @@
       const m = bg.match(/\d+/g).map(Number);
       let [r, g, b] = m;
       const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+      // light version: pale paints (white, silver) get darkened instead
+      if (document.documentElement.getAttribute('data-theme') === 'light') {
+        const MAX_LUMINANCE = 120;
+        if (luminance > MAX_LUMINANCE) {
+          const amount = Math.min(0.75, (luminance - MAX_LUMINANCE) / (255 - MAX_LUMINANCE) * 0.6 + 0.3);
+          r = Math.round(r * (1 - amount));
+          g = Math.round(g * (1 - amount));
+          b = Math.round(b * (1 - amount));
+        }
+        return `rgb(${r}, ${g}, ${b})`;
+      }
       const MIN_LUMINANCE = 100;
       if (luminance < MIN_LUMINANCE) {
         const amount = Math.min(0.72, (MIN_LUMINANCE - luminance) / MIN_LUMINANCE * 0.6 + 0.32);
@@ -662,6 +765,7 @@
     });
 
     updateColorName(swatchesEl.querySelector('.swatch.selected'));
+    document.addEventListener('themechange', () => updateColorName(swatchesEl.querySelector('.swatch.selected')));
 
     // --- Loading pop-up for the 3D asset -------------------------------
     // Only surfaces if the model hasn't already loaded within a short
