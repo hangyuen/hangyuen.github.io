@@ -794,30 +794,9 @@
     background:#e4e4e4;
     flex-shrink:0;
   }
-  /* About Me portrait: same tile as the floating character icons
-     (same size, corner radius, background and shadow), so it matches
-     them on every screen. The About window is a little wider to fit it. */
+  /* About window: a little narrower so the info lines end close to the text */
   #aboutOverlay .about-window{ max-width:452px; }
   @media (min-width:641px){ .about-value.about-link{ white-space:nowrap; } }
-  .about-photo.about-face{
-    width:clamp(64px, 7vw, 140px);
-    height:clamp(64px, 7vw, 140px);
-    border-radius:clamp(14px, 1.6vw, 28px);
-    background:linear-gradient(145deg, var(--icon-box-grad-1), var(--icon-box-grad-2));
-    box-shadow:var(--icon-box-shadow);
-    overflow:hidden;
-    display:flex;
-    transition:background 0.35s ease, box-shadow 0.35s ease;
-  }
-  .about-face img,
-  .about-face svg,
-  .voyage-face svg{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-  .about-fields{ align-self:center; }
   /* Voyage illustration: same size as the floating character icons
      (7vw, 64–140px; 58px on phones), rounded only on top so it still
      peeks up from the bottom edge of the window */
@@ -826,6 +805,11 @@
     height:clamp(64px, 7vw, 140px);
     border-radius:clamp(14px, 1.6vw, 28px) clamp(14px, 1.6vw, 28px) 0 0;
     overflow:hidden;
+  }
+  .voyage-face svg{
+    width:100%;
+    height:100%;
+    display:block;
   }
   @media (max-width:640px){
     .voyage-face{ width:58px; height:58px; border-radius:14px 14px 0 0; }
@@ -1379,8 +1363,6 @@
     .about-content{ padding:22px 20px 26px; }
     .about-content h1{ font-size:24px; }
     .about-photo{ width:76px; height:76px; }
-    /* phones: same as the 58px character icons on the landing page */
-    .about-photo.about-face{ width:58px; height:58px; border-radius:14px; }
     /* phones: label sits above its value so long values like the
        email address get the full row width instead of overflowing */
     .about-profile{ gap:14px; }
@@ -2803,7 +2785,7 @@
         <h1 id="aboutTitle">About Me</h1>
 
         <div class="about-profile">
-          <div class="about-photo about-face"><img src="assets/faces/hy.svg" alt="Hang Yuan" data-live-face></div>
+          <img class="about-photo" src="assets/hangyuan.jpg" alt="Hang Yuan">
           <div class="about-fields">
             <div class="about-field">
               <span class="about-label">NAME</span>
