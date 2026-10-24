@@ -796,7 +796,14 @@
   }
   /* About window: a little narrower so the info lines end close to the text */
   #aboutOverlay .about-window{ max-width:452px; }
-  @media (min-width:641px){ .about-value.about-link{ white-space:nowrap; } }
+  @media (min-width:641px){
+    .about-value.about-link{ white-space:nowrap; }
+    /* Name / Position / Mail block sits centred against the photo:
+       the space above NAME equals the space below the MAIL line */
+    .about-profile{ align-items:center; }
+    .about-field:first-child{ padding-top:0; }
+    .about-fields{ margin-top:-6px; } /* offsets the empty space above the NAME letters */
+  }
   /* Voyage illustration: same size as the floating character icons
      (7vw, 64–140px; 58px on phones), rounded only on top so it still
      peeks up from the bottom edge of the window */
