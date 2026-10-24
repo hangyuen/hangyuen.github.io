@@ -2298,16 +2298,12 @@
     --ux-surface:#1c1c1e; --ux-dark:#3a3a3e; --ux-line:#3a3a3c; --ux-line2:#4a4a4e; --ux-bar:#8e8e93;
   }
   /* dark mode: strokes and dots that were near-black become light */
-  html:not([data-theme="white"]) .uxcs .jr-curve .line{ stroke:var(--ux-ink); }
-  html:not([data-theme="white"]) .uxcs .jr-curve .pt.hi,
   html:not([data-theme="white"]) .uxcs .web .dotn{ fill:var(--ux-ink); }
   html:not([data-theme="white"]) .uxcs .web .dotp{ stroke:var(--ux-ink); }
   html:not([data-theme="white"]) .uxcs .jr-dot.hi,
   html:not([data-theme="white"]) .uxcs .lc::before{ background:var(--ux-ink); }
   html:not([data-theme="white"]) .uxcs .lc.gap::before{ background:var(--ux-surface); box-shadow:0 0 0 4px var(--ux-surface), inset 0 0 0 2px var(--ux-ink); }
   html:not([data-theme="white"]) .uxcs .tn,
-  html:not([data-theme="white"]) .uxcs .npill.d,
-  html:not([data-theme="white"]) .uxcs .money-note-k{ background:var(--ux-ink); color:#111; }
   html:not([data-theme="white"]) .uxcs .lc.hot .lc-p span{ color:#f6d27f; }
   .uxcs .viz-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
   .uxcs .swipe{ display:none; font-size:12px; color:var(--dim); margin-top:10px; }
@@ -2436,23 +2432,35 @@
 
   
   .uxcs .nav-rows{ margin-top:22px; }
-  .uxcs .nrow{ display:grid; grid-template-columns:150px minmax(0, 1fr); gap:18px; align-items:center; padding:14px 0; border-top:1px solid var(--hairline); }
-  .uxcs .nrow:first-child{ border-top:none; }
-  .uxcs .nrow-h{ font-size:14px; font-weight:600; color:var(--ux-ink); line-height:1.3; }
-  .uxcs .nrow-h span{ display:block; font-size:12px; font-weight:500; color:var(--dim); margin-top:2px; }
-  .uxcs .nrow-items{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
-  .uxcs .ndot{ width:10px; height:10px; border-radius:50%; background:var(--ux-line); flex:none; }
-  .uxcs .npill{ font-size:12.5px; font-weight:600; border-radius:999px; padding:5px 11px; white-space:nowrap; }
-  .uxcs .npill.f{ background:var(--blue); color:#fff; }
-  .uxcs .npill.i{ background:var(--ux-surface); color:var(--ux-blue-deep); box-shadow:inset 0 0 0 2px var(--blue); }
-  .uxcs .npill.d{ background:var(--ux-dark); color:#fff; }
-  .uxcs .sw{ width:12px; height:12px; border-radius:3px; display:inline-block; }
-  .uxcs .smap-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:16px; font-size:12.5px; color:var(--ux-text); }
+  /* navigation: the five menus drawn as plain columns of their real links */
+  .uxcs .menus{ display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:0; margin-top:22px; }
+  .uxcs .menu{ padding:0 14px; border-left:1px solid var(--hairline); min-width:0; }
+  .uxcs .menu:first-child{ padding-left:0; border-left:none; }
+  .uxcs .menu:last-child{ padding-right:0; }
+  .uxcs .menu-h{ font-size:13px; font-weight:700; color:var(--ux-ink); line-height:1.25; padding-bottom:10px; margin-bottom:6px; border-bottom:1px solid var(--hairline); }
+  .uxcs .menu-h span{ display:block; font-size:11px; font-weight:500; color:var(--mute); margin-top:2px; }
+  .uxcs .menu ul{ list-style:none; margin:0; padding:0; }
+  .uxcs .menu li{ position:relative; font-size:12px; line-height:1.3; color:var(--mute); padding:4px 0 4px 14px; }
+  .uxcs .menu li.f, .uxcs .menu li.i, .uxcs .menu li.d{ color:var(--ux-ink); font-weight:600; }
+  .uxcs .menu li.f{ color:var(--ux-blue-deep); }
+  .uxcs .menu li.miss{ color:#c8102e; font-weight:600; }
+  html:not([data-theme="white"]) .uxcs .menu li.miss{ color:#ff6b7d; }
+  .uxcs .menu li::before, .uxcs .mk{ content:''; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--ux-line); }
+  .uxcs .mk{ position:static; display:inline-block; width:9px; height:9px; }
+  .uxcs .menu li.f::before, .uxcs .mk.f{ background:var(--blue); }
+  .uxcs .menu li.i::before, .uxcs .mk.i{ background:transparent; box-shadow:inset 0 0 0 1.5px var(--ux-ink); }
+  .uxcs .menu li.d::before, .uxcs .mk.d{ background:var(--ux-ink); border-radius:1.5px; }
+  .uxcs .menu li.miss::before, .uxcs .mk.miss{ background:transparent; box-shadow:inset 0 0 0 1.5px currentColor; border-radius:50%; }
+  .uxcs .mk.miss{ color:#c8102e; }
+  html:not([data-theme="white"]) .uxcs .mk.miss{ color:#ff6b7d; }
+  .uxcs .menu li.i::before, .uxcs .menu li.miss::before{ width:7px; height:7px; top:8px; }
+  .uxcs .smap-legend{ display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:20px; font-size:12px; color:var(--ux-text2); }
   .uxcs .smap-legend span{ display:inline-flex; align-items:center; gap:7px; }
-  .uxcs .name-strip{ margin-top:20px; display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; padding:14px 16px; border-radius:12px; border:1px dashed var(--ux-line2); }
-  .uxcs .name-strip-k{ font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--dim); }
-  .uxcs .names{ display:flex; flex-wrap:wrap; gap:6px; }
-  .uxcs .names span{ font-size:13px; font-weight:600; color:var(--ux-blue-deep); background:var(--blue-soft); border-radius:8px; padding:4px 10px; }/* ===== QUOTES ===== */
+  .uxcs .name-strip{ margin-top:16px; display:grid; grid-template-columns:180px minmax(0, 1fr); gap:18px; align-items:baseline; padding-top:14px; border-top:1px solid var(--hairline); }
+  .uxcs .name-strip-k{ font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); }
+  .uxcs .names{ display:flex; flex-wrap:wrap; gap:4px 0; }
+  .uxcs .names span{ font-size:13.5px; font-weight:600; color:var(--ux-blue-deep); }
+  .uxcs .names span + span::before{ content:'/'; color:var(--mute); font-weight:400; margin:0 10px; }/* ===== QUOTES ===== */
 
   
   .uxcs .quotes{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; margin-top:22px; }
@@ -2464,32 +2472,38 @@
   .uxcs .quote:first-child blockquote{ color:#fff; }/* ===== JOURNEY ===== */
 
   
-  .uxcs .jr-scroll{ overflow-x:auto; margin:18px -8px 0; padding:0 8px; }
-  .uxcs .jr{ position:relative; min-width:720px; }
-  .uxcs .jr-curve{ width:100%; height:auto; display:block; overflow:visible; }
-  .uxcs .jr-curve .area{ fill:url(#jrGrad); opacity:0.9; }
-  .uxcs .jr-curve .line{ fill:none; stroke:var(--ux-dark); stroke-width:2.5; stroke-linejoin:round; stroke-dasharray:1400; stroke-dashoffset:1400; transition:stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1); }
-  .uxcs .viz.in .jr-curve .line{ stroke-dashoffset:0; }
-  .uxcs .jr-curve .pt{ stroke:var(--ux-surface); stroke-width:2.5; }
-  .uxcs .jr-curve .pt.hi{ fill:var(--ux-dark); }
-  .uxcs .jr-curve .pt.lo{ fill:var(--blue); }
-  .uxcs .jr-curve .base{ stroke:var(--hairline); stroke-width:1; stroke-dasharray:3 4; }
-  .uxcs .jr-steps{ display:grid; grid-template-columns:repeat(6, 1fr); gap:8px; margin-top:12px; }
-  .uxcs .jstep{ border-radius:14px; padding:12px; background:var(--soft); }
-  .uxcs .jstep.low{ background:var(--blue-soft); box-shadow:inset 0 0 0 1.5px var(--blue); }
-  .uxcs .js-n{ font-size:11px; font-weight:700; color:var(--dim); }
-  .uxcs .js-t{ font-size:13.5px; font-weight:700; color:var(--ux-ink); margin-top:4px; line-height:1.3; }
-  .uxcs .js-d{ font-size:12px; color:var(--ux-text2); margin-top:4px; line-height:1.4; }
-  .uxcs .js-p{ display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
-  .uxcs .js-p span{ font-size:10.5px; font-weight:600; color:var(--ux-text); background:var(--ux-surface); border-radius:999px; padding:2px 7px; }
-  .uxcs .js-fix{ margin-top:8px; font-size:11.5px; font-weight:600; color:var(--ux-blue-deep); }
+  /* journey: a vertical, left-aligned timeline; each step has a slim
+     confidence bar (gold when the student is stuck) */
+  .uxcs .jr2{ margin-top:24px; }
+  .uxcs .jr2-steps{ list-style:none; margin:0; padding:0; }
+  .uxcs .jr2-steps li{ position:relative; display:grid; grid-template-columns:minmax(0, 1fr) 190px; gap:6px 32px; align-items:start; padding:0 0 22px 30px; }
+  .uxcs .jr2-steps li:last-child{ padding-bottom:0; }
+  .uxcs .jr2-steps li::before{ content:''; position:absolute; left:4px; top:5px; width:9px; height:9px; border-radius:50%; background:var(--ux-ink); box-shadow:0 0 0 4px var(--ux-surface); z-index:1; }
+  .uxcs .jr2-steps li.low::before{ background:var(--blue); box-shadow:0 0 0 4px var(--ux-surface), 0 0 0 8px var(--blue-soft); }
+  .uxcs .jr2-steps li::after{ content:''; position:absolute; left:8px; top:10px; bottom:-6px; width:1px; background:var(--hairline); }
+  .uxcs .jr2-steps li:last-child::after{ display:none; }
+  .uxcs .jr2-main{ min-width:0; }
+  .uxcs .jr2-n{ font-size:11px; font-weight:600; color:var(--mute); font-variant-numeric:tabular-nums; }
+  .uxcs .jr2-t{ font-size:15px; font-weight:700; color:var(--ux-ink); margin-top:2px; line-height:1.3; }
+  .uxcs .jr2-steps li.low .jr2-t{ color:var(--ux-blue-deep); }
+  .uxcs .jr2-d{ font-size:13px; line-height:1.45; color:var(--ux-text2); margin-top:3px; text-wrap:pretty; }
+  .uxcs .jr2-w{ font-size:11.5px; color:var(--mute); margin-top:6px; }
+  .uxcs .jr2-fix{ font-size:12px; font-weight:600; color:var(--ux-blue-deep); margin-top:8px; }
+  .uxcs .jr2-meter{ padding-top:20px; }
+  .uxcs .jr2-bar{ height:6px; border-radius:3px; background:var(--track); overflow:hidden; }
+  .uxcs .jr2-bar i{ display:block; height:100%; width:0; border-radius:3px; background:var(--ux-ink); opacity:0.75; transition:width 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+  .uxcs .jr2-steps li.low .jr2-bar i{ background:var(--blue); opacity:1; }
+  .uxcs .viz.in .jr2-bar i{ width:var(--v); }
+  .uxcs .jr2-lab{ display:flex; justify-content:space-between; font-size:11px; color:var(--mute); margin-top:6px; }
+  .uxcs .jr2-lab b{ font-weight:600; color:var(--ux-text2); }
+  .uxcs .jr2-steps li.low .jr2-lab b{ color:var(--ux-blue-deep); }
   .uxcs .jr-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:4px; font-size:12.5px; color:var(--dim); }
   .uxcs .jr-legend span{ display:inline-flex; align-items:center; gap:7px; }
   .uxcs .jr-dot{ width:10px; height:10px; border-radius:50%; }
   .uxcs .jr-dot.hi{ background:var(--ux-dark); }
-  .uxcs .jr-dot.lo{ background:var(--blue); }
-  .uxcs .money-note{ display:flex; gap:14px; align-items:center; margin-top:12px; padding:12px 14px; border-radius:12px; border:1px dashed #a1a1a6; }
-  .uxcs .money-note-k{ flex:none; font-size:11.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#fff; background:var(--ux-dark); border-radius:999px; padding:4px 10px; }
+  .uxcs .jr-dot.lo{ background:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+  .uxcs .money-note{ display:grid; grid-template-columns:180px minmax(0, 1fr); gap:18px; align-items:baseline; margin-top:14px; padding-top:14px; border-top:1px solid var(--hairline); }
+  .uxcs .money-note-k{ font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--dim); }
   .uxcs .money-note-d{ font-size:13.5px; line-height:1.45; color:var(--ux-text); }
   .uxcs .money-note-d b{ color:var(--ux-ink); }/* ===== NATIONAL STRIP ===== */
 
@@ -2587,10 +2601,15 @@
     .uxcs .web-wrap{ display:none; }
     .uxcs .web-list{ display:block; }
     .uxcs .swipe{ display:block !important; }
-    .uxcs .nrow{ grid-template-columns:1fr; gap:8px; }
+    .uxcs .menus{ grid-template-columns:repeat(2, minmax(0, 1fr)); row-gap:22px; }
+    .uxcs .menu, .uxcs .menu:first-child, .uxcs .menu:last-child{ padding:0 0 0 12px; border-left:none; }
+    .uxcs .menu:nth-child(odd){ padding:0 12px 0 0; }
+    .uxcs .name-strip{ grid-template-columns:1fr; gap:6px; }
+    .uxcs .jr2-steps li{ grid-template-columns:1fr; padding-left:26px; }
+    .uxcs .jr2-meter{ padding-top:4px; max-width:220px; }
     .uxcs .quotes{ grid-template-columns:1fr; }
     .uxcs .quote blockquote{ font-size:16.5px; }
-    .uxcs .money-note{ flex-direction:column; align-items:flex-start; }
+    .uxcs .money-note{ grid-template-columns:1fr; gap:6px; }
     .uxcs .task{ grid-template-columns:28px minmax(0, 1fr); row-gap:6px; }
     .uxcs .task > div:nth-child(3), .uxcs .task > div:nth-child(4){ grid-column:2; }
     .uxcs .task.t-h{ display:none; }
@@ -3290,12 +3309,8 @@
           <div class="viz-sub">A composite international Ph.D. student's confidence at each step</div></div>
           <div class="jr-legend"><span><i class="jr-dot hi"></i>Confident</span><span><i class="jr-dot lo"></i>Stuck, likely to email the office</span></div>
         </div>
-        <div class="swipe">Swipe to follow all 6 steps →</div>
-        <div class="jr-scroll">
-          <div class="jr">
-            <svg class="jr-curve" id="jrCurve" viewBox="0 0 600 64" aria-hidden="true"></svg>
-            <div class="jr-steps" id="jrSteps"></div>
-          </div>
+        <div class="jr2">
+          <ol class="jr2-steps" id="jrSteps"></ol>
         </div>
         <div class="takeaway"><span>The lowest point is <b>checking work rules</b>. That's where a funding question turns into a visa question, and the student has to switch to a different office to get an answer.</span></div>
         <div class="money-note">
@@ -3311,13 +3326,13 @@
       <h3 class="sub-heading"><span class="hl">43 links, 5 menus.</span> Funding has three names.</h3>
       <div class="viz" id="vizMap">
         <div class="viz-title">Graduate College main navigation</div>
-        <div class="viz-sub">Each dot is one menu link. Only the links tied to students' top needs are named.</div>
-        <div class="nav-rows" id="navRows"></div>
+        <div class="viz-sub">All 43 links across the 5 menus. The ones tied to students' top needs are marked.</div>
+        <div class="menus" id="navRows"></div>
         <div class="smap-legend">
-          <span><i class="sw" style="background:var(--blue)"></i>Funding</span>
-          <span><i class="sw" style="background:#fff; box-shadow:inset 0 0 0 2px var(--blue)"></i>International</span>
-          <span><i class="sw" style="background:#1d1d1f"></i>Forms, deadlines &amp; Workday</span>
-          <span><i class="sw" style="background:#d2d2d7; border-radius:50%"></i>Other link</span>
+          <span><i class="mk f"></i>Funding</span>
+          <span><i class="mk i"></i>International</span>
+          <span><i class="mk d"></i>Forms, deadlines &amp; Workday</span>
+          <span><i class="mk miss"></i>Missing</span>
         </div>
         <div class="name-strip">
           <div class="name-strip-k">Same topic, three names</div>
@@ -5147,44 +5162,37 @@
     { t:'First paycheck',   d:'Settled and focused on research.',                       p:['Department'],                     f:4.2 },
   ];
   (function drawJourney(){
-    const svg = document.getElementById('jrCurve');
-    const W = 600, H = 64, n = steps.length;
-    const x = i => (i + 0.5) * W / n;
-    const y = f => 12 + (5 - f) / 4 * (H - 24);
-    const pts = steps.map((s, i) => [x(i), y(s.f)]);
-    let d = `M${pts[0][0]},${pts[0][1]}`;
-    for (let i = 1; i < pts.length; i++){
-      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], mx = (x0 + x1) / 2;
-      d += ` C${mx},${y0} ${mx},${y1} ${x1},${y1}`;
-    }
-    svg.innerHTML = `<defs><linearGradient id="jrGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ux-ink)" stop-opacity="0.10"/><stop offset="1" style="stop-color:var(--ux-ink)" stop-opacity="0"/></linearGradient></defs>
-      <line class="base" x1="0" x2="${W}" y1="${y(3)}" y2="${y(3)}"/>
-      <path class="area" d="${d} L${pts[n-1][0]},${H} L${pts[0][0]},${H} Z"/>
-      <path class="line" d="${d}"/>
-      ${pts.map((p, i) => `<circle class="pt ${steps[i].f < 2.5 ? 'lo' : 'hi'}" cx="${p[0]}" cy="${p[1]}" r="6.5" vector-effect="non-scaling-stroke"/>`).join('')}`;
+    const word = f => f < 2.5 ? 'Stuck' : f < 3.5 ? 'Unsure' : 'Confident';
     document.getElementById('jrSteps').innerHTML = steps.map((s, i) => `
-      <div class="jstep${s.f < 2.5 ? ' low' : ''}">
-        <div class="js-n">Step ${i + 1}</div>
-        <div class="js-t">${s.t}</div>
-        <div class="js-d">${s.d}</div>
-        <div class="js-p">${s.p.map(t => `<span>${t}</span>`).join('')}</div>
-        ${s.fix ? `<div class="js-fix">${s.fix}</div>` : ''}
-      </div>`).join('');
+      <li class="${s.f < 2.5 ? 'low' : ''}">
+        <div class="jr2-main">
+          <div class="jr2-n">Step ${i + 1}</div>
+          <div class="jr2-t">${s.t.replace('&', '&amp;')}</div>
+          <div class="jr2-d">${s.d}</div>
+          <div class="jr2-w">Answer from: ${s.p.join(' · ')}</div>
+          ${s.fix ? `<div class="jr2-fix">Fix: ${s.fix.replace(/^→\s*/, '')}</div>` : ''}
+        </div>
+        <div class="jr2-meter" aria-label="Confidence ${s.f} of 5">
+          <div class="jr2-bar"><i style="--v:${(s.f / 5 * 100).toFixed(0)}%"></i></div>
+          <div class="jr2-lab"><span>Confidence</span><b>${word(s.f)}</b></div>
+        </div>
+      </li>`).join('');
   })();
 
   // ---- ISU main navigation (f = funding, i = international, d = forms/deadlines/Workday) ----
   const nav = [
     ['Future Students',  [['Graduate Programs'],['Application Information'],['Graduate Research'],['Online Students'],['Funding Opportunities','f'],['International Students','i'],['Additional Resources'],['Apply Here']]],
-    ['Current Students', [['Important Deadlines','d'],['Academic Milestones'],['New Student'],['Degree Requirements'],['Graduate Financing','f'],['Graduate Awards'],['Student Forms','d'],['Thesis/Dissertation'],['You & Your Major Professor'],['Additional Resources']]],
+    ['Current Students', [['Important Deadlines','d'],['Academic Milestones'],['New Student'],['Degree Requirements'],['Graduate Financing','f'],['Graduate Awards'],['Student Forms','d'],['Thesis/Dissertation'],['You & Your Major Professor'],['Additional Resources'],['No International link','miss']]],
     ['Faculty & Staff',  [['Contact Lists'],['Guides for Faculty & Staff'],['Graduate Faculty Cabinet'],['Funding Resources','f'],['Recruiting Information'],['Professional Development'],['Program Review'],['Faculty Awards'],['Additional Resources']]],
     ['Prof. Development',[['Communication'],['Research'],['Teaching'],['Career'],['Leadership'],['Events and Resources']]],
     ['Resources',        [['About the College'],['A-Z Index'],['Graduate Awards'],['Graduate Events'],['Graduate Financing','f'],['Graduate News'],['Graduate Staff'],['Handbook'],['Graduate Programs'],['Workday Student','d']]],
   ];
-  document.getElementById('navRows').innerHTML = nav.map(([menu, items]) => `
-    <div class="nrow"><div class="nrow-h">${menu.replace('&','&amp;')}<span>${items.length} links</span></div>
-    <div class="nrow-items">${items.map(([t, k]) => k
-      ? `<span class="npill ${k}">${t.replace('&','&amp;')}</span>`
-      : `<span class="ndot" data-tip="${t.replace('&','&amp;')}"></span>`).join('')}</div></div>`).join('');
+  const esc = t => t.replace(/&/g, '&amp;');
+  document.getElementById('navRows').innerHTML = nav.map(([menu, items]) => {
+    const real = items.filter(([, k]) => k !== 'miss').length;
+    return `<div class="menu"><div class="menu-h">${esc(menu)}<span>${real} links</span></div>
+      <ul>${items.map(([t, k]) => `<li${k ? ` class="${k}"` : ''}>${esc(t)}</li>`).join('')}</ul></div>`;
+  }).join('');
 
   
     const story = document.getElementById('uxStory');
