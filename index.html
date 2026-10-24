@@ -2282,7 +2282,10 @@
     --display:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     --ux-ink:#111111; --ink:#1d1d1f; --ux-text:#333333; --ux-text2:#555555;
     --body:#4a4a4a; --dim:#6e6e73; --mute:#86868b;
-    --blue:#0071e3; --blue-soft:#eef5ff; --ux-blue-deep:#0b4ea2;
+    /* accent: ISU Gold (#F1BE48), not blue, so highlights don't read as
+       clickable links; on white it's deepened so small text stays readable.
+       ISU Cardinal is kept only for "missing" (e.g. Menu: none). */
+    --blue:#8f6400; --blue-soft:#fdf4dc; --ux-blue-deep:#6e4c00;
     --track:#ececf0; --hairline:rgba(0,0,0,0.08); --soft:#f2f2f5;
     --ux-surface:#ffffff; --ux-dark:#1d1d1f; --ux-line:#d2d2d7; --ux-line2:#c7c7cc; --ux-bar:#3a3a3c;
     margin-top:12px;
@@ -2290,7 +2293,7 @@
   html:not([data-theme="white"]) .uxcs{
     --ux-ink:#f5f5f7; --ink:#f5f5f7; --ux-text:#d1d1d6; --ux-text2:#aeaeb2;
     --body:#c7c7cc; --dim:#98989d; --mute:#7c7c80;
-    --blue:#2997ff; --blue-soft:rgba(41,151,255,0.15); --ux-blue-deep:#6cb2ff;
+    --blue:#F1BE48; --blue-soft:rgba(241,190,72,0.16); --ux-blue-deep:#f6d27f;
     --track:rgba(255,255,255,0.10); --hairline:rgba(255,255,255,0.10); --soft:#2a2a2d;
     --ux-surface:#1c1c1e; --ux-dark:#3a3a3e; --ux-line:#3a3a3c; --ux-line2:#4a4a4e; --ux-bar:#8e8e93;
   }
@@ -2305,7 +2308,7 @@
   html:not([data-theme="white"]) .uxcs .tn,
   html:not([data-theme="white"]) .uxcs .npill.d,
   html:not([data-theme="white"]) .uxcs .money-note-k{ background:var(--ux-ink); color:#111; }
-  html:not([data-theme="white"]) .uxcs .lc.hot .lc-p span{ color:#6cb2ff; }
+  html:not([data-theme="white"]) .uxcs .lc.hot .lc-p span{ color:#f6d27f; }
   .uxcs .viz-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
   .uxcs .swipe{ display:none; font-size:12px; color:var(--dim); margin-top:10px; }
   .uxcs .bx{ background:var(--ux-surface); border-color:var(--hairline); border-radius:22px; }
@@ -2457,7 +2460,7 @@
   .uxcs .q-tag{ display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--dim); margin-bottom:10px; }
   .uxcs .quote blockquote{ font-family:var(--display); font-size:18px; font-weight:600; letter-spacing:-0.012em; line-height:1.4; color:var(--ux-ink); text-wrap:pretty; }
   .uxcs .quote:first-child{ background:var(--ux-dark); }
-  .uxcs .quote:first-child .q-tag{ color:#6cb2ff; }
+  .uxcs .quote:first-child .q-tag{ color:#F1BE48; }
   .uxcs .quote:first-child blockquote{ color:#fff; }/* ===== JOURNEY ===== */
 
   
@@ -2518,7 +2521,7 @@
   .uxcs .fcell .d{ font-size:13px; line-height:1.5; color:var(--ux-text2); margin-top:4px; text-wrap:pretty; }
   .uxcs .fcell.ship .t{ color:#fff; }
   .uxcs .fcell.ship .d{ color:rgba(255,255,255,0.72); }
-  .uxcs .fcell.ship .n{ color:#6cb2ff; }
+  .uxcs .fcell.ship .n{ color:#F1BE48; }
   .uxcs .farrow{ display:flex; align-items:center; justify-content:center; color:var(--ux-line2); }
   .uxcs .farrow svg{ width:16px; height:16px; }
   .uxcs .lesson{ margin-top:28px; border-radius:22px; padding:30px 32px; background:var(--ux-dark); color:#fff; }
@@ -2544,7 +2547,8 @@
   .uxcs .ts{ font-size:13px; color:var(--body); }
   .uxcs .metrics{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; margin-top:14px; }
   .uxcs .metric{ min-width:0; border:1px solid var(--hairline); border-radius:16px; padding:16px 16px 14px; }
-  .uxcs .m-ic{ width:30px; height:30px; border-radius:9px; background:var(--soft); display:flex; align-items:center; justify-content:center; font-size:15px; color:var(--ux-dark); margin-bottom:10px; }
+  /* no icons: same short ISU-gold bar as the "If I did it again" cards */
+  .uxcs .metric::before{ content:''; display:block; width:26px; height:3px; border-radius:2px; background:#F1BE48; margin-bottom:12px; }
   .uxcs .m-t{ font-size:14.5px; font-weight:700; color:var(--ux-ink); }
   .uxcs .m-d{ font-size:12.5px; line-height:1.45; color:var(--ux-text2); margin-top:4px; text-wrap:pretty; }
   .uxcs .m-dir{ font-size:12px; font-weight:700; color:var(--blue); margin-top:8px; }/* ===== LIMITATIONS + NEXT ===== */
@@ -2560,12 +2564,9 @@
   .uxcs .next-t{ font-family:var(--display); font-size:clamp(19px, 1.8vw, 24px); font-weight:600; letter-spacing:-0.015em; line-height:1.35; max-width:720px; text-wrap:balance; }
   .uxcs .next-grid{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; margin-top:22px; }
   .uxcs .nx{ min-width:0; border-radius:16px; padding:18px 18px 16px; background:#2c2c2e; display:flex; flex-direction:column; }
-  .uxcs .nx.ai{ background:linear-gradient(160deg, #10325f 0%, var(--ux-dark) 100%); box-shadow:inset 0 0 0 1px rgba(108,178,255,0.35); }
-  .uxcs .nx-ic{ flex:none; width:34px; height:34px; border-radius:10px; background:rgba(255,255,255,0.1); color:#fff; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
-  .uxcs .nx.ai .nx-ic{ background:rgba(108,178,255,0.18); color:#6cb2ff; }
-  .uxcs .nx-ic svg{ width:18px; height:18px; }
-  .uxcs .nx-tag{ font-size:10.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#6cb2ff; margin-bottom:6px; }
-  .uxcs .nx-tag.g{ color:#a1a1a6; }
+  /* no icons: a short ISU-gold bar tops each card instead */
+  .uxcs .nx::before{ content:''; display:block; width:26px; height:3px; border-radius:2px; background:#F1BE48; margin-bottom:14px; }
+  .uxcs .nx-tag{ font-size:10.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#F1BE48; margin-bottom:6px; }
   .uxcs .nx-t{ font-size:15.5px; font-weight:700; letter-spacing:-0.012em; line-height:1.3; color:#fff; text-wrap:balance; }
   .uxcs .nx-d{ font-size:13.5px; line-height:1.5; color:rgba(255,255,255,0.72); margin-top:6px; text-wrap:pretty; }
 
@@ -2629,8 +2630,7 @@
     .uxcs .method-strip .mstep + .mstep{ border-left:none; border-top:1px solid var(--hairline); }
     .uxcs .next{ padding:22px 18px 18px; border-radius:18px; }
     .uxcs .next-t{ font-size:19px; }
-    .uxcs .nx{ display:grid; grid-template-columns:34px minmax(0, 1fr); column-gap:14px; align-items:start; padding:16px; }
-    .uxcs .nx-ic{ grid-row:1 / span 3; margin-bottom:0; }
+    .uxcs .nx{ padding:16px; }
   }
 
   .uxcs .ch-name, .uxcs .eyebrow{
@@ -2649,11 +2649,11 @@
     margin-top:14px;
     font-size:15px;
     font-weight:600;
-    color:#ff9f0a;
+    color:#F1BE48;
     opacity:0;
     transform:translateY(6px);
   }
-  html[data-theme="white"] .story-readtime{ color:#b85c00; }
+  html[data-theme="white"] .story-readtime{ color:#8f6400; }
   .story-overlay.open .story-readtime{
     animation:readIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
   }
@@ -3129,7 +3129,7 @@
       <h1>ISU Graduate College</h1>
       <p class="story-tagline">To learn what their funding covered, students had to check four places. I redesigned the site so the answer starts in one.</p>
       <div class="story-readtime">
-        <span>About a 10-minute read. Maybe grab a coffee first.</span>
+        <span>About a 10-minute read, so settle in.</span>
       </div>
     </div>
 
@@ -3498,10 +3498,10 @@
         </div>
       </div>
       <div class="metrics">
-        <div class="metric"><div class="m-ic">✉︎</div><div class="m-t">Repeat emails</div><div class="m-d">Funding and work-rule questions to the office, per month</div><div class="m-dir">Goal: ↓</div></div>
-        <div class="metric"><div class="m-ic">◎</div><div class="m-t">Funding page reach</div><div class="m-d">Views of Graduate Financing from the homepage and menus</div><div class="m-dir">Goal: ↑</div></div>
-        <div class="metric"><div class="m-ic">⌕</div><div class="m-t">Site search terms</div><div class="m-d">How often students search "funding," "tuition," "work hours"</div><div class="m-dir">Goal: ↓</div></div>
-        <div class="metric"><div class="m-ic">◷</div><div class="m-t">Time to answer</div><div class="m-d">Task time in the usability test, before vs. after</div><div class="m-dir">Goal: ↓</div></div>
+        <div class="metric"><div class="m-t">Repeat emails</div><div class="m-d">Funding and work-rule questions to the office, per month</div><div class="m-dir">Goal: ↓</div></div>
+        <div class="metric"><div class="m-t">Funding page reach</div><div class="m-d">Views of Graduate Financing from the homepage and menus</div><div class="m-dir">Goal: ↑</div></div>
+        <div class="metric"><div class="m-t">Site search terms</div><div class="m-d">How often students search "funding," "tuition," "work hours"</div><div class="m-dir">Goal: ↓</div></div>
+        <div class="metric"><div class="m-t">Time to answer</div><div class="m-d">Task time in the usability test, before vs. after</div><div class="m-dir">Goal: ↓</div></div>
       </div>
     </div>
 
@@ -3519,26 +3519,22 @@
         <div class="next-t">Next time, I'd start counting earlier and test before launch.</div>
         <div class="next-grid">
           <div class="nx">
-            <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></div>
-            <div class="nx-tag g">Research ops</div>
+            <div class="nx-tag">Research ops</div>
             <div class="nx-t">Tag the inbox from day one</div>
             <div class="nx-d">Tag every student email as it comes in, so I'd have real counts instead of relying on what I remembered.</div>
           </div>
           <div class="nx ai">
-            <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></div>
             <div class="nx-tag">AI collaboration</div>
             <div class="nx-t">Let AI do the first sort</div>
             <div class="nx-d">An AI model could group anonymized emails by topic as they come in. I'd still review every group by hand before using it.</div>
           </div>
           <div class="nx">
-            <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l2 2 4-4"/><rect x="4" y="4" width="16" height="16" rx="3"/></svg></div>
-            <div class="nx-tag g">Testing</div>
+            <div class="nx-tag">Testing</div>
             <div class="nx-t">Test with students before launch</div>
             <div class="nx-d">I'd sit down with 5 students and run the tasks in 6.1 on a draft of the funding pages, so I could fix problems before the pages went live.</div>
           </div>
           <div class="nx">
-            <div class="nx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 11.5a3 3 0 1 0 0-6M18 19a5 5 0 0 0-2.5-4.3"/></svg></div>
-            <div class="nx-tag g">Recruiting</div>
+            <div class="nx-tag">Recruiting</div>
             <div class="nx-t">Reach students who never write in</div>
             <div class="nx-d">Orientation reached a lot of new students. Next time I'd add longer follow-up sessions through departments, plus a 2&#8209;minute survey.</div>
           </div>
