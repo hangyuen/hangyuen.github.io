@@ -813,10 +813,11 @@
     border-radius:clamp(14px, 1.6vw, 28px) clamp(14px, 1.6vw, 28px) 0 0;
     overflow:hidden;
   }
-  /* dark mode only: the black hair would melt into the dark window, so the
-     figure sits on the same soft grey tile as the floating avatars */
-  html:not([data-theme="white"]) .voyage-face{
-    background:linear-gradient(145deg, var(--icon-box-grad-1), var(--icon-box-grad-2));
+  /* dark mode only: the Voyage window fades from black at the top to dark
+     grey at the bottom, so the black hair of the figure standing there
+     keeps its detail (no tile behind him) */
+  html:not([data-theme="white"]) #journeyWindow{
+    background:linear-gradient(180deg, var(--story-sheet) 0%, var(--story-sheet) 38%, #2a2a2e 78%, #343438 100%);
   }
   .voyage-face svg{
     width:100%;
