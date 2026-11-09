@@ -2,28 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>1982 Mercedes-Benz 190E · Hang Yuan's Web</title>
+<title>1982 Mercedes-Benz 190E · Hang Yuan's Website</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="format-detection" content="address=no, telephone=no, email=no, date=no">
 <script>
-  // THEME — same as the homepage and Digital Works: the saved choice
-  // ("off" = dark, "white" = light), or the system appearance.
+  // THEME — same as the homepage: black ("off") by default for every
+  // visitor, whatever their computer's Light/Dark setting. The white
+  // version is only used once the visitor has picked white on the homepage.
   (function(){
     var saved = null;
     try { saved = localStorage.getItem('site-theme'); } catch (e) {}
-    var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
-    function apply(){
-      var t = saved === 'white' || saved === 'off' ? saved : (mq && mq.matches ? 'white' : 'off');
-      if (t === 'white') document.documentElement.setAttribute('data-theme', 'light');
-      else document.documentElement.removeAttribute('data-theme');
-      document.dispatchEvent(new Event('themechange'));
-    }
-    apply();
-    if (mq && !saved){
-      if (mq.addEventListener) mq.addEventListener('change', apply);
-      else if (mq.addListener) mq.addListener(apply);
-    }
+    if (saved === 'white') document.documentElement.setAttribute('data-theme', 'light');
+    else document.documentElement.removeAttribute('data-theme');
+    document.dispatchEvent(new Event('themechange'));
   })();
 </script>
 <script type="module" src="model-viewer.min.js"></script>
